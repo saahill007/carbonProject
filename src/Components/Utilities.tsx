@@ -31,7 +31,7 @@ const Utilities: React.FC = () => {
   };
 
   const handleadmin = () => {
-    navigate("/admin");
+    navigate("/values");
   };
 
   const fetchData = async () => {
@@ -94,6 +94,7 @@ const Utilities: React.FC = () => {
             <img className="UtilImg" src={delImg} alt="delete" />
           </a>
         </div>
+        a
       </div>
 
       <div className="utilities-and-search">
@@ -152,7 +153,9 @@ const Utilities: React.FC = () => {
         </table>
       </div>
 
-      <button className="back">Back</button>
+      <button className="back" onClick={handleadmin}>
+        Back
+      </button>
 
       <div className="bottom-border"></div>
     </div>
