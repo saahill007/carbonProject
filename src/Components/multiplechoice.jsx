@@ -1,0 +1,137 @@
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+
+
+export default function MultipleChoice() {
+  const [toggleState, setToggleState] = useState(false);
+  const [options, setOptions] = useState([
+    { index: '', option: '', carbonOffsetValue: '' },
+    { index: '', option: '', carbonOffsetValue: '' },
+    { index: '', option: '', carbonOffsetValue: '' },
+    { index: '', option: '', carbonOffsetValue: '' },
+  ]);
+  const [buttonTop, setButtonTop] = useState(653); // Initial top position of buttons
+  const navigate = useNavigate();
+  const handleback = () => {
+    navigate("/questions/add");
+  };
+  // Function to handle toggle switch click
+  const handleToggleClick = () => {
+    setToggleState(!toggleState);
+  };
+  const handleAddOption = () => {
+    // Create a new option object with empty values
+    const newOption = { index: '', option: '', carbonOffsetValue: '' };
+    // Add the new option to the options array
+    setOptions([...options, newOption]);
+    // Move the buttons down
+    setButtonTop(buttonTop + 80);
+  };
+  
+  const handleOptionChange = (index, field, value) => {
+    // Update the options array with the new value for the specified field
+    const updatedOptions = [...options];
+    updatedOptions[index][field] = value;
+    setOptions(updatedOptions);
+  };
+  
+  function getParameterByName(name, url) {
+    if (!url) url = window.location.href;
+    name = name.replace(/[\[\]]/g, '\\$&');
+    var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)');
+    var results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, ' '));
+  }
+
+  useEffect(() => {
+    // Get the value of the 'question' parameter from the URL
+    const questionValue = getParameterByName('question');
+
+    // Find the input element by its ID or another selector
+    const inputElement = document.getElementById('myInput');
+
+    // Set the 'questionValue' as the placeholder for the input element
+    if (inputElement) {
+      inputElement.value = questionValue || 'Default Placeholder';
+    }
+  }, []);
+
+  return (
+    <div>
+    <div style={{background: 'white'}}>
+    <div style={{width: 1239, height: 760, left: 53, top: 100, position: 'absolute'}}>
+    {/* <div style={{width: 1239, height: 754, left: 0, top: -25, position: 'absolute', background: 'rgba(217, 217, 217, 0.12)', borderRadius: 30}} /> */}
+          <div style={{width: 1166.66, height: 111, left: 40, top: 20, position: 'absolute'}}> 
+    <div style={{width: 1166.66, height: 111, left: 0, top: 0, position: 'absolute', background: '#84D2F3', borderRadius: 15}}></div>
+    <input type="text" id="myInput" style={{ width: 1019, height: 51, left: 70, top: 25, position: "absolute", color: "black", fontSize: 20, fontFamily: "Outfit", fontWeight: "400", wordWrap: "break-word", border: "1px solid #ccc", padding: "10px", borderRadius: "30" }} />
+        </div>
+        <div style={{left: 117, top: 143, position: 'absolute', color: 'black', fontSize: 20, fontFamily: 'Outfit', fontWeight: '500', wordWrap: 'break-word'}}>Allow Multiple Answers: </div>
+        <div style={{ width: 64, height: 32, left: 325, top: 145, position: 'absolute', background: 'white',  justifyContent: 'flex-start', alignItems: 'flex-start', gap: 10, display: 'inline-flex', cursor: 'pointer' }} onClick={handleToggleClick}>
+        <div style={{ width: 64, height: 32, justifyContent: toggleState ? 'flex-end' : 'flex-start', alignItems: 'center', background: toggleState ? 'green' : '#D9D9D9', borderRadius: '10%', transition: 'background-color 0.2s ease-in-out, transform 0.2s ease-in-out',display: 'flex',justifyContent: toggleState ? 'flex-end' : 'flex-start',alignItems: 'center' }}>
+        <div style={{ width: 24, height: 24, background: 'white', borderRadius: '50%',border: '0.1px solid black', }}></div>
+        </div>
+      </div>
+    </div>
+
+     {/* Headers */}
+     <div style={{ width: 863, height: 250.11, left: 270, top: 298, position: 'absolute' }}>
+          <div style={{ width: 333.40, height: 24.38, left: 442, top: 0, position: 'absolute', color: 'black', fontSize: 20, fontFamily: 'Outfit', fontWeight: '500', wordWrap: 'break-word' }}>Set Carbon offset Value</div>
+          <div style={{ width: 253.64, height: 24.38, left: 130, top: 0, position: 'absolute', color: 'black', fontSize: 20, fontFamily: 'Outfit', fontWeight: '500', wordWrap: 'break-word' }}>Your New Options</div>
+          <div style={{ width: 78.16, height: 24.38, left: 0, top: 0, position: 'absolute', color: 'black', fontSize: 20, fontFamily: 'Outfit', fontWeight: '500', wordWrap: 'break-word' }}>Index</div>
+        </div>
+    {/* Render the options dynamically */}
+    {options.map((option, index) => (
+        <div key={index} style={{ width: 863, height: 417, left: 254, top: 328 + index * 70, position: 'absolute' }}>
+          <div style={{ width: 863, height: 417, left: 0, top: 0, position: 'absolute' }}>
+            <div style={{ width: 863, height: 417, left: 0, top: 0, position: 'absolute', background: 'white' }} />
+          </div>
+          <div style={{ width: 772.07, height: 250.11, left: 22.33, top: 21, position: 'absolute' }}>
+            <input
+              type="text"
+              placeholder="Index"
+              style={{ width: '60px', height: '29px', left: '0', top: '0px', position: 'absolute', color: 'rgba(0, 0, 0, 0.47)' }}
+              value={option.index}
+              onChange={(e) => handleOptionChange(index, 'index', e.target.value)}
+            />
+            <input
+              type="text"
+              placeholder="Option"
+              style={{ width: '244.06px', height: '29px', left: '122.83px', top: '0px', position: 'absolute', color: 'rgba(0, 0, 0, 0.47)', fontSize: 20, fontFamily: 'Outfit', fontWeight: '500', wordWrap: 'break-word' }}
+              value={option.option}
+              onChange={(e) => handleOptionChange(index, 'option', e.target.value)}
+            />
+            <input
+              type="text"
+              placeholder="CarbonOffset Value"
+              style={{ width: '272.78px', height: '29px', left: '441.87px', top: '0px', position: 'absolute', color: 'rgba(0, 0, 0, 0.47)' }}
+              value={option.carbonOffsetValue}
+              onChange={(e) => handleOptionChange(index, 'carbonOffsetValue', e.target.value)}
+            />
+          </div>
+        </div>
+      ))}
+        {/* Add an option button */}
+        <div style={{ width: 151.56, height: 57.11, left: 610, top: buttonTop, position: 'absolute' }}>
+          <div
+            style={{ width: 150.66, height: 57.11, left: 0, top: 0, position: 'absolute', background: '#A3C7A0', boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)', borderRadius: 300, border: '1px black solid' }}
+            onClick={handleAddOption}
+          >
+            <div style={{ width: 139.56, height: 25.50, left: 12, top: 16, position: 'absolute', color: 'black', fontSize: 20, fontFamily: 'Outfit', fontWeight: '600', wordWrap: 'break-word', cursor: 'pointer' }}>Add an option</div>
+          </div>
+        </div>
+    {/* SAVE button */}
+    <div style={{ width: 189.56, height: 57.11, left: 1104, top: buttonTop, position: 'absolute' }}>
+          <div style={{ width: 150.66, height: 57.11, left: 0, top: 0, position: 'absolute', background: '#A3C7A0', boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)', borderRadius: 300, border: '1px black solid' }}></div>
+          <div style={{ width: 139.56, height: 25.50, left: 50, top: 16.18, position: 'absolute', color: 'black', fontSize: 20, fontFamily: 'Outfit', fontWeight: '600', wordWrap: 'break-word', cursor: 'pointer' }}>SAVE</div>
+        </div>
+     {/* BACK button */}
+     <div style={{ width: 189.56, height: 57.11, left: 93, top: buttonTop, position: 'absolute' }}>
+          <div style={{ width: 150.66, height: 57.11, left: 0, top: 0, position: 'absolute', background: '#A3C7A0', boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)', borderRadius: 300, border: '1px black solid' }}></div>
+          <div style={{ width: 139.56, height: 25.50, left: 50, top: 16.18, position: 'absolute', color: 'black', fontSize: 20, fontFamily: 'Outfit', fontWeight: '600', wordWrap: 'break-word', cursor: 'pointer' }}onClick={handleback}>BACK</div>
+        </div>
+</div>
+</div>
+  );
+}
