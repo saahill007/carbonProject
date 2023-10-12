@@ -1,0 +1,156 @@
+.top-nav {
+    font-family: Arial, sans-serif;
+    font-size: large;
+    font-weight: 500;
+    margin-top: 40px;
+    text-align: right;
+    border-bottom: 3px solid #333;
+    margin-bottom: 70px;
+}
+
+a:link {
+    text-decoration: none;
+}
+
+.admin_edit {
+    text-align: right;
+    margin-top: 40px;
+    margin-bottom: 25px;
+
+}
+
+.edit {
+    font-family: Arial, sans-serif;
+    font-size: larger;
+    font-weight: 750;
+    display: inline;
+    margin-right: 1200px;
+}
+
+
+.sidebar {
+    padding-top: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    position: fixed;
+    cursor: pointer;
+    left: 0;
+    bottom: 0;
+    top: 0;
+    background-color: hsl(114, 25%, 71%);
+    width: 72px;
+    z-index: 5;
+    padding-bottom: 250px;
+}
+
+.attribute-names {
+    padding-top: 10px;
+    color: black;
+    display: flex;
+    justify-content: space-between;
+    padding-bottom: 3px;
+    border-bottom: 2px solid #333;
+    align-items: center;
+}
+
+.sticky-header {
+    position: sticky;
+    top: 0;
+    background-color: white;
+    z-index: 1;
+}
+
+th {
+    color: black;
+    font-weight: 600 !important;
+    background-color: white;
+    position: sticky;
+    padding-top: 1px !important;
+    padding-bottom: 1px !important;
+}
+
+input[type="checkbox"] {
+    transform: scale(2.5);
+    margin-left: 10px;
+    margin-top: 11px !important;
+}
+
+
+.table-wrapper {
+    display: flex;
+    max-height: 290px;
+    overflow-y: scroll;
+}
+
+.tabl-sapce {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    border-collapse: collapse;
+}
+
+.tabl-sapce th,
+.tabl-sapce td {
+    padding: 8px;
+    text-align: center;
+    vertical-align: middle;
+    border: 1px solid #ddd;
+}
+
+.tabl-sapce th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+}
+
+.tabl-sapce tbody tr:hover {
+    background-color: #f5f5f5;
+}
+
+.data {
+    padding-top: 10px;
+    flex: column;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.data input {
+    width: 30px;
+    cursor: pointer;
+    height: 30px;
+    color: black
+}
+
+.save {
+
+    margin-top: 10px;
+    margin-left: 15px;
+    margin-bottom: 500px;
+    background-color: hsl(114, 25%, 71%);
+    color: black;
+    height: 50px;
+    width: 100px;
+    border-radius: 15px;
+    position: absolute;
+    z-index: 1;
+    display: block;
+
+}
+
+.save:hover {
+    cursor: pointer;
+    background-color: rgb(19, 190, 19);
+    color: white;
+}
+
+
+
+.bottom-border {
+    background-color: #A7C8A3;
+    height: 30px;
+    width: 100%;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+}
