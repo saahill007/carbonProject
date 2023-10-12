@@ -52,8 +52,14 @@ const App: React.FC = () => {
             />
             <Route path="/questions" element={<Questions />} />
             <Route path="/questions/add" element={<AddQuestionPage />} />
-            <Route path="/questions/multiplechoice" element={<MultipleChoice />} />
-            <Route path="/questions/fillintheblanks" element={<FillInTheBlank/>} />
+            <Route
+              path="/questions/multiplechoice"
+              element={<MultipleChoice />}
+            />
+            <Route
+              path="/questions/fillintheblanks"
+              element={<FillInTheBlank />}
+            />
             <Route path="/questions/dropdown" element={<div>Dropdown</div>} />
             <Route path="/questions/slider" element={<div>Slider</div>} />
             <Route path="/support" element={<Support />} />

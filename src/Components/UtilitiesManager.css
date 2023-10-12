@@ -1,0 +1,107 @@
+.AddNewUtilForm {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    margin: auto;
+    max-width: 400px;
+    padding: 20px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+  }
+  
+  .AddNewUtilForm label {
+    display: inline-block;
+    margin-top: 10px;
+    width: 30%; /* Adjust the width as needed */
+    text-align: left;
+  }
+  
+  .AddNewUtilForm input {
+    display: inline-block;
+    width: 70%; /* Adjust the width as needed */
+    padding: 8px;
+    margin-top: 5px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
+  
+  .AddNewUtilForm button {
+    width: 100%;
+    padding: 10px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .AddNewUtilForm button:hover {
+    background-color: #0056b3;
+  }
+  /* UtilitiesManager.css */
+
+/* UtilitiesManager.css */
+
+.UtilitiesManager {
+    display: flex;
+    justify-content: space-around;
+  }
+  
+  .UtilitiesTable {
+    width: 65%; /* Adjust the width as needed */
+  }
+  
+  .UtilitiesTable input {
+    width: 80%; /* Set a fixed width for the input fields in the table */
+  }
+  
+  .AddNewUtilForm {
+    width: 30%; /* Adjust the width as needed */
+  }
+  
+  
+  .ActionsButtons button {
+    display: inline-block; /* Set buttons to inline-block */
+    margin-right: 5px; /* Add some spacing between buttons */
+    width: 65px;
+  }
+
+  /* Add this CSS to set a minimum width for the Actions column */
+.table th:last-child,
+.table td:last-child {
+    width: auto;
+}
+
+/* Add this CSS to allow other columns to adjust based on the available space */
+.table th:not(:last-child),
+.table td:not(:last-child) {
+  width: 20%; /* Allow other columns to adjust */
+  white-space: nowrap; /* Prevent text wrapping in other columns */
+}
+.UtilitiesTable{
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    padding: 15px 15px;
+}
+
+.utilitiesHeading{
+    font-size: 30px;
+    font-weight: 400;
+    justify-content: center;
+}
+.utilitiesHeading {
+    text-align: center;
+    padding: 10px 10px;
+   
+  }
+  
+.headingUtil{
+    font-size: 20px;
+    font-weight: 600;
+    justify-content: center;
+    text-align: center;
+    padding: 10px 10px;
+}

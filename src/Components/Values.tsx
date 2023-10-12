@@ -6,6 +6,7 @@ import { Link, Routes, Route, Outlet, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import ValuesLandingPage from "./ValuesLandingPage";
 import Utilities from "./Utilities";
+import Formulas from "./Formulas";
 // import { Link, Routes, Route, Outlet, useNavigate } from "react-router-dom";
 
 interface ValuesProps {
@@ -136,7 +137,7 @@ const Admin: React.FC = () => <div>Admin Page</div>;
 // const Utilities: React.FC = () => <div>Utilities Page</div>;
 const Payments: React.FC = () => <div>Payments Page</div>;
 const ZipCodes: React.FC = () => <div>Zip Codes Page</div>;
-const Formulas: React.FC = () => <div>Formulas Page</div>;
+// const Formulas: React.FC = () => <div>Formulas Page</div>;
 
 const Values: React.FC = () => {
   return (
