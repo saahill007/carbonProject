@@ -9,6 +9,7 @@ import Admin_add from "./admin_add";
 import AdminEdit from "./admin_edit";
 import Utilities from "./Utilities";
 import Admin_main from "./admin_main";
+import Formulas from "./Formulas";
 // import { Link, Routes, Route, Outlet, useNavigate } from "react-router-dom";
 
 interface ValuesProps {
@@ -139,7 +140,7 @@ const ValuesPage: React.FC<ValuesProps> = ({ children }) => {
 // const Utilities: React.FC = () => <div>Utilities Page</div>;
 const Payments: React.FC = () => <div>Payments Page</div>;
 const ZipCodes: React.FC = () => <div>Zip Codes Page</div>;
-const Formulas: React.FC = () => <div>Formulas Page</div>;
+// const Formulas: React.FC = () => <div>Formulas Page</div>;
 
 const Values: React.FC = () => {
   return (

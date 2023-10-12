@@ -14,13 +14,12 @@
   .AddNewUtilForm label {
     display: inline-block;
     margin-top: 10px;
-    width: 30%; /* Adjust the width as needed */
     text-align: left;
   }
   
   .AddNewUtilForm input {
     display: inline-block;
-    width: 70%; /* Adjust the width as needed */
+    width: 40%; /* Adjust the width as needed */
     padding: 8px;
     margin-top: 5px;
     margin-bottom: 15px;
