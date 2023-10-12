@@ -95,7 +95,7 @@ export default function MultipleChoice() {
       const response = await axios.post('http://localhost:3000/api/question/multiplechoice', data);
   
       if (response.status === 201) {
-        setMessage('Question added successfully.');
+        setMessage('Question and Options added successfully.');
       setTimeout(() => {
         setMessage(null); // Clear the message after 2 seconds
       }, 2000);

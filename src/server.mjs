@@ -11,8 +11,8 @@ const port = 3000;
 const dbConfig = {
     HOST: '127.0.0.1',
     USER: 'root',
-    PASSWORD: "Carbon@123",
-    DB: 'CRBN',
+    PASSWORD: "",
+    DB: "CarbnOffset"
 };
 
 // Create a MySQL connection
@@ -47,8 +47,8 @@ app.post('/api/slider', cors(), (req, res) => {
             const queId = results.insertId;
 
             // Insert options into the "Options" table with queId as a foreign key
-            const insertOptionsSql = 'INSERT INTO CRBN.Options (ques_id, given_option, option_type, equivalent_carbon) VALUES ?';
-            const optionsData = options.map(option => [queId, option.dropdown, "Slider", option.carbonOffset]);
+            const insertOptionsSql = 'INSERT INTO CarbnOffset.Options (ques_id, given_option, option_type, equivalent_carbon) VALUES ?';
+            const optionsData = options.map(option => [queId, option.baseline, option.optiontype, option.carbonOffset]);
 
             mysqlConnection.query(insertOptionsSql, [optionsData], (err, optionsResults) => {
                 if (err) {
@@ -68,7 +68,7 @@ app.post('/api/dropdown', cors(), (req, res) => {
     const { question, options } = req.body;
 
     // Insert the question into the "questions" table
-    const insertQuestionSql = 'INSERT INTO CRBN.questions (questions, question_flag, type_of_question) VALUES (?, 1, "Dropdown")';
+    const insertQuestionSql = 'INSERT INTO CarbnOffset.questions (questions, question_flag, type_of_question) VALUES (?, 1, "Dropdown")';
     mysqlConnection.query(insertQuestionSql, [question], (err, results) => {
         if (err) {
             console.error('Database query error:', err);
@@ -80,7 +80,7 @@ app.post('/api/dropdown', cors(), (req, res) => {
 
             // Insert options into the "Options" table with queId as a foreign key
             const insertOptionsSql = 'INSERT INTO CarbnOffset.Options (ques_id, given_option, option_type, equivalent_carbon) VALUES ?';
-            const optionsData = options.map(option => [queId, option.dropdown, "Dropdown", option.carbonOffset]);
+            const optionsData = options.map(option => [queId, option.dropdown, option.optiontype, option.carbonOffset]);
 
             mysqlConnection.query(insertOptionsSql, [optionsData], (err, optionsResults) => {
                 if (err) {
@@ -156,7 +156,7 @@ app.post('/api/updateToggleState', (req, res) => {
 
 // Define a route to retrieve Utility table from the database
 app.get('/api/Utility', cors(), (req, res) => {
-    const sql = 'SELECT * FROM CRBN.Utility';
+    const sql = 'SELECT * FROM CarbnOffset.Utility';
 
     // Execute the SQL query using the MySQL connection
     mysqlConnection.query(sql, (error, results) => {
@@ -211,7 +211,7 @@ app.post('/api/questionsfind', (req, res) => {
 // Define a route to add new question and its options by its content
 app.post('/api/question/multiplechoice', cors(), (req, res) => {
     const { question, question_flag, type_of_question, options } = req.body;
-    const sql = "INSERT INTO CRBN.questions (questions, question_flag, type_of_question) VALUES (?, ?, ?);";
+    const sql = "INSERT INTO CarbnOffset.questions (questions, question_flag, type_of_question) VALUES (?, ?, ?);";
 
     mysqlConnection.query(sql, [question, question_flag, type_of_question], (err, results) => {
         if (err) {
@@ -245,7 +245,7 @@ app.post('/api/question/multiplechoice', cors(), (req, res) => {
 // Define a route to add new question and its options by its content
 app.post('/api/question/fillintheblank', cors(), (req, res) => {
     const { question, carbonOffsetValue, answer, selectedTextType } = req.body;
-    const sql = "INSERT INTO CRBN.questions (questions, question_flag, type_of_question) VALUES (?, 0, 'Fill in the blank');";
+    const sql = "INSERT INTO CarbnOffset.questions (questions, question_flag, type_of_question) VALUES (?, 0, 'Fill in the blank');";
 
     mysqlConnection.query(sql, [question], (err, results) => {
         if (err) {
@@ -278,7 +278,7 @@ app.post('/api/question/fillintheblank', cors(), (req, res) => {
 
 // Define a route to retrieve admin table from the database
 app.get('/api/admin_main', cors(), (req, res) => {
-    const sql = 'SELECT * FROM CRBN.admin where flag=1';
+    const sql = 'SELECT * FROM carbon.admin where flag=1';
 
     // Execute the SQL query using the MySQL connection
     mysqlConnection.query(sql, (error, results) => {
@@ -294,7 +294,7 @@ app.get('/api/admin_main', cors(), (req, res) => {
 
 // Define a route to retrieve admin table for the add new admin from the database
 app.get('/api/admin_add', cors(), (req, res) => {
-    const sql = 'SELECT * FROM CRBN.admin where flag=1';
+    const sql = 'SELECT * FROM carbon.admin where flag=1';
 
     // Execute the SQL query using the MySQL connection
     mysqlConnection.query(sql, (error, results) => {
@@ -311,7 +311,7 @@ app.get('/api/admin_add', cors(), (req, res) => {
 // Define a route to save new admin data
 app.post("/api/new_admin_add", (req, res) => {
     const { Name, Email, password } = req.body;
-    const sql = "INSERT INTO CRBN.admin (Name, Email, password) VALUES (?, ?, ?)";
+    const sql = "INSERT INTO carbon.admin (Name, Email, password) VALUES (?, ?, ?)";
     const values = [Name, Email, password];
 
     mysqlConnection.query(sql, values, (error, result) => {
@@ -332,7 +332,7 @@ app.delete('/api/admins/delete', (req, res) => {
         return res.status(400).json({ message: 'Invalid input data' });
     }
 
-    const sql = 'UPDATE CRBN.admin SET flag = 0 WHERE admin_id IN (?)';
+    const sql = 'UPDATE carbon.admin SET flag = 0 WHERE admin_id IN (?)';
 
     // Execute the SQL query using the MySQL connection and the list of adminIds
     mysqlConnection.query(sql, [adminIds], (error, result) => {
@@ -345,6 +345,9 @@ app.delete('/api/admins/delete', (req, res) => {
         }
     });
 });
+
+
+
 
 // Start the server
 app.listen(port, () => {

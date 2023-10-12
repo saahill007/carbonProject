@@ -52,7 +52,7 @@ export default function FillInTheBlank() {
           const response = await axios.post('http://localhost:3000/api/question/fillintheblank', data);
       
           if (response.status === 201) {
-            setMessage('Question added successfully.');
+            setMessage('Question and Options added successfully.');
       setTimeout(() => {
         setMessage(null); 
       }, 2000);
