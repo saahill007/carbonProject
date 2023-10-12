@@ -94,7 +94,6 @@ const Utilities: React.FC = () => {
             <img className="UtilImg" src={delImg} alt="delete" />
           </a>
         </div>
-        a
       </div>
 
       <div className="utilities-and-search">

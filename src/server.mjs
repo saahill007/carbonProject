@@ -11,8 +11,8 @@ const port = 3000;
 const dbConfig = {
     HOST: '127.0.0.1',
     USER: 'root',
-    PASSWORD: 'Carbon@123',
-    DB: 'CRBN',
+    PASSWORD: "Saiteja17@",
+    DB: 'CarbnOffset',
 };
 
 // Create a MySQL connection
@@ -30,6 +30,71 @@ mysqlConnection.connect((err) => {
         console.error('Connection to MySQL failed:', err);
     }
 });
+
+// Define a route to handle updating the question
+app.post('/api/slider', cors(), (req, res) => {
+    const { question, options } = req.body;
+  
+    // Replace this with your actual query to update the question in the database
+    const sql = 'INSERT INTO CarbnOffset.questions (questions, question_flag, type_of_question) VALUES (?, 1, "Slider")';
+    mysqlConnection.query(sql, [question], (err, results) => {
+      if (err) {
+        console.error('Database query error:', err);
+        return res.status(500).json({ error: 'Internal Server Error' });
+      }
+
+      if (results.affectedRows === 1) {
+        const queId = results.insertId;
+  
+        // Insert options into the "Options" table with queId as a foreign key
+        const insertOptionsSql = 'INSERT INTO CarbnOffset.Options (ques_id, given_option, option_type, equivalent_carbon) VALUES ?';
+        const optionsData = options.map(option => [queId, option.dropdown, "Slider", option.carbonOffset]);
+  
+        mysqlConnection.query(insertOptionsSql, [optionsData], (err, optionsResults) => {
+          if (err) {
+            console.error('Database query error:', err);
+            return res.status(500).json({ error: 'Error saving options' });
+          }
+  
+          res.status(201).json({ message: 'Question and options saved successfully', queId });
+        });
+      } else {
+        res.status(500).send('Error saving the question.');
+      }
+    });
+  });
+
+app.post('/api/dropdown', cors(), (req, res) => {
+    const { question, options } = req.body;
+  
+    // Insert the question into the "questions" table
+    const insertQuestionSql = 'INSERT INTO CarbnOffset.questions (questions, question_flag, type_of_question) VALUES (?, 1, "Dropdown")';
+    mysqlConnection.query(insertQuestionSql, [question], (err, results) => {
+      if (err) {
+        console.error('Database query error:', err);
+        return res.status(500).json({ error: 'Internal Server Error' });
+      }
+  
+      if (results.affectedRows === 1) {
+        const queId = results.insertId;
+  
+        // Insert options into the "Options" table with queId as a foreign key
+        const insertOptionsSql = 'INSERT INTO CarbnOffset.Options (ques_id, given_option, option_type, equivalent_carbon) VALUES ?';
+        const optionsData = options.map(option => [queId, option.dropdown, "Dropdown", option.carbonOffset]);
+  
+        mysqlConnection.query(insertOptionsSql, [optionsData], (err, optionsResults) => {
+          if (err) {
+            console.error('Database query error:', err);
+            return res.status(500).json({ error: 'Error saving options' });
+          }
+  
+          res.status(201).json({ message: 'Question and options saved successfully', queId });
+        });
+      } else {
+        res.status(500).send('Error saving the question.');
+      }
+    });
+  });
 
 // Define a route to handle admin login
 app.post('/api/admin/login', cors(), (req, res) => {
@@ -91,7 +156,7 @@ app.post('/api/updateToggleState', (req, res) => {
 
 // Define a route to retrieve Utility table from the database
 app.get('/api/Utility', cors(),(req, res) => {
-    const sql = 'SELECT * FROM CRBN.Utility';
+    const sql = 'SELECT * FROM CarbnOffset.Utility';
 
     // Execute the SQL query using the MySQL connection
     mysqlConnection.query(sql, (error, results) => {
