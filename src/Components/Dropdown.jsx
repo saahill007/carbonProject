@@ -14,12 +14,26 @@ export function Dropdown() {
     { dropdown: "", carbonOffset: "" },
   ]);
 
+  const [message, setMessage] = useState(null); 
+
   const handleSave = async () => {
     // Prepare the data to be sent to the server
-    const optionsData = fields.map((field, index) => ({
+    const optionsData = fields.map((field, index) => {
+     let optiontype = '';
+     if (/^[a-zA-Z]+$/.test(field.dropdown)) {
+        optiontype = 'Alphabetic';
+      } else if (/^\d+$/.test(field.dropdown)) {
+        optiontype = 'Numeric';
+      } else if (/^[a-zA-Z\d]+$/.test(field.dropdown)) {
+        optiontype = 'Alphanumeric';
+      }
+  
+  return {
         dropdown: field.dropdown,
+        optiontype,
         carbonOffset: field.carbonOffset,
-      }));
+      };
+    });
     const data = {
       question,
       options: optionsData,
@@ -31,13 +45,22 @@ export function Dropdown() {
       const response = await axios.post('http://localhost:3000/api/dropdown', data);
   
       if (response.status === 201) {
-        alert('Question and Options added successfully.');
-      } else {
-        alert('Error updating the question.');
+        setMessage('Question and Options added successfully.');
+      setTimeout(() => {
+        setMessage(null); 
+      }, 2000);
+          } else {
+            setMessage('Error adding the question.');
+      setTimeout(() => {
+        setMessage(null); 
+      }, 2000);
       }
     } catch (error) {
       console.error('Error:', error);
-      alert('Error updating the question.');
+      setMessage('Error updating the question.');
+      setTimeout(() => {
+        setMessage(null); // Clear the message after 2 seconds
+      }, 2000);
     }
   };
 
@@ -129,6 +152,21 @@ export function Dropdown() {
           </div>
         <button onClick={handleSave} className="save-button">Save</button>
       </div>
+      {/* Message Display */}
+{message && (
+        <div style={{ position: 'absolute', bottom: 20, left: '48%', transform: 'translateX(-50%)' }}>
+          <div
+            style={{
+              background: message.includes('Error') ? 'red' : '#A3C7A0',
+              color: 'white',
+              padding: '10px',
+              borderRadius: '5px',
+            }}
+          >
+            {message}
+          </div>
+        </div>
+      )}
     </div>
     
 
