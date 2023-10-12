@@ -20,7 +20,7 @@ export default function AddQuestionPage() {
   
   return (
     <div style={{ background: 'white'}}>
-    <div style={{width: 1239, height: 760, left: 53, top: 100, position: 'absolute'}}>
+    <div style={{width: 1239, height: 760, left: 93, top: 100, position: 'absolute'}}>
         <div style={{width: 1239, height: 754, left: 0, top: 6, position: 'absolute', background: 'rgba(217, 217, 217, 0.12)', borderRadius: 30}} />
     {/* Single/Multiple Choice */}
     <div
@@ -277,7 +277,7 @@ export default function AddQuestionPage() {
           Fill in the blank
         </div>
       </div>
-        <div style={{width: 1166.66, height: 111, left: 40, top: 20, position: 'absolute'}}>
+        <div style={{width: 1166.66, height: 111, left: 30, top: 20, position: 'absolute'}}>
             <div style={{width: 1166.66, height: 111, left: 0, top: 0, position: 'absolute', background: '#84D2F3', borderRadius: 15}}></div>
             <input
             type="text"
@@ -287,7 +287,7 @@ export default function AddQuestionPage() {
         style={{
           width: 1019,
           height: 51,
-          left: 70,
+          left: 30,
           top: 20,
           position: "absolute",
           color: "rgba(0, 0, 0, 0.43)",
