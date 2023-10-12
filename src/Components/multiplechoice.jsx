@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from "axios";
 
 
 export default function MultipleChoice() {
@@ -7,11 +8,11 @@ export default function MultipleChoice() {
   const [options, setOptions] = useState([
     { index: '', option: '', carbonOffsetValue: '' },
     { index: '', option: '', carbonOffsetValue: '' },
-    { index: '', option: '', carbonOffsetValue: '' },
-    { index: '', option: '', carbonOffsetValue: '' },
   ]);
   const [buttonTop, setButtonTop] = useState(653); // Initial top position of buttons
   const navigate = useNavigate();
+  const [message, setMessage] = useState(null); // State for displaying messages
+
   const handleback = () => {
     navigate("/questions/add");
   };
@@ -20,13 +21,19 @@ export default function MultipleChoice() {
     setToggleState(!toggleState);
   };
   const handleAddOption = () => {
-    // Create a new option object with empty values
     const newOption = { index: '', option: '', carbonOffsetValue: '' };
-    // Add the new option to the options array
     setOptions([...options, newOption]);
     // Move the buttons down
     setButtonTop(buttonTop + 80);
   };
+
+  const handleDeleteOption = (index) => {
+    // Create a copy of the options array without the deleted option
+    const updatedOptions = options.filter((_, i) => i !== index);
+      setOptions(updatedOptions);
+      setButtonTop(buttonTop - 80);
+  };
+  
   
   const handleOptionChange = (index, field, value) => {
     // Update the options array with the new value for the specified field
@@ -57,6 +64,55 @@ export default function MultipleChoice() {
       inputElement.value = questionValue || 'Default Placeholder';
     }
   }, []);
+
+  const handleSave = async () => {
+    const isMultipleChoice = toggleState; 
+    const optionsData = options.map((option, index) => {
+      let optiontype = '';
+  
+      if (/^[a-zA-Z]+$/.test(option.option)) {
+        optiontype = 'Alphabetic';
+      } else if (/^\d+$/.test(option.option)) {
+        optiontype = 'Numeric';
+      } else if (/^[a-zA-Z\d]+$/.test(option.option)) {
+        optiontype = 'Alphanumeric';
+      }
+  
+      return {
+        option: option.option,
+        optiontype,
+        carbonOffset: option.carbonOffsetValue,
+      };
+    });
+    const data = {
+      question: document.getElementById('myInput').value,
+      question_flag: 0,
+      type_of_question: isMultipleChoice?'Multiple Choice':'Single Choice', 
+      options: optionsData, 
+    };
+
+    try {
+      const response = await axios.post('http://localhost:3000/api/question/multiplechoice', data);
+  
+      if (response.status === 201) {
+        setMessage('Question updated successfully.');
+      setTimeout(() => {
+        setMessage(null); // Clear the message after 2 seconds
+      }, 2000);
+      } else {
+        setMessage('Error updating the question.');
+      setTimeout(() => {
+        setMessage(null); // Clear the message after 2 seconds
+      }, 2000);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      setMessage('Error updating the question.');
+      setTimeout(() => {
+        setMessage(null); // Clear the message after 2 seconds
+      }, 2000);
+    }
+  };
 
   return (
     <div>
@@ -110,6 +166,12 @@ export default function MultipleChoice() {
               onChange={(e) => handleOptionChange(index, 'carbonOffsetValue', e.target.value)}
             />
           </div>
+          <div style={{ width: 75, height: 29, left: 810, top: 20, position: 'absolute' }}>
+            <div style={{ width: 75, height: 29, left: 0, top: 0, position: 'absolute', background: '#A3C7A0', boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)', borderRadius: 300, border: '1px black solid' }} onClick={() => handleDeleteOption(index)}>
+              <div style={{ width: 75, height: 29, left: 10, top: 0, position: 'absolute', color: 'black', fontSize: 20, fontFamily: 'Outfit', fontWeight: '600', wordWrap: 'break-word', cursor: 'pointer' }}>Delete</div></div>
+
+</div>
+
         </div>
       ))}
         {/* Add an option button */}
@@ -124,7 +186,7 @@ export default function MultipleChoice() {
     {/* SAVE button */}
     <div style={{ width: 189.56, height: 57.11, left: 1104, top: buttonTop, position: 'absolute' }}>
           <div style={{ width: 150.66, height: 57.11, left: 0, top: 0, position: 'absolute', background: '#A3C7A0', boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)', borderRadius: 300, border: '1px black solid' }}></div>
-          <div style={{ width: 139.56, height: 25.50, left: 50, top: 16.18, position: 'absolute', color: 'black', fontSize: 20, fontFamily: 'Outfit', fontWeight: '600', wordWrap: 'break-word', cursor: 'pointer' }}>SAVE</div>
+          <div style={{ width: 139.56, height: 25.50, left: 50, top: 16.18, position: 'absolute', color: 'black', fontSize: 20, fontFamily: 'Outfit', fontWeight: '600', wordWrap: 'break-word', cursor: 'pointer' }} onClick={() => handleSave()}>SAVE</div>
         </div>
      {/* BACK button */}
      <div style={{ width: 189.56, height: 57.11, left: 93, top: buttonTop, position: 'absolute' }}>
@@ -132,6 +194,21 @@ export default function MultipleChoice() {
           <div style={{ width: 139.56, height: 25.50, left: 50, top: 16.18, position: 'absolute', color: 'black', fontSize: 20, fontFamily: 'Outfit', fontWeight: '600', wordWrap: 'break-word', cursor: 'pointer' }}onClick={handleback}>BACK</div>
         </div>
 </div>
+ {/* Message Display */}
+ {message && (
+        <div style={{ position: 'absolute', bottom: 20, left: '48%', transform: 'translateX(-50%)' }}>
+          <div
+            style={{
+              background: message.includes('Error') ? 'red' : '#A3C7A0',
+              color: 'white',
+              padding: '10px',
+              borderRadius: '5px',
+            }}
+          >
+            {message}
+          </div>
+        </div>
+      )}
 </div>
   );
 }
