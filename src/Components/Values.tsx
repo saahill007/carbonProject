@@ -5,8 +5,10 @@ import { Link, Routes, Route, Outlet, useNavigate } from "react-router-dom";
 // src/Values.tsx
 import { useState } from "react";
 import ValuesLandingPage from "./ValuesLandingPage";
+import Admin_add from "./admin_add";
+import AdminEdit from "./admin_edit";
 import Utilities from "./Utilities";
-import Formulas from "./Formulas";
+import Admin_main from "./admin_main";
 // import { Link, Routes, Route, Outlet, useNavigate } from "react-router-dom";
 
 interface ValuesProps {
@@ -133,21 +135,23 @@ const ValuesPage: React.FC<ValuesProps> = ({ children }) => {
 
 // ... (rest of the components)
 
-const Admin: React.FC = () => <div>Admin Page</div>;
+//const Admin: React.FC = () => <div>Admin Page</div>;
 // const Utilities: React.FC = () => <div>Utilities Page</div>;
 const Payments: React.FC = () => <div>Payments Page</div>;
 const ZipCodes: React.FC = () => <div>Zip Codes Page</div>;
-// const Formulas: React.FC = () => <div>Formulas Page</div>;
+const Formulas: React.FC = () => <div>Formulas Page</div>;
 
 const Values: React.FC = () => {
   return (
     <Routes>
       <Route index element={<ValuesLandingPage></ValuesLandingPage>} />
-      <Route path="admin" element={<Admin />} />
+      <Route path="admin" element={<Admin_main />} />
       <Route path="utilities" element={<Utilities />} />
       <Route path="payments" element={<Payments />} />
       <Route path="zipcodes" element={<ZipCodes />} />
       <Route path="formulas" element={<Formulas />} />
+      <Route path="/admin/admin_add" element={<Admin_add />} />
+      <Route path="/admin/admin_edit" element={<AdminEdit />} />
     </Routes>
   );
 };

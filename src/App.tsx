@@ -15,6 +15,8 @@ import FillInTheBlank from "./Components/fillintheblank";
 import Support from "./Components/Support";
 import Contact from "./Components/Contact";
 import Logout from "./Components/Logout";
+import Slider from "./Components/Slider";
+import Dropdown from "./Components/Dropdown";
 
 const Home: React.FC = () => <div>Home Page</div>;
 
@@ -60,11 +62,11 @@ const App: React.FC = () => {
               path="/questions/fillintheblanks"
               element={<FillInTheBlank />}
             />
-            <Route path="/questions/dropdown" element={<div>Dropdown</div>} />
-            <Route path="/questions/slider" element={<div>Slider</div>} />
             <Route path="/support" element={<Support />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/logout" element={<Logout />} />
+            <Route path="/questions/slider" element={<Slider />} />
+            <Route path="/questions/dropdown" element={<Dropdown />} />
           </Routes>
         </div>
       </div>
