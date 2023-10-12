@@ -61,7 +61,7 @@ export default function MultipleChoice() {
 
     // Set the 'questionValue' as the placeholder for the input element
     if (inputElement) {
-      inputElement.value = questionValue || 'Default Placeholder';
+      inputElement.value = questionValue || 'Type Your Question Here';
     }
   }, []);
 
@@ -95,12 +95,12 @@ export default function MultipleChoice() {
       const response = await axios.post('http://localhost:3000/api/question/multiplechoice', data);
   
       if (response.status === 201) {
-        setMessage('Question updated successfully.');
+        setMessage('Question added successfully.');
       setTimeout(() => {
         setMessage(null); // Clear the message after 2 seconds
       }, 2000);
       } else {
-        setMessage('Error updating the question.');
+        setMessage('Error adding the question.');
       setTimeout(() => {
         setMessage(null); // Clear the message after 2 seconds
       }, 2000);
@@ -117,11 +117,11 @@ export default function MultipleChoice() {
   return (
     <div>
     <div style={{background: 'white'}}>
-    <div style={{width: 1239, height: 760, left: 53, top: 100, position: 'absolute'}}>
+    <div style={{width: 1239, height: 760, left: 93, top: 100, position: 'absolute'}}>
     {/* <div style={{width: 1239, height: 754, left: 0, top: -25, position: 'absolute', background: 'rgba(217, 217, 217, 0.12)', borderRadius: 30}} /> */}
           <div style={{width: 1166.66, height: 111, left: 40, top: 20, position: 'absolute'}}> 
     <div style={{width: 1166.66, height: 111, left: 0, top: 0, position: 'absolute', background: '#84D2F3', borderRadius: 15}}></div>
-    <input type="text" id="myInput" style={{ width: 1019, height: 51, left: 70, top: 25, position: "absolute", color: "black", fontSize: 20, fontFamily: "Outfit", fontWeight: "400", wordWrap: "break-word", border: "1px solid #ccc", padding: "10px", borderRadius: "30" }} />
+    <input type="text" id="myInput" style={{ width: 1019, height: 51, left: 30, top: 25, position: "absolute", color: "black", fontSize: 20, fontFamily: "Outfit", fontWeight: "400", wordWrap: "break-word", border: "1px solid #ccc", padding: "10px", borderRadius: "30" }} />
         </div>
         <div style={{left: 117, top: 143, position: 'absolute', color: 'black', fontSize: 20, fontFamily: 'Outfit', fontWeight: '500', wordWrap: 'break-word'}}>Allow Multiple Answers: </div>
         <div style={{ width: 64, height: 32, left: 325, top: 145, position: 'absolute', background: 'white',  justifyContent: 'flex-start', alignItems: 'flex-start', gap: 10, display: 'inline-flex', cursor: 'pointer' }} onClick={handleToggleClick}>
@@ -134,8 +134,8 @@ export default function MultipleChoice() {
      {/* Headers */}
      <div style={{ width: 863, height: 250.11, left: 270, top: 298, position: 'absolute' }}>
           <div style={{ width: 333.40, height: 24.38, left: 442, top: 0, position: 'absolute', color: 'black', fontSize: 20, fontFamily: 'Outfit', fontWeight: '500', wordWrap: 'break-word' }}>Set Carbon offset Value</div>
-          <div style={{ width: 253.64, height: 24.38, left: 130, top: 0, position: 'absolute', color: 'black', fontSize: 20, fontFamily: 'Outfit', fontWeight: '500', wordWrap: 'break-word' }}>Your New Options</div>
-          <div style={{ width: 78.16, height: 24.38, left: 0, top: 0, position: 'absolute', color: 'black', fontSize: 20, fontFamily: 'Outfit', fontWeight: '500', wordWrap: 'break-word' }}>Index</div>
+          <div style={{ width: 253.64, height: 24.38, left: 60, top: 0, position: 'absolute', color: 'black', fontSize: 20, fontFamily: 'Outfit', fontWeight: '500', wordWrap: 'break-word' }}>Your New Options</div>
+          {/* <div style={{ width: 78.16, height: 24.38, left: 0, top: 0, position: 'absolute', color: 'black', fontSize: 20, fontFamily: 'Outfit', fontWeight: '500', wordWrap: 'break-word' }}>Index</div> */}
         </div>
     {/* Render the options dynamically */}
     {options.map((option, index) => (
@@ -143,18 +143,18 @@ export default function MultipleChoice() {
           <div style={{ width: 863, height: 417, left: 0, top: 0, position: 'absolute' }}>
             <div style={{ width: 863, height: 417, left: 0, top: 0, position: 'absolute', background: 'white' }} />
           </div>
-          <div style={{ width: 772.07, height: 250.11, left: 22.33, top: 21, position: 'absolute' }}>
-            <input
+          <div style={{ width: 200, height: 250, left: 22, top: 21, position: 'absolute' }}>
+            {/* <input
               type="text"
               placeholder="Index"
               style={{ width: '60px', height: '29px', left: '0', top: '0px', position: 'absolute', color: 'rgba(0, 0, 0, 0.47)' }}
               value={option.index}
               onChange={(e) => handleOptionChange(index, 'index', e.target.value)}
-            />
+            /> */}
             <input
               type="text"
               placeholder="Option"
-              style={{ width: '244.06px', height: '29px', left: '122.83px', top: '0px', position: 'absolute', color: 'rgba(0, 0, 0, 0.47)', fontSize: 20, fontFamily: 'Outfit', fontWeight: '500', wordWrap: 'break-word' }}
+              style={{ width: '244.06px', height: '29px', left: 50, top: '0px', position: 'absolute', color: 'rgba(0, 0, 0, 0.47)', fontSize: 20, fontFamily: 'Outfit', fontWeight: '500', wordWrap: 'break-word' }}
               value={option.option}
               onChange={(e) => handleOptionChange(index, 'option', e.target.value)}
             />
@@ -171,7 +171,6 @@ export default function MultipleChoice() {
               <div style={{ width: 75, height: 29, left: 10, top: 0, position: 'absolute', color: 'black', fontSize: 20, fontFamily: 'Outfit', fontWeight: '600', wordWrap: 'break-word', cursor: 'pointer' }}>Delete</div></div>
 
 </div>
-
         </div>
       ))}
         {/* Add an option button */}

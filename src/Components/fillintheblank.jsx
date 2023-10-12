@@ -5,7 +5,6 @@ import axios from "axios";
 
 export default function FillInTheBlank() {
     const [selectedOption, setSelectedOption] = useState('');
-    const [question, setQuestion] = useState(''); 
     const [answer, setAnswer] = useState(''); 
     const [carbonOffsetValue, setCarbonOffsetValue] = useState(''); 
     const [selectedTextType, setSelectedTextType] = useState('');
@@ -37,13 +36,13 @@ export default function FillInTheBlank() {
         const questionValue = getParameterByName('question');
         const inputElement = document.getElementById('myInput');
         if (inputElement) {
-          inputElement.value = questionValue || 'Default Placeholder';
+          inputElement.value = questionValue || 'Type Your Question Here';
         }
       }, []);
 
       const handleSave = async () => {
         const data = {
-          question,
+          question: document.getElementById('myInput').value,
           carbonOffsetValue,
           answer,
           selectedTextType
@@ -53,14 +52,14 @@ export default function FillInTheBlank() {
           const response = await axios.post('http://localhost:3000/api/question/fillintheblank', data);
       
           if (response.status === 201) {
-            setMessage('Question updated successfully.');
+            setMessage('Question added successfully.');
       setTimeout(() => {
-        setMessage(null); // Clear the message after 2 seconds
+        setMessage(null); 
       }, 2000);
           } else {
-            setMessage('Error updating the question.');
+            setMessage('Error adding the question.');
       setTimeout(() => {
-        setMessage(null); // Clear the message after 2 seconds
+        setMessage(null); 
       }, 2000);
           }
         } catch (error) {
@@ -76,7 +75,7 @@ export default function FillInTheBlank() {
     {/* <div style={{width: 110, height: 29, left: 944, top: 400, position: 'absolute'}}></div> */}
     <div style={{width: 1166.66, height: 111, left: 130, top: 120, position: 'absolute',zIndex: 2}}> 
     <div style={{width: 1166.66, height: 111, left: 0, top: 0, position: 'absolute', background: '#84D2F3', borderRadius: 15}}></div>
-        <input type="text" id="myInput" value={question} onChange={(e) => setQuestion(e.target.value)} style={{width: 1019,height: 51,left: 70,top: 25,position: "absolute",color: "black",fontSize: 20,fontFamily: "Outfit",fontWeight: "400",wordWrap: "break-word",border: "1px solid #ccc",padding: "10px", borderRadius: "30" }}/>
+    <input type="text" id="myInput" style={{ width: 1019, height: 51, left: 30, top: 25, position: "absolute", color: "black", fontSize: 20, fontFamily: "Outfit", fontWeight: "400", wordWrap: "break-word", border: "1px solid #ccc", padding: "10px", borderRadius: "30" }} />
         </div>
 
     {/* <div style={{width: 1266.66, height: 754, left: 100, top: 100, position: 'absolute'}}> */}
@@ -114,7 +113,7 @@ export default function FillInTheBlank() {
 </div>
 
 <div style={{ width: 457, height: 25, left: 700, top: 538, position: "absolute", justifyContent: "flex-start", alignItems: "center", gap: 20, display: "inline-flex" }} onClick={() => handleOptionClick("Both")}>
-<div style={{ width: 45, height: 40, position: "relative", background: "white", borderRadius: "50%", border: "1px #828282 solid", display: "flex", alignItems: "center", justifyContent: "center" }}onClick={() => handleTextTypeSelect("Both")}>  
+<div style={{ width: 45, height: 40, position: "relative", background: "white", borderRadius: "50%", border: "1px #828282 solid", display: "flex", alignItems: "center", justifyContent: "center" }}onClick={() => handleTextTypeSelect("Alphanumeric")}>  
   {selectedOption === "Both" && (
       <div style={{ width: 24, height: 24, background: "black", borderRadius: "50%" }} />
     )}
