@@ -89,7 +89,7 @@ app.post('/api/updateToggleState', (req, res) => {
     });
   });
 
-    // Define a route to retrieve Utility table from the database
+// Define a route to retrieve Utility table from the database
 app.get('/api/Utility', cors(),(req, res) => {
     const sql = 'SELECT * FROM CRBN.Utility';
 
@@ -105,6 +105,109 @@ app.get('/api/Utility', cors(),(req, res) => {
         res.json(results);
     });
 });
+
+// Define a route to add a question to question table
+app.post('/api/newquestion', (req, res) => {
+    const { question , question_flag, type_of_question } = req.body;
+    const sql = "INSERT INTO CRBN.questions (questions, question_flag, type_of_question) VALUES (?, ?, ?);";
+  
+    // Execute the SQL query using the MySQL connection
+    mysqlConnection.query(sql, [question, question_flag, type_of_question ], (error, results) => {
+      if (error) {
+        console.error('Error executing SQL query:', error.message);
+        res.status(500).json({ error: 'Error updating toggle state in the database' });
+        return;
+      }
+      res.json({ message: 'New Question added successfully' });
+    });
+  });
+
+// Define a route to get a question by its content
+app.post('/api/questionsfind', (req, res) => {
+    const { questions } = req.body;
+    const sql = "SELECT * FROM CRBN.questions WHERE questions = ?";
+
+    // Execute the SQL query using the MySQL connection
+    mysqlConnection.query(sql, [questions], (error, results) => {
+        if (error) {
+            console.error('Error executing SQL query:', error.message);
+            res.status(500).json({ error: 'Error retrieving the question from the database' });
+            return;
+        }
+
+        if (results.length === 0) {
+            res.status(404).json({ error: 'Question not found' });
+        } else {
+            res.json(results[0]);
+        }
+    });
+});
+
+// Define a route to add new question and its options by its content
+app.post('/api/question/multiplechoice', cors(), (req, res) => {
+    const { question , question_flag, type_of_question ,options } = req.body;
+    const sql = "INSERT INTO CRBN.questions (questions, question_flag, type_of_question) VALUES (?, ?, ?);";
+
+    mysqlConnection.query(sql, [question, question_flag, type_of_question ], (err, results) => {
+      if (err) {
+        console.error('Database query error:', err);
+        return res.status(500).json({ error: 'Internal Server Error' });
+      }else{
+        console.log('New Question added successfully');
+      }
+  
+      if (results.affectedRows === 1) {
+        const queId = results.insertId;
+  
+        // Insert options into the "Options" table with queId as a foreign key
+        const insertOptionsSql = 'INSERT INTO Options (ques_id, given_option, option_type, equivalent_carbon) VALUES ?';
+        const optionsData = options.map(option => [queId, option.option, option.optiontype , option.carbonOffset]);
+  
+        mysqlConnection.query(insertOptionsSql, [optionsData], (err, optionsResults) => {
+          if (err) {
+            console.error('Database query error:', err);
+            return res.status(500).json({ error: 'Error saving options' });
+          }
+  
+          res.status(201).json({ message: 'Question and options saved successfully', queId });
+        });
+      } else {
+        res.status(500).send('Error saving the question.');
+      }
+    });
+  });
+
+  // Define a route to add new question and its options by its content
+  app.post('/api/question/fillintheblank', cors(), (req, res) => {
+    const { question , carbonOffsetValue, answer, selectedTextType } = req.body;
+    const sql = "INSERT INTO CRBN.questions (questions, question_flag, type_of_question) VALUES (?, 0, 'Fill in the blank');";
+
+    mysqlConnection.query(sql, [question], (err, results) => {
+      if (err) {
+        console.error('Database query error:', err);
+        return res.status(500).json({ error: 'Internal Server Error' });
+      }else{
+        console.log('New Question added successfully');
+      }
+  
+      if (results.affectedRows === 1) {
+        const queId = results.insertId;
+  
+        // Insert options into the "Options" table with queId as a foreign key
+        const insertOptionsSql = 'INSERT INTO Options (ques_id, given_option, option_type, equivalent_carbon) VALUES (?, ?, ?, ?)';
+  
+        mysqlConnection.query(insertOptionsSql, [queId, answer, selectedTextType , carbonOffsetValue], (err, optionsResults) => {
+          if (err) {
+            console.error('Database query error:', err);
+            return res.status(500).json({ error: 'Error saving options' });
+          }
+          res.status(201).json({ message: 'Question and options saved successfully', queId });
+        });
+      } else {
+        res.status(500).send('Error saving the question.');
+      }
+    });
+  });
 
 // Start the server
 app.listen(port, () => {
