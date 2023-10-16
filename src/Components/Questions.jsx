@@ -49,6 +49,10 @@ export function Questions(props) {
     }
   };
 
+  const handleEditClick = (questionId) => {
+    navigate(`/questions/edit?question=${questionId}`);
+  };
+
   return (
     <div style={{width: 1440, height: 1706, position: 'relative', background: 'white'}}>
     <div style={{width: 585, height: 659, left: 751, top: 221, position: 'absolute'}} />
@@ -64,7 +68,7 @@ export function Questions(props) {
         {question.questions}
       </div>
     </div>      <div style={{width: 173, height: 57, left: 975, top: 31, position: 'absolute', background: '#F6A55A', boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)', borderRadius: 300, border: '1px black solid'}}></div>
-      <div style={{width: 37, left: 1040, top: 50, position: 'absolute', color: 'black', fontSize: 20, fontFamily: 'Outfit', fontWeight: '600', wordWrap: 'break-word',cursor: 'pointer',}}>Edit</div>
+      <div style={{width: 37, left: 1040, top: 50, position: 'absolute', color: 'black', fontSize: 20, fontFamily: 'Outfit', fontWeight: '600', wordWrap: 'break-word',cursor: 'pointer',}}onClick={() => handleEditClick(question.questions)}>Edit</div>
      <div style={{ width: 64, height: 32, left: 3, top: 40, position: 'absolute', background: 'white', justifyContent: 'flex-start', alignItems: 'flex-start', gap: 10, display: 'inline-flex', cursor: 'pointer', }} onClick={() => handleToggleClick(index)}>
       <div style={{ width: 64, height: 32, justifyContent: question.toggleState ? 'flex-end' : 'flex-start', alignItems: 'center', background: question.toggleState ? 'green' : 'white', borderRadius: '10%', transition: 'background-color 0.2s ease-in-out, transform 0.2s ease-in-out', display: 'flex', justifyContent: question.toggleState ? 'flex-end' : 'flex-start', alignItems: 'center', }}>
         <div style={{ width: 24, height: 24, background: 'white', borderRadius: '50%',border: '0.1px solid black', }}></div>
