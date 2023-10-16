@@ -12,7 +12,6 @@ interface Admin {
     admin_id: number;
     Name: string;
     Email: string;
-    password: string;
 }
 
 const Admin_main: React.FC = () => {
@@ -91,6 +90,15 @@ const Admin_main: React.FC = () => {
         }
     };
 
+    const handleEditClick = () => {
+        if (selectedAdmins.length > 0) {
+            // Redirect to the edit page with selected admin IDs as query parameters
+            const adminIdsQueryParam = selectedAdmins.join(",");
+            navigate(`/values/admin/admin_edit/${adminIdsQueryParam}`);
+        } else {
+            console.error('Select one or more admins to edit.');
+        }
+    };
 
     useEffect(() => {
         handleSearch();
@@ -109,7 +117,7 @@ const Admin_main: React.FC = () => {
                         <img className="adminImg" src={addImg} alt="add" onClick={() => navigate("/values/admin/admin_add")} />
                     </a>
                     <a href="#">
-                        <img className="adminImg" src={editImg} alt="edit" />
+                        <img className="adminImg" src={editImg} alt="edit" onClick={() => handleEditClick()} />
                     </a>
                     <a href="#">
                         <img className="adminImg" src={delImg} alt="delete" onClick={() => handleDeleteClick()} />
@@ -137,7 +145,6 @@ const Admin_main: React.FC = () => {
                             <th>admin_id</th>
                             <th>Name</th>
                             <th>Email</th>
-                            <th>Password</th>
                         </tr>
                     </thead>
                     <tbody id="myTable">
@@ -150,7 +157,6 @@ const Admin_main: React.FC = () => {
                                 <td>{item.admin_id}</td>
                                 <td>{item.Name}</td>
                                 <td>{item.Email}</td>
-                                <td>{'####'}</td>
                             </tr>
                         ))}
                     </tbody>
@@ -163,5 +169,4 @@ const Admin_main: React.FC = () => {
         </div>
     );
 };
-
 export default Admin_main;
