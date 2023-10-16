@@ -108,9 +108,16 @@ export function Dropdown() {
     }
   }, []);
 
-  const handleChange = (index, event) => {
+  const handleChange = (index, event, field) => {
     const updatedFields = [...fields];
-    updatedFields[index][event.target.name] = event.target.value;
+    if (field === 'carbonOffset' && /[a-zA-Z]/.test(event.target.value)) {
+      setMessage("Error CarbonOffset value should be numeric.");
+            setTimeout(() => {
+              setMessage(null);
+            }, 2000);
+            return;
+    }
+    updatedFields[index][field] = event.target.value;
     setFields(updatedFields);
   };
 

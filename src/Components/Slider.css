@@ -1,78 +1,95 @@
 .centered-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center; 
-    justify-content: flex-start; 
-    /* height: 10vh;  */
-    margin-top: 50px;
-  }
-  
-  input {
-    width: 95% !important; 
-    padding: 10px !important; 
-  } 
-  
-  .question-input-container {
-     width: 75%;  
-    background-color: rgba(132, 210, 243, 1);
-    padding: 10px; 
-    border-radius: 15px; 
-    text-align: center; 
-  }
-  
-  .base{
-    /* position: absolute; */
-    left: 50%;
-    transform: translate(-50%, -50%);
-    text-align: center; 
-    overflow-y:scroll;
-  }
-  
-  .input-fields-container {
-    margin-top: 50px;
-    margin-right: 250px;
-    margin-left: 250px;
-    max-height: 220px; /* Adjust the maximum height as needed */
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    align-items:normal
-  }
-  
-  .side-by-side-inputs {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 10px; /* Optional spacing between the input pairs */
-  }
-  
-  .side-by-side-inputs input {
-    flex: 1;
-    margin-right: 10px; /* Optional spacing between the input fields */
-  }
-  
-  .add-button,
-  .remove-button,
-  .back-button,
-  .save-button{
-    background-color: hsl(114, 25%, 71%);
-    color: black;
-    padding: 10px 20px;
-    border-radius: 15px; 
-    margin: 10px;
-    cursor: pointer;
-  }
-  
-  .buttonss{
-    margin-top: 20px;
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-  }
-  
-  .ab{
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-  }
-  
+  display: flex;
+  flex-direction: column;
+  align-items: center; 
+  justify-content: flex-start; 
+  /* height: 10vh;  */
+  margin-top: 50px;
+}
+
+input {
+  width: 95% !important; 
+  padding: 10px !important; 
+} 
+
+.question-input-container {
+   width: 75%;  
+  background-color: rgba(132, 210, 243, 1);
+  padding: 10px; 
+  border-radius: 15px; 
+  text-align: center; 
+}
+
+.base{
+  /* position: absolute; */
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center; 
+  overflow-y:scroll;
+}
+
+.baseline-type-container{
+  margin-top: 5vh;
+}
+
+.baseline-type-container label {
+  font-size: 1.2em;
+  font-weight: 450;
+}
+
+.baseline-type-container select {
+  margin-left: 10px; /* Adjust the value to add the desired space */
+}
+
+.input-fields-container select{
+  margin-left: 8vw;
+  margin-right: 7vw;
+}
+
+.input-fields-container {
+  margin-top: 50px;
+  margin-right: 250px;
+  margin-left: 250px;
+  max-height: 220px; /* Adjust the maximum height as needed */
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  align-items:normal
+}
+
+.side-by-side-inputs {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px; /* Optional spacing between the input pairs */
+}
+
+.side-by-side-inputs input {
+  flex: 1;
+  margin-right: 10px; /* Optional spacing between the input fields */
+}
+
+.add-button,
+.remove-button,
+.back-button,
+.save-button{
+  background-color: hsl(114, 25%, 71%);
+  color: black;
+  padding: 10px 20px;
+  border-radius: 15px; 
+  margin: 10px;
+  cursor: pointer;
+}
+
+.buttonss{
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.ab{
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
