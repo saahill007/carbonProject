@@ -11,11 +11,23 @@ export default function MultipleChoice() {
   ]);
   const [buttonTop, setButtonTop] = useState(653); // Initial top position of buttons
   const navigate = useNavigate();
+  const [isSaveAttempted, setIsSaveAttempted] = useState(false);
+  const [inputErrors, setInputErrors] = useState(Array(options.length).fill({ option: false, carbonOffsetValue: false }));
+  
+
   const [message, setMessage] = useState(null); // State for displaying messages
 
   const handleback = () => {
-    navigate("/questions/add");
+    const questionValue = getParameterByName('question');
+    const source = getParameterByName('source');
+    if (source === 'add') {
+      navigate(`/questions/add?question=${questionValue}`);
+    } else if (source === 'edit') {
+      navigate(`/questions/edit?question=${questionValue}`);
+    }
   };
+  
+  
   // Function to handle toggle switch click
   const handleToggleClick = () => {
     setToggleState(!toggleState);
@@ -36,7 +48,15 @@ export default function MultipleChoice() {
   
   
   const handleOptionChange = (index, field, value) => {
-    // Update the options array with the new value for the specified field
+    if (field === 'carbonOffsetValue') {
+      // Use a regular expression to check if the value consists only of numeric characters
+      if (!/^\d*$/.test(value)) {
+        // If it's not a numeric value, don't update the state
+        return;
+      }
+    }
+  
+   // Update the options array with the new value for the specified field
     const updatedOptions = [...options];
     updatedOptions[index][field] = value;
     setOptions(updatedOptions);
@@ -64,9 +84,31 @@ export default function MultipleChoice() {
       inputElement.value = questionValue || 'Type Your Question Here';
     }
   }, []);
+  
 
   const handleSave = async () => {
     const isMultipleChoice = toggleState; 
+    setIsSaveAttempted(true); 
+
+     // Update the inputErrors array based on user input and the save attempt
+     const updatedInputErrors = options.map((option) => ({
+      option: !option.option && isSaveAttempted, // Show error if empty and save attempted
+      carbonOffsetValue: !option.carbonOffsetValue && isSaveAttempted, // Show error if empty and save attempted
+    }));
+
+    setInputErrors(updatedInputErrors);
+
+    // Check if there are any errors
+    const hasErrors = updatedInputErrors.some((errors) => errors.option || errors.carbonOffsetValue);
+
+    if (hasErrors) {
+      // Display an error message and return without saving
+      setMessage('Please enter all the required values.');
+      setTimeout(() => {
+        setMessage(null);
+      }, 2000);
+      return;
+    }
     const optionsData = options.map((option, index) => {
       let optiontype = '';
   
@@ -151,24 +193,56 @@ export default function MultipleChoice() {
               value={option.index}
               onChange={(e) => handleOptionChange(index, 'index', e.target.value)}
             /> */}
-            <input
-              type="text"
-              placeholder="Option"
-              style={{ width: '244.06px', height: '29px', left: 50, top: '0px', position: 'absolute', color: 'rgba(0, 0, 0, 0.47)', fontSize: 20, fontFamily: 'Outfit', fontWeight: '500', wordWrap: 'break-word' }}
-              value={option.option}
-              onChange={(e) => handleOptionChange(index, 'option', e.target.value)}
-            />
-            <input
-              type="text"
-              placeholder="CarbonOffset Value"
-              style={{ width: '272.78px', height: '29px', left: '441.87px', top: '0px', position: 'absolute', color: 'rgba(0, 0, 0, 0.47)' }}
-              value={option.carbonOffsetValue}
-              onChange={(e) => handleOptionChange(index, 'carbonOffsetValue', e.target.value)}
-            />
-          </div>
+              <input
+            type="text"
+            placeholder="Option"
+            style={{
+              width: '244.06px',
+              height: '29px',
+              left: 50,
+              top: '0px',
+              position: 'absolute',
+              color: 'rgba(0, 0, 0, 0.47)',
+              fontSize: 20,
+              fontFamily: 'Outfit',
+              fontWeight: '500',
+              wordWrap: 'break-word',
+              borderColor: (inputErrors[index].option || (isSaveAttempted && !option.option)) ? 'red' : 'rgba(0, 0, 0, 0.47)',
+            }}
+            value={option.option}
+            onChange={(e) => handleOptionChange(index, 'option', e.target.value)}
+          />
+           <input
+            type="text"
+            placeholder="CarbonOffset Value"
+            style={{
+              width: '272.78px',
+              height: '29px',
+              left: '441.87px',
+              top: '0px',
+              position: 'absolute',
+              color: 'rgba(0, 0, 0, 0.47)',
+              borderColor: (inputErrors[index].carbonOffsetValue || (isSaveAttempted && !option.carbonOffsetValue)) ? 'red' : 'rgba(0, 0, 0, 0.47)',
+            }}
+            value={option.carbonOffsetValue}
+            onChange={(e) => handleOptionChange(index, 'carbonOffsetValue', e.target.value)}
+          />
+
+          {/* {inputErrors[index].option && (
+        <div style={{ color: 'red', fontSize: 12, position: 'absolute', top: 30, left: 50 }}>
+          Please enter an option.
+        </div>
+      )}
+      {inputErrors[index].carbonOffsetValue && (
+        <div style={{ color: 'red', fontSize: 12, position: 'absolute', top: 30, left: '441.87px' }}>
+          Please enter a numeric value.
+        </div>
+      )} */}
+    </div>
           <div style={{ width: 75, height: 29, left: 810, top: 20, position: 'absolute' }}>
             <div style={{ width: 75, height: 29, left: 0, top: 0, position: 'absolute', background: '#A3C7A0', boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)', borderRadius: 300, border: '1px black solid' }} onClick={() => handleDeleteOption(index)}>
-              <div style={{ width: 75, height: 29, left: 10, top: 0, position: 'absolute', color: 'black', fontSize: 20, fontFamily: 'Outfit', fontWeight: '600', wordWrap: 'break-word', cursor: 'pointer' }}>Delete</div></div>
+              <div style={{ width: 75, height: 29, left: 10, top: 0, position: 'absolute', color: 'black', fontSize: 20, fontFamily: 'Outfit', fontWeight: '600', wordWrap: 'break-word', cursor: 'pointer' }}>Delete</div>
+              </div>
 
 </div>
         </div>

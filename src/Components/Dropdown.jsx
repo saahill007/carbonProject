@@ -78,8 +78,15 @@ export function Dropdown() {
 
   const navigate = useNavigate();
   const handleBack = () => {
-    navigate("/questions/add");
+    const questionValue = getParameterByName('question');
+    const source = getParameterByName('source');
+    if (source === 'add') {
+      navigate(`/questions/add?question=${questionValue}`);
+    } else if (source === 'edit') {
+      navigate(`/questions/edit?question=${questionValue}`);
+    }
   };
+  
 
   function getParameterByName(name, url) {
     if (!url) url = window.location.href;
