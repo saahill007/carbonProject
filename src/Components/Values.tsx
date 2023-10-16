@@ -152,7 +152,8 @@ const Values: React.FC = () => {
       <Route path="zipcodes" element={<ZipCodes />} />
       <Route path="formulas" element={<Formulas />} />
       <Route path="/admin/admin_add" element={<Admin_add />} />
-      <Route path="/admin/admin_edit" element={<AdminEdit />} />
+      {/* <Route path="/admin/admin_edit" element={<AdminEdit />} /> */}
+      <Route path="/admin/admin_edit/:adminIds" element={<AdminEdit />} />
     </Routes>
   );
 };

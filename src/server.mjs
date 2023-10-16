@@ -12,7 +12,7 @@ const dbConfig = {
     HOST: '127.0.0.1',
     USER: 'root',
     PASSWORD: "",
-    DB: "CRBN"
+    DB: "carbon"
 };
 
 // Create a MySQL connection
@@ -299,7 +299,7 @@ app.post('/api/question/fillintheblank', cors(), (req, res) => {
 
 // Define a route to retrieve admin table from the database
 app.get('/api/admin_main', cors(), (req, res) => {
-    const sql = 'SELECT * FROM CRBN.admin where flag=1';
+    const sql = 'SELECT * FROM carbon.admin where flag=1';
 
     // Execute the SQL query using the MySQL connection
     mysqlConnection.query(sql, (error, results) => {
@@ -315,7 +315,7 @@ app.get('/api/admin_main', cors(), (req, res) => {
 
 // Define a route to retrieve admin table for the add new admin from the database
 app.get('/api/admin_add', cors(), (req, res) => {
-    const sql = 'SELECT * FROM CRBN.admin where flag=1';
+    const sql = 'SELECT * FROM carbon.admin';
 
     // Execute the SQL query using the MySQL connection
     mysqlConnection.query(sql, (error, results) => {
@@ -332,7 +332,7 @@ app.get('/api/admin_add', cors(), (req, res) => {
 // Define a route to save new admin data
 app.post("/api/new_admin_add", (req, res) => {
     const { Name, Email, password } = req.body;
-    const sql = "INSERT INTO CRBN.admin (Name, Email, password) VALUES (?, ?, ?)";
+    const sql = "INSERT INTO carbon.admin (Name, Email, password) VALUES (?, ?, ?)";
     const values = [Name, Email, password];
 
     mysqlConnection.query(sql, values, (error, result) => {
@@ -346,6 +346,24 @@ app.post("/api/new_admin_add", (req, res) => {
     });
 });
 
+
+// Define a route to update the flag
+app.post("/api/update_flag", (req, res) => {
+    const { Email, password, flag } = req.body;
+    console.log("Received Password:", password);
+
+    const sql = 'UPDATE admin SET flag = ? , password = ? WHERE Email = ?';
+    mysqlConnection.query(sql, [flag, password, Email], (error, result) => {
+        if (error) {
+            console.error('Error updating flag and password :', error);
+            res.status(500).json({ error: 'Error updating flag and password ' });
+        } else {
+            console.log('Flag and password updated successfully.');
+            res.json({ message: 'Flag and password updated successfully' });
+        }
+    });
+});
+
 app.delete('/api/admins/delete', (req, res) => {
     const { adminIds } = req.body;
 
@@ -353,7 +371,7 @@ app.delete('/api/admins/delete', (req, res) => {
         return res.status(400).json({ message: 'Invalid input data' });
     }
 
-    const sql = 'UPDATE CRBN.admin SET flag = 0 WHERE admin_id IN (?)';
+    const sql = 'UPDATE carbon.admin SET flag = 0 WHERE admin_id IN (?)';
 
     // Execute the SQL query using the MySQL connection and the list of adminIds
     mysqlConnection.query(sql, [adminIds], (error, result) => {
@@ -367,7 +385,44 @@ app.delete('/api/admins/delete', (req, res) => {
     });
 });
 
+app.get('/api/admin/:adminId', (req, res) => {
+    const { adminId } = req.params;
+    // Perform a query to retrieve the name and email based on the admin_id
+    const query = 'SELECT admin_id , Name, Email FROM carbon.admin WHERE admin_id = ?';
+    mysqlConnection.query(query, [adminId], (error, rows) => {
+        if (error) {
+            console.error(`Error fetching admin data for admin ID ${adminId}:`, error);
+            res.status(500).json({ error: 'Internal server error' });
+        } else {
+            if (rows.length === 0) {
+                res.status(404).json({ error: 'Admin not found' });
+            } else {
+                res.json(rows[0]);
+            }
+        }
+    });
+});
 
+
+app.post('/api/update_admin/:adminId', (req, res) => {
+    const adminId = req.params.adminId;
+    console.log("adminID:", adminId);
+    const { Name, Email } = req.body;
+    console.log("name", Name);
+    console.log("Email", Email)
+
+    const query = 'UPDATE carbon.admin SET Name = ?, Email = ? WHERE admin_id = ?';
+    const values = [Name, Email, adminId];
+
+    mysqlConnection.query(query, values, (error, results) => {
+        if (error) {
+            console.error('Error updating admin data: ' + error);
+            res.status(500).json({ message: 'Internal Server Error' });
+        } else {
+            res.status(200).json({ message: 'Admin data updated successfully' });
+        }
+    });
+});
 
 
 // Start the server
