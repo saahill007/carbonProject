@@ -35,7 +35,7 @@ a:link {
 
 }
 
-.adminImg {
+.CateImg {
     cursor: pointer;
     border-radius: 8px;
     background-color: azure;
@@ -43,39 +43,26 @@ a:link {
     width: 25px;
 }
 
-adminImg:hover {
+CateImg:hover {
     box-shadow: 0 0 2px 1px rgba(0, 140, 186, 0.5);
 }
 
-.Admin_and_search {
+
+.Category {
     display: flex;
+    flex-direction: column;
+    align-items: left;
+    text-align: left;
     margin-top: 15px;
-    margin-bottom: 30px;
-    justify-content: right;
+    margin-left: 15px;
+    margin-bottom: 5vh;
 }
 
-.Admin_Details {
-    margin-top: 25px;
+.Category_Details {
     font-family: Arial, sans-serif;
     font-size: larger;
     font-weight: 750;
-    margin-right: 25vw;
-}
-
-
-.search-container {
-    margin-left: 100px;
-    margin-top: 10px;
-    margin-right: 1vw;
-    justify-content: center;
-}
-
-input[type="text"] {
-    margin-top: 3px;
-    padding: 10px;
-    border-radius: 20px;
-    font-size: 13px;
-    width: 150px;
+    margin: 0;
 }
 
 .sidebar {
@@ -127,9 +114,14 @@ input[type="checkbox"] {
     margin-top: 11px !important;
 }
 
+.Category_Details{
+    margin-bottom: 2vh;
+}
 
 .table-wrapper {
     display: flex;
+    flex-direction: column !important;
+    align-content: stretch;
     max-height: 290px;
     overflow-y: scroll;
 }
@@ -172,7 +164,27 @@ input[type="checkbox"] {
     color: black
 }
 
-.back {
+.error-message {
+    color: red;
+    margin: 10px 0;
+    padding: 10px;
+    background-color: #f2dede;
+    /* Optional: Add a light background color for error messages */
+    border: 1px solid #ebccd1;
+    /* Optional: Add a border for error messages */
+}
+
+.success-message {
+    color: hsl(114, 25%, 71%);
+    margin: 10px 0;
+    padding: 10px;
+    background-color: #f2dede;
+    /* Optional: Add a light background color for error messages */
+    border: 1px solid #ebccd1;
+    /* Optional: Add a border for error messages */
+}
+
+.back_option {
     margin-top: 10px;
     margin-left: 15px;
     margin-bottom: 500px;
@@ -186,11 +198,28 @@ input[type="checkbox"] {
     display: block;
 }
 
-.back:hover {
+.save {
+    margin-top: 10px;
+    margin-left: 150px;
+    margin-bottom: 500px;
+    background-color: hsl(114, 25%, 71%);
+    color: black;
+    height: 50px;
+    width: 100px;
+    border-radius: 15px;
+    position: absolute;
+    z-index: 1;
+    display: block;
+}
+
+.back_option:hover,
+.save:hover {
     cursor: pointer;
     background-color: rgb(19, 190, 19);
     color: white;
 }
+
+
 
 .bottom-border {
     background-color: #A7C8A3;

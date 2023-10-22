@@ -11,8 +11,8 @@ const port = 3000;
 const dbConfig = {
     HOST: '127.0.0.1',
     USER: 'root',
-    PASSWORD: "",
-    DB: "carbon"
+    PASSWORD: "Saiteja17@",
+    DB: "CarbnOffset"
 };
 
 // Create a MySQL connection
@@ -157,6 +157,39 @@ app.post('/api/updateToggleState', (req, res) => {
 // Define a route to retrieve Utility table from the database
 app.get('/api/Utility', cors(), (req, res) => {
     const sql = 'SELECT * FROM CRBN.Utility';
+
+    // Execute the SQL query using the MySQL connection
+    mysqlConnection.query(sql, (error, results) => {
+        if (error) {
+            console.error('Error executing SQL query:', error.message);
+            res.status(500).json({ error: 'Error retrieving questions from the database' });
+            return;
+        }
+
+        // Send the retrieved questions as a JSON response
+        res.json(results);
+    });
+});
+
+// Define a route to retrieve Category table from the database
+app.get('/api/Category', cors(), (req, res) => {
+    const sql = 'SELECT * FROM CarbnOffset.Category';
+
+    // Execute the SQL query using the MySQL connection
+    mysqlConnection.query(sql, (error, results) => {
+        if (error) {
+            console.error('Error executing SQL query:', error.message);
+            res.status(500).json({ error: 'Error retrieving questions from the database' });
+            return;
+        }
+
+        // Send the retrieved questions as a JSON response
+        res.json(results);
+    });
+});
+
+app.get('/api/category_name', cors(), (req, res) => {
+    const sql = 'SELECT category_name FROM CarbnOffset.Category';
 
     // Execute the SQL query using the MySQL connection
     mysqlConnection.query(sql, (error, results) => {
@@ -424,8 +457,78 @@ app.post('/api/update_admin/:adminId', (req, res) => {
     });
 });
 
+// Define a route to retrieve admin table for the add new admin from the database
+app.get('/api/category_add', cors(), (req, res) => {
+    const sql = 'SELECT category_name FROM CarbnOffset.Category';
+
+    // Execute the SQL query using the MySQL connection
+    mysqlConnection.query(sql, (error, results) => {
+        if (error) {
+            console.error('Error executing SQL query:', error.message);
+            res.status(500).json({ error: 'Error retrieving questions from the database' });
+            return;
+        }
+        // Send the retrieved questions as a JSON response
+        res.json(results);
+    });
+});
+
+// Define a route to save new admin data
+app.post("/api/new_add_category", (req, res) => {
+    const { category_name } = req.body;
+    const sql = "INSERT INTO CarbnOffset.Category (category_name) VALUES (?)";
+    const values = [category_name];
+
+    mysqlConnection.query(sql, values, (error, result) => {
+        if (error) {
+            console.error("Error saving admin data:", error);
+            res.status(500).json({ error: "Error saving admin data" });
+        } else {
+            console.log("Admin data saved successfully.");
+            res.json({ message: "Admin data saved successfully" });
+        }
+    });
+});
+
+app.get('/api/category/:categoryId', (req, res) => {
+    const { categoryId } = req.params;
+    // Perform a query to retrieve the name and email based on the category_id
+    const query = 'SELECT category_id , category_name FROM CarbnOffset.category WHERE category_id = ?';
+    mysqlConnection.query(query, [categoryId], (error, rows) => {
+        if (error) {
+            console.error(`Error fetching admin data for admin ID ${categoryId}:`, error);
+            res.status(500).json({ error: 'Internal server error' });
+        } else {
+            if (rows.length === 0) {
+                res.status(404).json({ error: 'Admin not found' });
+            } else {
+                res.json(rows[0]);
+            }
+        }
+    });
+});
+
+app.post('/api/update_category/:categoryId', (req, res) => {
+    const categoryId = req.params.categoryId;
+    console.log("categoryID:", categoryId);
+    const { category_name, Email } = req.body;
+    console.log("name", category_name)
+
+    const query = 'UPDATE CarbnOffset.Category SET category_name = ? WHERE category_id = ?';
+    const values = [category_name, categoryId];
+
+    mysqlConnection.query(query, values, (error, results) => {
+        if (error) {
+            console.error('Error updating admin data: ' + error);
+            res.status(500).json({ message: 'Internal Server Error' });
+        } else {
+            res.status(200).json({ message: 'Admin data updated successfully' });
+        }
+    });
+});
 
 // Start the server
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });
+

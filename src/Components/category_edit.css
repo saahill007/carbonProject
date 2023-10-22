@@ -5,77 +5,34 @@
     margin-top: 40px;
     text-align: right;
     border-bottom: 3px solid #333;
-    margin-bottom: 20px;
+    margin-bottom: 70px;
 }
 
 a:link {
     text-decoration: none;
 }
 
-.action {
 
-    margin-top: 50px;
-    text-align: right;
-    padding-right: 60px;
-}
-
-.action-item {
-    font-size: large;
-    font-weight: 500;
-    vertical-align: middle;
-    display: inline;
-    margin-left: 1000px;
-    margin-right: 5px;
-}
-
-.modify {
-    text-align: right;
-    display: inline;
-    vertical-align: middle;
-
-}
-
-.adminImg {
-    cursor: pointer;
-    border-radius: 8px;
-    background-color: azure;
-    height: 25px;
-    width: 25px;
-}
-
-adminImg:hover {
-    box-shadow: 0 0 2px 1px rgba(0, 140, 186, 0.5);
-}
-
-.Admin_and_search {
+.admin-edit-header {
     display: flex;
+    flex-direction: column;
+    align-items: left;
     margin-top: 15px;
-    margin-bottom: 30px;
-    justify-content: right;
+    margin-left: 15px;
+    margin-bottom: 40px;
 }
 
-.Admin_Details {
-    margin-top: 25px;
+.edit-title {
     font-family: Arial, sans-serif;
     font-size: larger;
     font-weight: 750;
-    margin-right: 25vw;
+    margin: 0;
 }
 
-
-.search-container {
-    margin-left: 100px;
-    margin-top: 10px;
-    margin-right: 1vw;
-    justify-content: center;
-}
-
-input[type="text"] {
-    margin-top: 3px;
-    padding: 10px;
-    border-radius: 20px;
-    font-size: 13px;
-    width: 150px;
+.admin-edit-container {
+    font-family: Arial, sans-serif;
+    margin-top: 40px;
+    margin-bottom: 70px;
 }
 
 .sidebar {
@@ -134,27 +91,27 @@ input[type="checkbox"] {
     overflow-y: scroll;
 }
 
-.tabl-sapce {
+.table-space {
     width: 100%;
     margin: 0;
     padding: 0;
     border-collapse: collapse;
 }
 
-.tabl-sapce th,
-.tabl-sapce td {
+.table-space th,
+.table-space td {
     padding: 8px;
     text-align: center;
     vertical-align: middle;
     border: 1px solid #ddd;
 }
 
-.tabl-sapce th {
+.table-space th {
     background-color: #f2f2f2;
     font-weight: bold;
 }
 
-.tabl-sapce tbody tr:hover {
+.table-space tbody tr:hover {
     background-color: #f5f5f5;
 }
 
@@ -170,6 +127,34 @@ input[type="checkbox"] {
     cursor: pointer;
     height: 30px;
     color: black
+}
+
+/* admin_edit.css */
+.savebutton {
+    background-color: #4CAF50;
+    /* Green background */
+    color: white;
+    padding: 5px 10px;
+    border: none;
+    cursor: pointer;
+}
+
+.savebutton:hover {
+    background-color: #45a049;
+    /* Darker green on hover */
+}
+
+.edit {
+    background-color: red;
+    color: white;
+    padding: 5px 10px;
+    border: none;
+    cursor: pointer;
+}
+
+.edit:hover {
+    background-color: rgb(223, 17, 17);
+    /* Darker blue on hover */
 }
 
 .back {
@@ -192,6 +177,26 @@ input[type="checkbox"] {
     color: white;
 }
 
+.error_message {
+    color: red;
+    margin: 0 auto;
+    padding: 10px;
+    background-color: #f2dede;
+    /* Optional: Add a light background color for error messages */
+    border: 1px solid #ebccd1;
+    /* Optional: Add a border for error messages */
+}
+
+.success_message {
+    color: #A7C8A3;
+    margin: 0 auto;
+    padding: 10px;
+    background-color: #d1eece;
+    /* Optional: Add a light background color for error messages */
+    border: 1px solid #ebccd1;
+    /* Optional: Add a border for error messages */
+}
+
 .bottom-border {
     background-color: #A7C8A3;
     height: 30px;
@@ -200,3 +205,4 @@ input[type="checkbox"] {
     bottom: 0;
     margin-left: 4.6vw;
 }
+  
