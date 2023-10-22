@@ -2,7 +2,8 @@ import "./question.css";
 import React from "react";
 import { useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
-import axios from "axios";
+import axiosInstance from './axiosconfig';
+
 
 export function Questions(props) {
   const [questions, setQuestions] = useState([]);
@@ -13,7 +14,7 @@ export function Questions(props) {
 
   const fetchQuestions = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/api/questions");
+      const response = await axiosInstance.get("/api/questions");
       console.log(response);
       // Map the response data to set toggleState based on question_flag
       const updatedQuestions = response.data.map((question) => ({
@@ -39,7 +40,7 @@ export function Questions(props) {
     // Make an HTTP request to update the database
     try {
       const updatedState = newQuestions[index].toggleState ? 1 : 0;
-      await axios.post("http://localhost:3000/api/updateToggleState", {
+      await axiosInstance.post("api/updateToggleState", {
         questionId: newQuestions[index].ques_id,
         newState: updatedState,
       });
