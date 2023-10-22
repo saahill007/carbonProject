@@ -1,0 +1,14 @@
+.side-panel {
+    position: relative;
+    z-index: 1001;
+  }
+  
+  .bottom-border {
+    background-color: #A7C8A3;
+    height: 30px;
+    width: 100%;
+    position: fixed;
+    left: 0;
+    z-index: 1000; /* Adjust the z-index to be less than the panel's z-index */
+  }
+  
