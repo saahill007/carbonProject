@@ -7,6 +7,7 @@ import axios from "axios";
 import addImg from "../assets/add.png";
 import delImg from "../assets/delete.png";
 import editImg from "../assets/edit.png";
+import axiosInstance from './axiosconfig';
 
 interface Admin {
     admin_id: number;
@@ -30,8 +31,8 @@ const Admin_main: React.FC = () => {
 
     const fetchData = async () => {
         try {
-            const response = await axios.get<Admin[]>(
-                "http://localhost:3000/api/admin_main"
+            const response = await axiosInstance.get<Admin[]>(
+                "/api/admin_main"
             );
             console.log("Response data:", response.data);
             setData(response.data);
@@ -76,7 +77,7 @@ const Admin_main: React.FC = () => {
     const handleDeleteClick = async () => {
         if (selectedAdmins.length > 0) {
             try {
-                await axios.delete('http://localhost:3000/api/admins/delete', {
+                await axiosInstance.delete('/api/admins/delete', {
                     data: { adminIds: selectedAdmins },
                 });
 

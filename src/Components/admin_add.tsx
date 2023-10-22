@@ -5,6 +5,7 @@ import axios from "axios";
 import addImg from "../assets/add.png";
 import delImg from "../assets/delete.png";
 import editImg from "../assets/edit.png";
+import axiosInstance from './axiosconfig';
 
 interface Admin {
     Name: string;
@@ -25,8 +26,8 @@ const Admin_add: React.FC = () => {
 
     const fetchData = async () => {
         try {
-            const response = await axios.get<Admin[]>(
-                "http://localhost:3000/api/admin_add"
+            const response = await axiosInstance.get<Admin[]>(
+                "/api/admin_add"
             );
             console.log("Response data:", response.data);
             setData(response.data);
@@ -66,7 +67,7 @@ const Admin_add: React.FC = () => {
         if (!existingAdmin) {
             try {
                 // Send the newAdmin data to your server for saving
-                const response = await axios.post("http://localhost:3000/api/new_admin_add", newAdmin);
+                const response = await axiosInstance.post("/api/new_admin_add", newAdmin);
                 console.log("Data saved:", response.data);
 
                 // If the data is successfully saved, reset the newAdmin state to an empty template
@@ -84,7 +85,7 @@ const Admin_add: React.FC = () => {
         else {
             if (existingAdmin.flag == 0) {
                 try {
-                    const response = await axios.post("http://localhost:3000/api/update_flag", {
+                    const response = await axiosInstance.post("/api/update_flag", {
                         Email: newAdmin.Email,
                         password: newAdmin.password,
                         flag: 1,

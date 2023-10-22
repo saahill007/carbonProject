@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import "./admin_edit.css"; // Import your CSS file
 import axios from "axios";
+import axiosInstance from './axiosconfig';
 
 interface Admin {
     admin_id: number;
@@ -27,7 +28,7 @@ const AdminEdit: React.FC = () => {
             // Loop through adminIdArray and fetch data for each admin ID
             const adminDataPromises = adminIdArray.map(async (adminId) => {
                 try {
-                    const response = await axios.get(`http://localhost:3000/api/admin/${adminId}`); // Replace with your API endpoint
+                    const response = await axiosInstance.get(`/api/admin/${adminId}`); // Replace with your API endpoint
                     return response.data; // Assuming the response contains the admin data
                 } catch (error) {
                     console.error(`Error fetching admin data for admin ID ${adminId}:`, error);
@@ -59,7 +60,7 @@ const AdminEdit: React.FC = () => {
         if (editAdmin && editAdmin.Name && editAdmin.Email) {
             try {
                 // Send a POST request to your API endpoint for updating admin data
-                await axios.post(`http://localhost:3000/api/update_admin/${editAdmin.admin_id}`, {
+                await axiosInstance.post(`/api/update_admin/${editAdmin.admin_id}`, {
                     Name: `${editAdmin.Name}`, // Enclose in backticks to ensure it's treated as a string
                     Email: `${editAdmin.Email}`, // Enclose in backticks to ensure it's treated as a string
                 });

@@ -11,8 +11,8 @@ const port = 3000;
 const dbConfig = {
     HOST: '127.0.0.1',
     USER: 'root',
-    PASSWORD: "Saiteja17@",
-    DB: "CarbnOffset"
+    PASSWORD: "Carbon@123",
+    DB: "CRBN"
 };
 
 // Create a MySQL connection
@@ -332,7 +332,7 @@ app.post('/api/question/fillintheblank', cors(), (req, res) => {
 
 // Define a route to retrieve admin table from the database
 app.get('/api/admin_main', cors(), (req, res) => {
-    const sql = 'SELECT * FROM carbon.admin where flag=1';
+    const sql = 'SELECT * FROM CRBN.admin where flag=1';
 
     // Execute the SQL query using the MySQL connection
     mysqlConnection.query(sql, (error, results) => {
@@ -348,7 +348,7 @@ app.get('/api/admin_main', cors(), (req, res) => {
 
 // Define a route to retrieve admin table for the add new admin from the database
 app.get('/api/admin_add', cors(), (req, res) => {
-    const sql = 'SELECT * FROM carbon.admin';
+    const sql = 'SELECT * FROM CRBN.admin';
 
     // Execute the SQL query using the MySQL connection
     mysqlConnection.query(sql, (error, results) => {
@@ -365,7 +365,7 @@ app.get('/api/admin_add', cors(), (req, res) => {
 // Define a route to save new admin data
 app.post("/api/new_admin_add", (req, res) => {
     const { Name, Email, password } = req.body;
-    const sql = "INSERT INTO carbon.admin (Name, Email, password) VALUES (?, ?, ?)";
+    const sql = "INSERT INTO CRBN.admin (Name, Email, password) VALUES (?, ?, ?)";
     const values = [Name, Email, password];
 
     mysqlConnection.query(sql, values, (error, result) => {
@@ -404,7 +404,7 @@ app.delete('/api/admins/delete', (req, res) => {
         return res.status(400).json({ message: 'Invalid input data' });
     }
 
-    const sql = 'UPDATE carbon.admin SET flag = 0 WHERE admin_id IN (?)';
+    const sql = 'UPDATE CRBN.admin SET flag = 0 WHERE admin_id IN (?)';
 
     // Execute the SQL query using the MySQL connection and the list of adminIds
     mysqlConnection.query(sql, [adminIds], (error, result) => {
@@ -421,7 +421,7 @@ app.delete('/api/admins/delete', (req, res) => {
 app.get('/api/admin/:adminId', (req, res) => {
     const { adminId } = req.params;
     // Perform a query to retrieve the name and email based on the admin_id
-    const query = 'SELECT admin_id , Name, Email FROM carbon.admin WHERE admin_id = ?';
+    const query = 'SELECT admin_id , Name, Email FROM CRBN.admin WHERE admin_id = ?';
     mysqlConnection.query(query, [adminId], (error, rows) => {
         if (error) {
             console.error(`Error fetching admin data for admin ID ${adminId}:`, error);
@@ -444,7 +444,7 @@ app.post('/api/update_admin/:adminId', (req, res) => {
     console.log("name", Name);
     console.log("Email", Email)
 
-    const query = 'UPDATE carbon.admin SET Name = ?, Email = ? WHERE admin_id = ?';
+    const query = 'UPDATE CRBN.admin SET Name = ?, Email = ? WHERE admin_id = ?';
     const values = [Name, Email, adminId];
 
     mysqlConnection.query(query, values, (error, results) => {
