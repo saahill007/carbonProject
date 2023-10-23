@@ -2,6 +2,8 @@ import express from 'express';
 import cors from 'cors';
 import mysql from 'mysql2';
 import bodyParser from 'body-parser'; // Add this line to parse JSON request bodies
+import nodemailer from 'nodemailer';
+
 
 const app = express();
 app.use(cors());
@@ -11,8 +13,8 @@ const port = 3000;
 const dbConfig = {
     HOST: '127.0.0.1',
     USER: 'root',
-    PASSWORD: "Carbon@123",
-    DB: "CRBN"
+    PASSWORD: "",
+    DB: "carbon"
 };
 
 // Create a MySQL connection
@@ -526,6 +528,51 @@ app.post('/api/update_category/:categoryId', (req, res) => {
         }
     });
 });
+
+app.post('/api/send-email', async (req, res) => {
+    const { subject, body } = req.body;
+
+    const transporter = nodemailer.createTransport({
+        service: 'Gmail',
+        auth: {
+            user: 'carbonoffset08@gmail.com',
+            pass: 'vjbv uaeq cpro lsub',
+        },
+    });
+
+    try {
+        mysqlConnection.query('SELECT Email FROM carbon.customer', (error, results, fields) => {
+            if (error) {
+                console.error('Error querying the database:', error);
+                res.status(500).send('Failed to fetch customer emails');
+                return;
+            }
+
+            const customerEmails = results.map((row) => row.Email); // Ensure the field name matches your database structure
+
+            customerEmails.forEach((customerEmail) => {
+                const mailOptions = {
+                    from: 'carbonoffset08@gmail.com',
+                    to: customerEmail, // Set the recipient's email address
+                    subject: subject,
+                    text: body,
+                };
+
+                transporter.sendMail(mailOptions, (error, info) => {
+                    if (error) {
+                        console.error('Error sending email:', error);
+                    }
+                });
+            });
+
+            res.status(200).send('Emails sent successfully');
+        });
+    } catch (error) {
+        console.error('Error sending email:', error);
+        res.status(500).send('Failed to send emails');
+    }
+});
+
 
 // Start the server
 app.listen(port, () => {
