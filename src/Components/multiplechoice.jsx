@@ -144,13 +144,7 @@ export default function MultipleChoice() {
             <div style={{ width: 863, height: 417, left: 0, top: 0, position: 'absolute', background: 'white' }} />
           </div>
           <div style={{ width: 200, height: 250, left: 22, top: 21, position: 'absolute' }}>
-            {/* <input
-              type="text"
-              placeholder="Index"
-              style={{ width: '60px', height: '29px', left: '0', top: '0px', position: 'absolute', color: 'rgba(0, 0, 0, 0.47)' }}
-              value={option.index}
-              onChange={(e) => handleOptionChange(index, 'index', e.target.value)}
-            /> */}
+            
             <input
               type="text"
               placeholder="Option"

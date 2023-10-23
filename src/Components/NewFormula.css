@@ -1,0 +1,19 @@
+.col{
+    width: 150px;
+}
+
+.horizontal-line {
+    border-top: 1px solid #060606; /* 1px solid black line */
+    width: 120px;
+  }
+
+  .select{
+    padding-top: 10px;
+    margin-top: 10px;
+  }
+
+  .desktop .overlap-3 {
+    height: 91px;
+    position: relative;
+    width: 996px;
+  }

@@ -8,19 +8,38 @@ export function Questions(props) {
   const [questions, setQuestions] = useState([]);
   const navigate = useNavigate();
   const handleaddquestion = () => {
-    navigate("/questions/add");
+    navigate("/contact");
   };
+
+  // const fetchQuestions = async () => {
+  //   try {
+  //     const response = await axios.get("http://localhost:3001/api/questions");
+  //     console.log(response);
+  //     // Map the response data to set toggleState based on question_flag
+  //     const updatedQuestions = response.data.map((question) => ({
+  //       ...question,
+  //       toggleState: question.question_flag.data[0] === 1, // Set toggleState based on question_flag
+  //     }));
+
+  //     setQuestions(updatedQuestions); // Set the questions in state
+  //   } catch (error) {
+  //     console.error("Error fetching questions:", error);
+  //   }
+  // };
 
   const fetchQuestions = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/api/questions");
+      const response = await axios.get("http://localhost:3001/api/questions");
       console.log(response);
-      // Map the response data to set toggleState based on question_flag
-      const updatedQuestions = response.data.map((question) => ({
-        ...question,
-        toggleState: question.question_flag.data[0] === 1, // Set toggleState based on question_flag
-      }));
-
+  
+      // Check if response.data is an array before mapping
+      const updatedQuestions = Array.isArray(response.data)
+        ? response.data.map((question) => ({
+            ...question,
+            toggleState: question.question_flag?.data[0] === 1, // Check if question_flag is defined
+          }))
+        : [];
+  
       setQuestions(updatedQuestions); // Set the questions in state
     } catch (error) {
       console.error("Error fetching questions:", error);
@@ -61,7 +80,7 @@ export function Questions(props) {
              <div style={{width: 1158.67, height: 111, left: 0, top: 0, position: 'absolute', background: '#84D2F3', borderRadius: 15}}></div>
              <div style={{ width: 873, height: 51, left: 85.82, top: 31, position: 'absolute', background: 'white', borderRadius: 300 }}>
       <div style={{ width: 1000, height: 31,left: 25, top: 10, color: 'black', fontSize: 20, fontFamily: 'Outfit', fontWeight: '400', wordWrap: 'break-word', position: 'relative'}}>
-        {question.questions}
+        {question.questionContent}
       </div>
     </div>      <div style={{width: 173, height: 57, left: 975, top: 31, position: 'absolute', background: '#F6A55A', boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)', borderRadius: 300, border: '1px black solid'}}></div>
       <div style={{width: 37, left: 1040, top: 50, position: 'absolute', color: 'black', fontSize: 20, fontFamily: 'Outfit', fontWeight: '600', wordWrap: 'break-word',cursor: 'pointer',}}>Edit</div>
