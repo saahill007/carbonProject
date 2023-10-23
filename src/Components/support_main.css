@@ -24,7 +24,7 @@ a:link {
 .box_1,
 .box_2,
 .box_3 {
-    width: 150%;
+    width: 180%;
     /* Adjust the width as needed */
     height: 100%;
     /* Adjust the height as needed */
@@ -39,7 +39,7 @@ a:link {
     font-family: Arial, sans-serif;
     font-size: large;
     font-weight: 500;
-    width: 85%;
+    width: 120%;
     height: 60%;
     background: #84D2F3;
     border-radius: 20px;
