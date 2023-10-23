@@ -42,7 +42,7 @@ a:link {
     font-family: Arial, sans-serif;
     font-weight: 600;
     text-align: centre;
-    padding-top: 6px;
+    padding-top: 1px;
 }
 
 .subject {
@@ -62,7 +62,7 @@ a:link {
     font-family: Arial, sans-serif;
     font-weight: 600;
     text-align: centre;
-    padding-top: 6px;
+    padding-top: 1px;
 }
 
 .body_message {
