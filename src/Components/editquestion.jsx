@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import axiosInstance from './axiosconfig';
+
 
 export default function Editquestion() {
   const [options, setOptions] =  useState([
@@ -80,7 +82,7 @@ export default function Editquestion() {
     };
 
     try {
-      const response = await axios.post('http://localhost:3000/api/questionsfind', data);
+      const response = await axiosInstance.post('/api/questionsfind', data);
 
       if (response.status === 201||200) {
         // Get the 'question_type' from the response
@@ -127,7 +129,7 @@ export default function Editquestion() {
     };
   
     try {
-      const response = await axios.post('http://localhost:3000/api/questionsfind', data);
+      const response = await axiosInstance.post('/api/questionsfind', data);
   
       if (response.status === 201 || response.status === 200) {
         // Get the 'question_type' from the response
@@ -136,7 +138,7 @@ export default function Editquestion() {
           ques_id: question_id,
         };
         try {
-          const optionresponse = await axios.post('http://localhost:3000/api/optionsfind', dataforoptions);
+          const optionresponse = await axiosInstance.post('/api/optionsfind', dataforoptions);
           if (optionresponse.status === 201 || optionresponse.status === 200) {
             const optionData = optionresponse.data;
   

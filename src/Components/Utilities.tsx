@@ -5,6 +5,8 @@ import axios from "axios";
 import addImg from "../assets/add.png";
 import delImg from "../assets/delete.png";
 import editImg from "../assets/edit.png";
+import axiosInstance from './axiosconfig';
+
 
 interface Utility {
   Val_Id: number;
@@ -36,8 +38,8 @@ const Utilities: React.FC = () => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get<Utility[]>(
-        "http://localhost:3000/api/Utility"
+      const response = await axiosInstance.get<Utility[]>(
+        "/api/Utility"
       );
       console.log("Response data:", response.data);
       setData(response.data);

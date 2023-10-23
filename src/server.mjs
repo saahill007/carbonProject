@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import mysql from 'mysql2';
-import bodyParser from 'body-parser'; // Add this line to parse JSON request bodies
+import bodyParser from 'body-parser';
 import nodemailer from 'nodemailer';
 
 
@@ -14,7 +14,7 @@ const dbConfig = {
     HOST: '127.0.0.1',
     USER: 'root',
     PASSWORD: "",
-    DB: "carbon"
+    DB: "CRBN"
 };
 
 // Create a MySQL connection
@@ -175,7 +175,7 @@ app.get('/api/Utility', cors(), (req, res) => {
 
 // Define a route to retrieve Category table from the database
 app.get('/api/Category', cors(), (req, res) => {
-    const sql = 'SELECT * FROM CarbnOffset.Category';
+    const sql = 'SELECT * FROM CRBN.Category';
 
     // Execute the SQL query using the MySQL connection
     mysqlConnection.query(sql, (error, results) => {
@@ -191,7 +191,7 @@ app.get('/api/Category', cors(), (req, res) => {
 });
 
 app.get('/api/category_name', cors(), (req, res) => {
-    const sql = 'SELECT category_name FROM CarbnOffset.Category';
+    const sql = 'SELECT category_name FROM CRBN.Category';
 
     // Execute the SQL query using the MySQL connection
     mysqlConnection.query(sql, (error, results) => {
@@ -461,7 +461,7 @@ app.post('/api/update_admin/:adminId', (req, res) => {
 
 // Define a route to retrieve admin table for the add new admin from the database
 app.get('/api/category_add', cors(), (req, res) => {
-    const sql = 'SELECT category_name FROM CarbnOffset.Category';
+    const sql = 'SELECT category_name FROM CRBN.Category';
 
     // Execute the SQL query using the MySQL connection
     mysqlConnection.query(sql, (error, results) => {
@@ -478,7 +478,7 @@ app.get('/api/category_add', cors(), (req, res) => {
 // Define a route to save new admin data
 app.post("/api/new_add_category", (req, res) => {
     const { category_name } = req.body;
-    const sql = "INSERT INTO CarbnOffset.Category (category_name) VALUES (?)";
+    const sql = "INSERT INTO CRBN.Category (category_name) VALUES (?)";
     const values = [category_name];
 
     mysqlConnection.query(sql, values, (error, result) => {
@@ -495,7 +495,7 @@ app.post("/api/new_add_category", (req, res) => {
 app.get('/api/category/:categoryId', (req, res) => {
     const { categoryId } = req.params;
     // Perform a query to retrieve the name and email based on the category_id
-    const query = 'SELECT category_id , category_name FROM CarbnOffset.category WHERE category_id = ?';
+    const query = 'SELECT category_id , category_name FROM CRBN.category WHERE category_id = ?';
     mysqlConnection.query(query, [categoryId], (error, rows) => {
         if (error) {
             console.error(`Error fetching admin data for admin ID ${categoryId}:`, error);
@@ -516,7 +516,7 @@ app.post('/api/update_category/:categoryId', (req, res) => {
     const { category_name, Email } = req.body;
     console.log("name", category_name)
 
-    const query = 'UPDATE CarbnOffset.Category SET category_name = ? WHERE category_id = ?';
+    const query = 'UPDATE CRBN.Category SET category_name = ? WHERE category_id = ?';
     const values = [category_name, categoryId];
 
     mysqlConnection.query(query, values, (error, results) => {
@@ -541,7 +541,7 @@ app.post('/api/send-email', async (req, res) => {
     });
 
     try {
-        mysqlConnection.query('SELECT Email FROM carbon.customer', (error, results, fields) => {
+        mysqlConnection.query('SELECT Email FROM CRBN.customer', (error, results, fields) => {
             if (error) {
                 console.error('Error querying the database:', error);
                 res.status(500).send('Failed to fetch customer emails');

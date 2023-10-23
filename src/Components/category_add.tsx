@@ -5,6 +5,8 @@ import axios from "axios";
 import addImg from "../assets/add.png";
 import delImg from "../assets/delete.png";
 import editImg from "../assets/edit.png";
+import axiosInstance from './axiosconfig';
+
 
 interface Category {
     category_name: string;
@@ -23,8 +25,8 @@ const Category_add: React.FC = () => {
 
     const fetchData = async () => {
         try {
-            const response = await axios.get<Category[]>(
-                "http://localhost:3000/api/category_add"
+            const response = await axiosInstance.get<Category[]>(
+                "/api/category_add"
             );
             console.log("Response data:", response.data);
             setData(response.data);
@@ -56,7 +58,7 @@ const Category_add: React.FC = () => {
                 }, 1000);
             } else {
                 try {
-                    const response = await axios.post("http://localhost:3000/api/new_add_category", {
+                    const response = await axiosInstance.post("/api/new_add_category", {
                         category_name: newCategory.category_name
                     });
                     console.log("New category added:", response.data);
