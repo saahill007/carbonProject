@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import "./category_edit.css"; // Import your CSS file
+import "./category_edit.css"; 
 import axios from "axios";
+import axiosInstance from './axiosconfig';
+
 
 interface category {
     category_id: number;
@@ -26,7 +28,7 @@ const CategoryEdit: React.FC = () => {
             // Loop through adminIdArray and fetch data for each admin ID
             const categoryDataPromises = categoryIdArray.map(async (categoryId) => {
                 try {
-                    const response = await axios.get(`http://localhost:3000/api/category/${categoryId}`); // Replace with your API endpoint
+                    const response = await axiosInstance.get(`/api/category/${categoryId}`); // Replace with your API endpoint
                     return response.data; // Assuming the response contains the admin data
                 } catch (error) {
                     console.error(`Error fetching admin data for admin ID ${categoryId}:`, error);
@@ -62,7 +64,7 @@ const CategoryEdit: React.FC = () => {
         if (editCategory.category_name) {
             try {
                 // Send a POST request to your API endpoint for updating admin data
-                await axios.post(`http://localhost:3000/api/update_category/${editCategory.category_id}`, {
+                await axiosInstance.post(`/api/update_category/${editCategory.category_id}`, {
                     category_name: `${editCategory.category_name}`, // Enclose in backticks to ensure it's treated as a string
                 });
 
@@ -100,7 +102,7 @@ const CategoryEdit: React.FC = () => {
             <div className="category-edit-header">
                 <h2 className="edit-title">Edit category</h2>
             </div>
-            <div className="table-wrapper">
+            <div className="table-wrappercat">
                 <table className="table-space">
                     <thead>
                         <tr className="sticky-header">
@@ -127,9 +129,9 @@ const CategoryEdit: React.FC = () => {
             
                                 <td>
                                     {editCategory?.category_id === category.category_id ? (
-                                        <button className="savebutton" onClick={handleSave}>Save</button>
+                                        <button className="savebuttoncat" onClick={handleSave}>Save</button>
                                     ) : (
-                                        <button className="edit" onClick={() => handleEdit(category)}>Edit</button>
+                                        <button className="editcat" onClick={() => handleEdit(category)}>Edit</button>
                                     )}
                                 </td>
                             </tr>

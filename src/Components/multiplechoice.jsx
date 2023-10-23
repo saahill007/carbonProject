@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from "axios";
+import axiosInstance from './axiosconfig';
 
 
 export default function MultipleChoice() {
@@ -134,7 +135,7 @@ export default function MultipleChoice() {
     };
 
     try {
-      const response = await axios.post('http://localhost:3000/api/question/multiplechoice', data);
+      const response = await axiosInstance.post('/api/question/multiplechoice', data);
   
       if (response.status === 201) {
         setMessage('Question and Options added successfully.');

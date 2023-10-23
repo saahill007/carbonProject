@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./Slider.css";
+import axiosInstance from './axiosconfig';
 
 
 export function Dropdown() {
@@ -42,7 +43,7 @@ export function Dropdown() {
     };
 
     try {
-      const response = await axios.post('http://localhost:3000/api/dropdown', data);
+      const response = await axiosInstance.post('/api/dropdown', data);
   
       if (response.status === 201) {
         setMessage('Question and Options added successfully.');

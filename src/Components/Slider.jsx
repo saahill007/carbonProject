@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./Slider.css";
+import axiosInstance from './axiosconfig';
+
 
 export function Slider() {
   const [question, setQuestion] = useState(""); // State to store the user's question
@@ -42,7 +44,7 @@ export function Slider() {
     };
   
     try {
-      const response = await axios.post("http://localhost:3000/api/slider", data);
+      const response = await axiosInstance.post("/api/slider", data);
   
       if (response.status === 201) {
         setMessage("Question and Options added successfully.");

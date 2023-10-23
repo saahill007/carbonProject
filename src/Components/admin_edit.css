@@ -135,6 +135,9 @@ input[type="checkbox"] {
     /* Green background */
     color: white;
     padding: 5px 10px;
+    margin-top: -20px;
+    height: 38px;
+    left: 1270px;
     border: none;
     cursor: pointer;
 }
@@ -148,6 +151,9 @@ input[type="checkbox"] {
     background-color: red;
     color: white;
     padding: 5px 10px;
+    margin-top: -20px;
+    height: 38px;
+    left: 1270px;
     border: none;
     cursor: pointer;
 }
