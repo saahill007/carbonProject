@@ -19,6 +19,7 @@ import Slider from "./Components/Slider";
 import Dropdown from "./Components/Dropdown";
 import Editquestion from "./Components/editquestion";
 import CategoryDrop from "./Components/catedrop";
+import Email_notification from "./Components/email_notification"
 
 const Home: React.FC = () => <div>Home Page</div>;
 
@@ -64,7 +65,8 @@ const App: React.FC = () => {
             <Route path="/logout" element={<Logout />} />
             <Route path="/questions/slider" element={<Slider />} />
             <Route path="/questions/dropdown" element={<Dropdown />} />
-            <Route path="/Categorydropdown" element={<CategoryDrop/>} />
+            <Route path="/Categorydropdown" element={<CategoryDrop />} />
+            <Route path="/email_notification" element={<Email_notification />} />
           </Routes>
         </div>
       </div>
