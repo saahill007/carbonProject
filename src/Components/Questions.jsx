@@ -14,7 +14,7 @@ export function Questions(props) {
 
   const fetchQuestions = async () => {
     try {
-      const response = await axiosInstance.get("/api/questions");
+      const response = await axiosInstance.get("/api/questionsadmin");
       console.log(response);
       // Map the response data to set toggleState based on question_flag
       const updatedQuestions = response.data.map((question) => ({
