@@ -1,4 +1,4 @@
-import React from "react";
+// import React from "react";
 import traffic from "../assets/traffic.jpg";
 
 const LineGraph = () => {

@@ -1,4 +1,4 @@
-import React from "react";
+// import React from "react";
 import pie from "../assets/pie.png";
 
 const PieChart = () => {

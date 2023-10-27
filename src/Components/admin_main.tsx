@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import "./admin_main.css";
 import "./admin_add.tsx";
 import "./admin_edit.tsx";
-import axios from "axios";
+// import axios from "axios";
 import addImg from "../assets/add.png";
 import delImg from "../assets/delete.png";
 import editImg from "../assets/edit.png";

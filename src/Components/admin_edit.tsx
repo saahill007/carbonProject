@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import "./admin_edit.css"; // Import your CSS file
-import axios from "axios";
+// import axios from "axios";
 import axiosInstance from './axiosconfig';
 
 interface Admin {
@@ -16,7 +16,7 @@ const AdminEdit: React.FC = () => {
     const [adminData, setAdminData] = useState<Admin[]>([]);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const navigate = useNavigate();
-    const [editAdmin, setEditAdmin] = useState<Admin | null>({
+    const [editAdmin, setEditAdmin] = useState<Admin>({
         admin_id: 0, // Provide a default value or the appropriate data type for admin_id
         Name: "",
         Email: "",
@@ -67,7 +67,7 @@ const AdminEdit: React.FC = () => {
 
 
                 // Clear the editAdmin state
-                setEditAdmin(null);
+                // setEditAdmin(null);
 
                 // Update the state with the saved data
                 setAdminData((prevAdminData) =>
