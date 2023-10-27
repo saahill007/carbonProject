@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import "./category_edit.css"; 
-import axios from "axios";
+// import axios from "axios";
 import axiosInstance from './axiosconfig';
 
 
@@ -17,7 +17,7 @@ const CategoryEdit: React.FC = () => {
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [SuccessMessage, setSuccessMessage] = useState<string>(""); 
     const navigate = useNavigate();
-    const [editCategory, setEditCategory] = useState<category | null>({
+    const [editCategory, setEditCategory] = useState<category>({
         category_id: 0, // Provide a default value or the appropriate data type for admin_id
         category_name: "",
     });
@@ -52,7 +52,7 @@ const CategoryEdit: React.FC = () => {
 
     const handleSave = async () => {
         
-        const onlyLetters = /^[A-Za-z]+$/;
+        // const onlyLetters = /^[A-Za-z]+$/;
     
         // if (!editCategory.category_name.match(onlyLetters)) {
         //     setErrorMessage("Category name should only contain alphabets.");
@@ -70,7 +70,7 @@ const CategoryEdit: React.FC = () => {
 
 
                 // Clear the editAdmin state
-                setEditCategory(null);
+                // setEditCategory(null);
 
                 // Update the state with the saved data
                 setCategoryData((prevCategoryData) =>
