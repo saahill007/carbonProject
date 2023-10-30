@@ -10,11 +10,10 @@ app.use(bodyParser.json());
 
 const port = 3000;
 const dbConfig = {
-   host: "18.219.100.56",
-  user: "carbonuser",
-  password: "Carbon@123",
-  database: "CRBN",
-  port: 3306,
+    host: '127.0.0.1',
+    user: 'root',
+    password: 'Carbon@123', // Fix the case of 'PASSWORD' to 'password'
+    database: 'CRBN' // Fix the case of 'DB' to 'database'
 };
 
 // const port = 3001;
@@ -39,6 +38,67 @@ mysqlConnection.connect((err) => {
   } else {
     console.error("Connection to MySQL failed:", err);
   }
+});
+
+app.get('/api/Customer', cors(), (req, res) => {
+  const query = 'SELECT cust_id, first_name,last_name, Email, total_carbon_footprint, number_of_trees, date_answered, zipcode FROM CRBN.Customer';
+  mysqlConnection.query(query, (error, results) => {
+    if (error) throw error;
+    res.send(results);
+  });
+});
+
+app.get('/api/filterCustomer', cors(), (req, res) => {
+  const { fromDate, toDate, zipcode, carbonComparison, carbonFootprintFilter, treesComparison, treesFilter } = req.query;
+  let query = 'SELECT cust_id, first_name, last_name, Email, total_carbon_footprint, number_of_trees, date_answered, zipcode FROM CRBN.Customer';
+  
+
+  if (fromDate && toDate && zipcode && carbonComparison && carbonFootprintFilter && treesComparison && treesFilter) {
+      const formattedFromDate = fromDate.split('/').reverse().join('-');
+      const formattedToDate = toDate.split('/').reverse().join('-');
+      query += ` WHERE date_answered BETWEEN STR_TO_DATE('${formattedFromDate}', '%Y-%m-%d') AND STR_TO_DATE('${formattedToDate}', '%Y-%m-%d') AND zipcode = '${zipcode}' AND total_carbon_footprint ${carbonComparison === '=' ? '=' : carbonComparison === '>' ? '>' : '<'} ${carbonFootprintFilter} AND number_of_trees ${treesComparison === '=' ? '=' : treesComparison === '>' ? '>' : '<'} ${treesFilter}`;
+  }
+  else if (fromDate && toDate && carbonComparison && carbonFootprintFilter && treesComparison && treesFilter) {
+      const formattedFromDate = fromDate.split('/').reverse().join('-');
+      const formattedToDate = toDate.split('/').reverse().join('-');
+      query += ` WHERE date_answered BETWEEN STR_TO_DATE('${formattedFromDate}', '%Y-%m-%d') AND STR_TO_DATE('${formattedToDate}', '%Y-%m-%d') AND total_carbon_footprint ${carbonComparison === '=' ? '=' : carbonComparison === '>' ? '>' : '<'} ${carbonFootprintFilter} AND number_of_trees ${treesComparison === '=' ? '=' : treesComparison === '>' ? '>' : '<'} ${treesFilter}`;
+  }
+  else if (fromDate && toDate && zipcode) {
+    const formattedFromDate = fromDate.split('/').reverse().join('-');
+    const formattedToDate = toDate.split('/').reverse().join('-');
+    query += ` WHERE date_answered BETWEEN STR_TO_DATE('${formattedFromDate}', '%Y-%m-%d') AND STR_TO_DATE('${formattedToDate}', '%Y-%m-%d') AND zipcode = '${zipcode}'`;
+  } else if (fromDate && toDate && carbonComparison && carbonFootprintFilter) {
+      const formattedFromDate = fromDate.split('/').reverse().join('-');
+      const formattedToDate = toDate.split('/').reverse().join('-');
+      query += ` WHERE date_answered BETWEEN STR_TO_DATE('${formattedFromDate}', '%Y-%m-%d') AND STR_TO_DATE('${formattedToDate}', '%Y-%m-%d') AND total_carbon_footprint ${carbonComparison === '=' ? '=' : carbonComparison === '>' ? '>' : '<'} ${carbonFootprintFilter}`;
+  }else if (fromDate && toDate && treesComparison && treesFilter) {
+      const formattedFromDate = fromDate.split('/').reverse().join('-');
+      const formattedToDate = toDate.split('/').reverse().join('-');
+      query += ` WHERE date_answered BETWEEN STR_TO_DATE('${formattedFromDate}', '%Y-%m-%d') AND STR_TO_DATE('${formattedToDate}', '%Y-%m-%d') AND number_of_trees ${treesComparison === '=' ? '=' : treesComparison === '>' ? '>' : '<'} ${treesFilter}`;
+  }
+  else if (fromDate && toDate) {
+    const formattedFromDate = fromDate.split('/').reverse().join('-');
+    const formattedToDate = toDate.split('/').reverse().join('-');
+    query += ` WHERE date_answered BETWEEN STR_TO_DATE('${formattedFromDate}', '%Y-%m-%d') AND STR_TO_DATE('${formattedToDate}', '%Y-%m-%d')`;
+  } else if (zipcode) {
+    query += ` WHERE zipcode = '${zipcode}'`;
+  } else if (carbonComparison && carbonFootprintFilter && treesComparison && treesFilter) {
+      query += ` WHERE total_carbon_footprint ${carbonComparison === '=' ? '=' : carbonComparison === '>' ? '>' : '<'} ${carbonFootprintFilter} AND number_of_trees ${treesComparison === '=' ? '=' : treesComparison === '>' ? '>' : '<'} ${treesFilter}`;
+  } else if (carbonComparison && carbonFootprintFilter) {
+      query += ` WHERE total_carbon_footprint ${carbonComparison === '=' ? '=' : carbonComparison === '>' ? '>' : '<'} ${carbonFootprintFilter}`;
+  } else if (treesComparison && treesFilter) {
+      query += ` WHERE number_of_trees ${treesComparison === '=' ? '=' : treesComparison === '>' ? '>' : '<'} ${treesFilter}`;
+  }
+  else if (zipcode && carbonComparison && carbonFootprintFilter) {
+      query += ` WHERE zipcode = '${zipcode}' AND total_carbon_footprint ${carbonComparison === '=' ? '=' : carbonComparison === '>' ? '>' : '<'} ${carbonFootprintFilter}`;
+  } else if (zipcode && treesComparison && treesFilter) {
+      query += ` WHERE zipcode = '${zipcode}' AND number_of_trees ${treesComparison === '=' ? '=' : treesComparison === '>' ? '>' : '<'} ${treesFilter}`;
+  }
+
+  mysqlConnection.query(query, (error, results) => {
+    if (error) throw error;
+    res.send(results);
+  });
 });
 
 // Define a route to handle updating the question

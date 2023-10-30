@@ -100,9 +100,9 @@ const Category_main: React.FC = () => {
                     <a href="#">
                         <img className="CateImg" src={editImg} alt="edit" onClick={() => handleEditClick()} />
                     </a>
-                    <a href="#">
+                    {/* <a href="#">
                         <img className="CateImg" src={delImg} alt="delete" onClick={() => handleDeleteClick()} />
-                    </a>
+                    </a> */}
                 </div>
             </div>
     

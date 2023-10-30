@@ -12,7 +12,9 @@ const Support: React.FC = () => {
           </Link>
         </div>
         <div className='box_2'>
+        <Link to="/Dashboard">
           <button className='customer_data'>View Customer emission data</button>
+          </Link>
         </div>
         <div className='box_3'>
           <Link to="/email_notification">
