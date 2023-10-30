@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Utility.css";
-import axios from "axios";
+// import axios from "axios";
 import addImg from "../assets/add.png";
 import delImg from "../assets/delete.png";
 import editImg from "../assets/edit.png";
@@ -24,12 +24,12 @@ interface Utility {
 
 const Utilities: React.FC = () => {
   const [data, setData] = useState<Utility[]>([]);
-  const [searchValue, setSearchValue] = useState<string>("");
+  // const [searchValue, setSearchValue] = useState<string>("");
   const navigate = useNavigate();
 
-  const handlequestions = () => {
-    navigate("/questions");
-  };
+  // const handlequestions = () => {
+  //   navigate("/questions");
+  // };
 
   const handleadmin = () => {
     navigate("/values");

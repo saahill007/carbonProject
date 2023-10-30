@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./category_main.css";
-import axios from "axios";
+// import axios from "axios";
 import addImg from "../assets/add.png";
 import delImg from "../assets/delete.png";
 import editImg from "../assets/edit.png";

@@ -7,7 +7,9 @@ const Support: React.FC = () => {
     <div>
       <div className='support_container'>
         <div className='box_1'>
-          <button className='query'>Respond to Customer Queries</button>
+          <Link to="/customer_queries">
+            <button className='query'>Respond to Customer Queries</button>
+          </Link>
         </div>
         <div className='box_2'>
           <button className='customer_data'>View Customer emission data</button>

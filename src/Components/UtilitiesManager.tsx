@@ -1,8 +1,10 @@
 // UtilitiesManager.tsx
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+// import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./UtilitiesManager.css";
+import axiosInstance from './axiosconfig';
+
 
 interface Utility {
   id: number;
@@ -17,7 +19,7 @@ interface UtilitiesManagerProps {
   // Any props you might need
 }
 
-const UtilitiesManager: React.FC<UtilitiesManagerProps> = (props) => {
+const UtilitiesManager: React.FC<UtilitiesManagerProps> = () => {
   const [utilities, setUtilities] = useState<Utility[]>([]);
   const [newUtility, setNewUtility] = useState({
     name: "",
@@ -33,7 +35,7 @@ const UtilitiesManager: React.FC<UtilitiesManagerProps> = (props) => {
 
   const fetchUtilities = async () => {
     try {
-      const response = await axios.get("http://localhost:3002/api/utilities");
+      const response = await axiosInstance.get("/api/utilities");
       setUtilities(response.data);
     } catch (error) {
       console.error("Error fetching utilities:", error);
@@ -42,7 +44,7 @@ const UtilitiesManager: React.FC<UtilitiesManagerProps> = (props) => {
 
   const handleAddUtility = async () => {
     try {
-      await axios.post("http://localhost:3002/api/addUtility", newUtility);
+      await axiosInstance.post("/api/addUtility", newUtility);
       await fetchUtilities();
       setNewUtility({ name: "", reference: "", city: "", zipCode: "" });
     } catch (error) {
@@ -52,7 +54,7 @@ const UtilitiesManager: React.FC<UtilitiesManagerProps> = (props) => {
   const handleUpdateUtility = async (id: number, disabled: boolean) => {
     try {
       // Send a PUT request to update the utility's disabled status
-      await axios.put(`http://localhost:3002/api/updateUtility/${id}`, {
+      await axiosInstance.put(`/api/updateUtility/${id}`, {
         disabled,
         // Include the other properties as needed
         name: editUtility?.name,
@@ -107,8 +109,8 @@ const UtilitiesManager: React.FC<UtilitiesManagerProps> = (props) => {
   const handleSaveEdit = async () => {
     if (editUtility) {
       try {
-        await axios.put(
-          `http://localhost:3002/api/updateUtility/${editUtility.id}`,
+        await axiosInstance.put(
+          `/api/updateUtility/${editUtility.id}`,
           {
             name: editUtility.name,
             reference: editUtility.reference,

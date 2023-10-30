@@ -1,4 +1,4 @@
-import React from "react";
+// import React from "react";
 import QuestionAdmin from "./QuestionAdmin";
 
 const Contact = () => {

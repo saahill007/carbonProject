@@ -11,21 +11,7 @@ export function Questions(props) {
     navigate("/questions/add");
   };
 
-  // const fetchQuestions = async () => {
-  //   try {
-  //     const response = await axios.get("http://localhost:3001/api/questions");
-  //     console.log(response);
-  //     // Map the response data to set toggleState based on question_flag
-  //     const updatedQuestions = response.data.map((question) => ({
-  //       ...question,
-  //       toggleState: question.question_flag.data[0] === 1, // Set toggleState based on question_flag
-  //     }));
-
-  //     setQuestions(updatedQuestions); // Set the questions in state
-  //   } catch (error) {
-  //     console.error("Error fetching questions:", error);
-  //   }
-  // };
+  
 
   const fetchQuestions = async () => {
     try {

@@ -4,20 +4,20 @@ import TextBox from "./TextBox";
 import LineGraph from "./LineGraph";
 import PieChart from "./PieChart";
 // import PieChart from "./PieChart";
-const pieChartData = {
-  labels: ["Red", "Blue", "Yellow"],
-  datasets: [
-    {
-      data: [300, 50, 100],
-      backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56"],
-      hoverBackgroundColor: ["#FF6384", "#36A2EB", "#FFCE56"],
-    },
-  ],
-};
+// const pieChartData = {
+//   labels: ["Red", "Blue", "Yellow"],
+//   datasets: [
+//     {
+//       data: [300, 50, 100],
+//       backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56"],
+//       hoverBackgroundColor: ["#FF6384", "#36A2EB", "#FFCE56"],
+//     },
+//   ],
+// };
 
-const pieChartOptions = {
-  // Your chart options...
-};
+// const pieChartOptions = {
+//   // Your chart options...
+// };
 const ValuesLandingPage: React.FC = () => {
   return (
     <div>

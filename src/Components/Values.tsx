@@ -1,6 +1,7 @@
 // src/Values.tsx
 import React from "react";
-import { Link, Routes, Route, Outlet, useNavigate } from "react-router-dom";
+import "./Values.css";
+import { Link, Routes, Route, useNavigate } from "react-router-dom";
 
 // src/Values.tsx
 import { useState } from "react";

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import "./email_notification.css";
-import axios from "axios";
 import axiosInstance from './axiosconfig';
 
 const Email_notification: React.FC = () => {
@@ -65,10 +64,11 @@ const Email_notification: React.FC = () => {
                 </div>
                 {error && <div className="error">{error}</div>}
                 {successMessage && <div className="success">{successMessage}</div>}
-                <button onClick={sendEmail}>Send</button>
+                <button className='send_notification' onClick={sendEmail}>Send</button>
             </div>
             <div className="bottom"></div>
         </div>
     );
 }
 export default Email_notification;
+
