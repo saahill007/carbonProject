@@ -18,6 +18,52 @@ interface AllTypesUnitsProps {
   enabled: boolean;
   label: string;
 }
+
+interface FormulaSelectorProps {
+  unitIndex: number;
+  unitLabel: string;
+  selectedFormula: string;
+  onFormulaChange: (unitIndex: number, formula: string) => void;
+  formulas: String[]; // Corrected the type here
+}
+
+const FormulaSelector: React.FC<FormulaSelectorProps> = ({
+  unitIndex,
+  unitLabel,
+  selectedFormula,
+  onFormulaChange,
+  formulas,
+}) => {
+  const [selectedForm, updateSelectedForm] = useState("");
+  return (
+    <div className="formula" style={{ marginLeft: "20%", marginRight: "20%" }}>
+      <div className="row d-flex align-items-center">
+        <div className="col text-center">{unitLabel}</div>
+        <div className="col text-center">
+          <select
+            className="form-select"
+            value={selectedForm || ""}
+            onChange={(e) => {
+              onFormulaChange(unitIndex, e.target.value);
+              updateSelectedForm(e.target.value);
+            }}
+            style={{ width: "200px" }}
+            onClick={() => {
+              // fetchFormulas(); // You may want to fetch formulas here
+            }}
+          >
+            <option value="" disabled>
+              Select Formula
+            </option>
+            {formulas.map((f, index) => (
+              <option key={index}>{f}</option>
+            ))}
+          </select>
+        </div>
+      </div>
+    </div>
+  );
+};
 const AllTypesUnits: React.FC<AllTypesUnitsProps> = ({
   onArraysChange,
   questionContent,
@@ -39,7 +85,11 @@ const AllTypesUnits: React.FC<AllTypesUnitsProps> = ({
   const [unit6Formula, updateUnit6Formula] = useState<string>("");
   const [unit7Formula, updateUnit7Formula] = useState<string>("");
   const [choiceAns, updateChoiceAns] = useState("1");
-  const [selectedFormulas, updateSelectedFormulas] = useState([]);
+  // const [selectedFormulas, updateSelectedFormulas] = useState([]);
+  const [newVar, updateVar] = useState<string>("");
+  const [unitsSelectorKey, setUnitsSelectorKey] = useState<string>("1"); // Initial key
+
+  const [variables, updateVariables] = useState<string[]>([]);
 
   const getUpdatedChoice = () => {
     if (isFib) {
@@ -96,6 +146,7 @@ const AllTypesUnits: React.FC<AllTypesUnitsProps> = ({
     onArraysChange(twoArrayOption, twoArrayValue);
   }, [twoArrayOption, twoArrayValue]);
   const [selectedUnits, setSelectedUnits] = useState<number[]>([]);
+  const [selectedUnitsString, setSelectedUnitsString] = useState<String[]>([]);
   const [unitRefs, updateUnitRefs] = useState<string[]>([
     "1",
     "1",
@@ -112,10 +163,29 @@ const AllTypesUnits: React.FC<AllTypesUnitsProps> = ({
   const [isAddNewActive, updateAddNew] = useState(false);
   const toggleAddNew = () => {
     updateAddNew(!isAddNewActive);
-    console.log(unit1Formula);
+    console.log(selectedFormulas);
+    console.log(selectedUnits);
   };
+
+  const [unitFormulas, setUnitFormulas] = useState<string[]>([]);
+  const [selectedFormulas, setSelectedFormulas] = useState<
+    { unitIndex: number; formula: string }[]
+  >([]);
+
+  // const handleFormulaChange = (unitIndex: number, formula: string) => {
+  //   const updatedFormulas = [...unitFormulas];
+  //   updatedFormulas[unitIndex] = formula;
+  //   setUnitFormulas(updatedFormulas);
+  // };
+
   const handleSelectionChange = (selectedButtonIds: number[]) => {
     setSelectedUnits(selectedButtonIds);
+    // Do whatever you need to do with the selected units in the parent component
+    console.log("Selected Units in Parent:", selectedButtonIds);
+  };
+
+  const handleSelectionChangeString = (selectedButtonIds: String[]) => {
+    setSelectedUnitsString(selectedButtonIds);
     // Do whatever you need to do with the selected units in the parent component
     console.log("Selected Units in Parent:", selectedButtonIds);
   };
@@ -124,6 +194,51 @@ const AllTypesUnits: React.FC<AllTypesUnitsProps> = ({
     console.log(hasMultiple);
     handleRadioChange;
   };
+  useEffect(() => {
+    // Fetch variables from the server when the component mounts
+    fetchVariables();
+  }, [selectedUnits, unitsSelectorKey]);
+  const fetchVariables = async () => {
+    try {
+      const response = await fetch("http://localhost:3001/api/getUnits");
+      const data = await response.json();
+      const variableNames = Object.keys(data);
+      updateVariables(variableNames);
+    } catch (error) {
+      console.error("Error fetching variables:", error);
+    }
+  };
+  const handleAddVariable = async (e: React.MouseEvent) => {
+    try {
+      // Ensure that selected variables are either the selected value or "1" if null
+      // const var1 = newVar;
+
+      // Your API endpoint for adding a new formula
+      const response = await fetch("http://localhost:3001/api/addUnit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: newVar,
+        }),
+      });
+
+      if (response.ok) {
+        console.log("Variable saved successfully!");
+        // Reset state variables
+        fetchVariables();
+        console.log(variables);
+        updateVar("");
+        setUnitsSelectorKey((prevKey) => (parseInt(prevKey) + 1).toString()); // Change the key to force remount
+      } else {
+        console.error("Failed to save var.");
+      }
+    } catch (error) {
+      console.error("Error saving var:", error);
+    }
+  };
+
   const handleSwitchChange = (value: boolean) => {
     updateHasMultiple(value);
     updateChoiceAns;
@@ -157,6 +272,30 @@ const AllTypesUnits: React.FC<AllTypesUnitsProps> = ({
     display: "inline-flex",
     alignItems: "center",
     marginRight: "20px",
+  };
+  const handleFormulaChange = (unitIndex: number, formula: string) => {
+    // Update selectedFormulas
+    const updatedFormulas = [...selectedFormulas];
+    const existingUnitIndex = updatedFormulas.findIndex(
+      (item) => item.unitIndex === unitIndex
+    );
+
+    if (existingUnitIndex !== -1) {
+      // Update existing entry
+      updatedFormulas[existingUnitIndex] = { unitIndex, formula };
+    } else {
+      // Add new entry
+      updatedFormulas.push({ unitIndex, formula });
+    }
+
+    setSelectedFormulas(updatedFormulas);
+
+    // Update selectedUnits (if needed)
+    const updatedUnits = [...selectedUnits];
+    if (!updatedUnits.includes(unitIndex)) {
+      updatedUnits.push(unitIndex);
+      setSelectedUnits(updatedUnits);
+    }
   };
 
   const radioStyle = {
@@ -260,8 +399,67 @@ const AllTypesUnits: React.FC<AllTypesUnitsProps> = ({
       >
         Select Units
       </p>
-      <UnitsSelector onSelectionChange={handleSelectionChange} />
-      {selectedUnits.includes(0) && (
+      <UnitsSelector
+        onSelectionChangeString={handleSelectionChangeString}
+        onSelectionChange={handleSelectionChange}
+        key={unitsSelectorKey}
+      />
+      <div className="row d-flex align-items-center" style={{}}>
+        <p
+          style={{
+            fontFamily: "Outfit-SemiBold, Helvetica",
+            fontSize: "16px",
+            fontWeight: "bold",
+            marginTop: "30px",
+            marginLeft: "20px",
+          }}
+        >
+          Add a new Unit
+        </p>
+        <div
+          className="row d-flex align-items-center"
+          style={{ marginLeft: "10%", marginRight: "10%" }}
+        >
+          <div className="col">
+            <input
+              type="text"
+              className="form-control rounded"
+              placeholder="Unit Name"
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                updateVar(e.target.value);
+              }}
+            ></input>
+          </div>
+
+          <div className="col">
+            <button
+              className="btn btn-success"
+              style={{
+                width: "200px",
+                backgroundColor: "#A7C8A3",
+                border: "black",
+              }}
+              onClick={handleAddVariable}
+            >
+              Add Variable
+            </button>
+          </div>
+        </div>
+        {/* <div className="col-md">
+            <Choice onValuesChange={getVarValues} />
+          </div> */}
+      </div>
+      {selectedUnits.map((unitIndex, index) => (
+        <FormulaSelector
+          key={index}
+          unitIndex={index}
+          unitLabel={`Unit ${unitIndex + 1}`}
+          selectedFormula={unitFormulas[index] || ""}
+          onFormulaChange={handleFormulaChange}
+          formulas={formulas}
+        />
+      ))}
+      {/* {selectedUnits.includes(0) && (
         <>
           <div
             className="formula"
@@ -477,7 +675,7 @@ const AllTypesUnits: React.FC<AllTypesUnitsProps> = ({
             </div>
           </div>
         </>
-      )}
+      )} */}
       <div className="row d-flex align-items-center">
         <div className="col-md text-center">
           <button
@@ -495,7 +693,7 @@ const AllTypesUnits: React.FC<AllTypesUnitsProps> = ({
           </button>
         </div>
       </div>
-      {isAddNewActive && <NewFormula />}
+      {isAddNewActive && <NewFormula isZipDependent={zipcode} />}
       {!isFib && (
         <>
           {selectedUnits.includes(0) && (

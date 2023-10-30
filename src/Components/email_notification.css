@@ -1,0 +1,95 @@
+.top-nav {
+    font-family: Arial, sans-serif;
+    font-size: large;
+    font-weight: 500;
+    margin-top: 40px;
+    text-align: right;
+    border-bottom: 3px solid #333;
+    margin-bottom: 70px;
+}
+
+a:link {
+    text-decoration: none;
+}
+
+.email_container {
+    position: absolute;
+    top: 35%;
+    left: 40%;
+    transform: translate(-30%, -30%);
+    text-align: center;
+    background: rgba(217, 217, 217, 0.18);
+    width: 50%;
+    height: 60%;
+}
+
+.heading {
+    font-family: Arial, sans-serif;
+    font-size: large;
+    font-weight: 600;
+    padding: 15px;
+}
+
+.subject_heading {
+    background: #84D2F3;
+    border-radius: 15px;
+    width: 25%;
+    height: 6%;
+    margin: 20px;
+}
+
+.email_subject {
+    font-family: Arial, sans-serif;
+    font-weight: 600;
+    text-align: centre;
+    padding-top: 1px;
+}
+
+.subject {
+    margin-bottom: 50px;
+}
+
+.message {
+    background: #84D2F3;
+    border-radius: 15px;
+    width: 25%;
+    height: 6%;
+    margin: 20px;
+
+}
+
+.email_body {
+    font-family: Arial, sans-serif;
+    font-weight: 600;
+    text-align: centre;
+    padding-top: 1px;
+}
+
+.body_message {
+    margin-bottom: 30px;
+}
+
+button {
+    margin-top: 10px;
+    margin-right: 25px;
+    margin-bottom: 500px;
+    background-color: hsl(114, 25%, 71%);
+    color: black;
+    height: 50px;
+    width: 100px;
+    border-radius: 15px;
+    position: absolute;
+    z-index: 1;
+    right: 0;
+    display: block;
+
+}
+
+.bottom {
+    background-color: #A7C8A3;
+    height: 30px;
+    width: 100%;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+}

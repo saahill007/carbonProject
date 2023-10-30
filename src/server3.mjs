@@ -6,10 +6,10 @@ const app = express();
 const port = 3001;
 
 const dbConfig = {
-  host: "127.0.0.1",
-  user: "root",
-  password: "Sahil@123456",
-  database: "offsetCRBN",
+  host: "3.16.38.171",
+  user: "carbonuser",
+  password: "Carbon@123",
+  database: "CRBN",
   port: 3306,
 };
 
@@ -38,6 +38,38 @@ app.get("/api/getvardata", async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
+app.get("/api/getUniqueUtilities", async (req, res) => {
+  try {
+    const connection = await pool.getConnection();
+    const [rows] = await connection.query(
+      "SELECT DISTINCT Utility FROM utilities"
+    );
+    connection.release();
+
+    const uniqueUtilities = rows.map((row) => row.Utility);
+    res.json(uniqueUtilities);
+  } catch (error) {
+    console.error("Error fetching unique utilities:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+// ... (previous code)
+
+app.get("/api/getUnits", async (req, res) => {
+  try {
+    const connection = await pool.getConnection();
+    const [rows] = await connection.query("SELECT name FROM units_table");
+    connection.release();
+    const unitNames = rows.map((row) => row.name);
+    res.json(unitNames);
+  } catch (error) {
+    console.error("Error fetching unit names:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
 app.get("/api/allformulas", async (req, res) => {
   try {
     const connection = await pool.getConnection();
@@ -89,56 +121,20 @@ app.post("/api/addConversion", async (req, res) => {
   }
 });
 
-// app.post("/api/addConversion", (req, res) => {
-//   const { variableName, variableValue } = req.body;
+app.post("/api/addUnit", async (req, res) => {
+  const { name, value } = req.body;
 
-//   // Validate the incoming data (you may want to add more validation)
-//   if (typeof variableName !== "string" || variableName.trim() === "") {
-//     return res
-//       .status(400)
-//       .json({ error: "Variable name must be a non-empty string" });
-//   }
+  try {
+    const connection = await pool.getConnection();
+    await connection.query("INSERT INTO units_table (name) VALUES (?)", [name]);
+    connection.release();
+    res.status(201).json({ message: "Var added successfully" });
+  } catch (error) {
+    console.error("Error adding Var:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
 
-//   // Convert variableValue to a number
-//   const parsedValue = parseFloat(variableValue);
-
-//   if (isNaN(parsedValue)) {
-//     return res
-//       .status(400)
-//       .json({ error: "Variable value must be a valid number" });
-//   }
-
-//   // Use the connection pool to execute the MySQL query
-//   pool.getConnection((err, connection) => {
-//     if (err) {
-//       console.error("Error getting MySQL connection:", err);
-//       return res.status(500).json({ error: "Internal Server Error" });
-//     }
-
-//     // Insert the new row into the new_conversion_table
-//     const insertQuery =
-//       "INSERT INTO new_conversion_table (name, value) VALUES (?, ?)";
-//     connection.query(
-//       insertQuery,
-//       [variableName, parsedValue], // Use parsedValue instead of variableValue
-//       (insertErr, results) => {
-//         connection.release(); // Release the connection back to the pool
-
-//         if (insertErr) {
-//           console.error(
-//             "Error inserting into new_conversion_table:",
-//             insertErr
-//           );
-//           return res.status(500).json({ error: "Internal Server Error" });
-//         }
-
-//         return res
-//           .status(200)
-//           .json({ success: true, message: "Conversion added successfully" });
-//       }
-//     );
-//   });
-// });
 app.post("/api/addQuestion", async (req, res) => {
   const {
     questionContent,
@@ -205,6 +201,119 @@ app.get("/api/questions", async (req, res) => {
     res.json(rows);
   } catch (error) {
     console.error("Error fetching questions:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+app.get("/api/question/:id", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const connection = await pool.getConnection();
+    const [rows] = await connection.query(
+      "SELECT * FROM questionsTable WHERE id = ?",
+      [id]
+    );
+    connection.release();
+
+    if (rows.length === 0) {
+      res.status(404).json({ error: "Question not found" });
+    } else {
+      res.json(rows[0]); // Assuming that ID is unique, so there should be only one result
+    }
+  } catch (error) {
+    console.error("Error fetching a specific question:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+app.patch("/api/updateQuestion/:id", async (req, res) => {
+  const { id } = req.params;
+
+  // Destructure the properties you want to update from the request body
+  const {
+    questionContent,
+    household,
+    zipcode,
+    questionType,
+    enabled,
+    choiceAns,
+    choices,
+    refs,
+    selectedUnits,
+    selectedFormulas,
+    label,
+  } = req.body;
+
+  try {
+    const connection = await pool.getConnection();
+
+    // Update the corresponding row in the questionsTable
+    await connection.query(
+      `
+      UPDATE questionsTable 
+      SET 
+        questionContent = ?, 
+        household = ?, 
+        zipcode = ?, 
+        questionType = ?, 
+        enabled = ?, 
+        choiceAns = ?, 
+        choices = ?, 
+        refs = ?, 
+        selectedUnits = ?, 
+        selectedFormulas = ?, 
+        label = ?
+      WHERE id = ?
+      `,
+      [
+        questionContent,
+        household,
+        zipcode,
+        questionType,
+        enabled,
+        choiceAns,
+        JSON.stringify(choices),
+        JSON.stringify(refs),
+        JSON.stringify(selectedUnits),
+        JSON.stringify(selectedFormulas),
+        label,
+        id,
+      ]
+    );
+
+    connection.release();
+    res.status(200).json({ message: "Question updated successfully" });
+  } catch (error) {
+    console.error("Error updating question:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+app.get("/api/utilities", async (req, res) => {
+  try {
+    const connection = await pool.getConnection();
+    const [rows] = await connection.query("SELECT * FROM utilities");
+    connection.release();
+    res.json(rows);
+  } catch (error) {
+    console.error("Error fetching utilities:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+app.get("/api/getCategories", async (req, res) => {
+  try {
+    const connection = await pool.getConnection();
+    const [rows] = await connection.query("SELECT * FROM Category");
+    connection.release();
+
+    const categories = rows.map((row) => ({
+      categoryId: row.category_id,
+      categoryName: row.category_name,
+    }));
+
+    res.json(categories);
+  } catch (error) {
+    console.error("Error fetching Category:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });

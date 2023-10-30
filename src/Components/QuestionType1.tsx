@@ -1,9 +1,9 @@
 // QuestionType1 Component
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import SwitchContent from "./SwitchContent";
 import OptionValue from "./OptionValue";
 import { useNavigate } from "react-router-dom";
-
+import { useParams } from "react-router-dom";
 interface QuestionType1Props {
   onChange: (option: string[][], value: number[][], type: string) => void;
   questionContent: string;
@@ -14,6 +14,7 @@ interface QuestionType1Props {
   selectedUnits: any[]; // Replace 'any' with the actual type of selectedUnits
   selectedFormulas: string[]; // Replace 'string' with the actual type of selectedFormulas
   label: string;
+  id?: string;
 }
 
 const QuestionType1: React.FC<QuestionType1Props> = ({
@@ -27,10 +28,12 @@ const QuestionType1: React.FC<QuestionType1Props> = ({
   selectedFormulas,
   label,
 }) => {
+  const { id } = useParams<{ id: string }>();
   const [twoArrayOption, setTwoArrayOption] = useState<string[][]>([]);
   const [twoArrayValue, setTwoArrayValue] = useState<number[][]>([]);
   const [optionCount, updateOptionCount] = useState<number>(4);
   const [choiceAns, updateChoiceAns] = useState("1");
+  const [deletedKeys, updateDeletedKeys] = useState<string[]>([]);
   const navigate = useNavigate();
   // Function to initialize arrays
   const initializeArrays = () => {
@@ -61,6 +64,7 @@ const QuestionType1: React.FC<QuestionType1Props> = ({
     setTwoArrayOption(optionArray);
     setTwoArrayValue(valueArray);
   };
+  const [isFib, updateFib] = useState(true);
   const determineQuestionType = () => {
     if (isFib) {
       updateChoiceAns("1");
@@ -70,12 +74,15 @@ const QuestionType1: React.FC<QuestionType1Props> = ({
       updateChoiceAns("2");
     }
   };
-  const [isFib, updateFib] = useState(true);
+
   const [hasMultiple, updateHasMultiple] = useState(false);
   React.useEffect(() => {
     initializeArrays();
   }, [isFib, hasMultiple]);
 
+  useEffect(() => {
+    determineQuestionType();
+  }, []);
   const radioContainerStyle = {
     display: "inline-flex",
     alignItems: "center",
@@ -148,22 +155,32 @@ const QuestionType1: React.FC<QuestionType1Props> = ({
     // Call onChange with the updated values
     // onChange(twoArrayOption, twoArrayValue, questionType);
   };
+  //
+
   const saveOptionsToDatabase = async () => {
     try {
-      const response = await fetch("http://localhost:3001/api/addQuestion", {
-        method: "POST",
+      console.log(id);
+      const url =
+        id == ""
+          ? "http://localhost:3001/api/addQuestion"
+          : `http://localhost:3001/api/updateQuestion/${id}`;
+
+      const response = await fetch(url, {
+        method: id == "" ? "POST" : "PATCH",
+
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
+          // Remove id from the request body, as it's already in the URL
           questionContent,
           household,
           zipcode,
           questionType,
           enabled,
           choiceAns,
-          choices: twoArrayOption, // Assuming twoArrayOption represents choices
-          refs: twoArrayValue, // Assuming twoArrayValue represents refs
+          choices: twoArrayOption,
+          refs: twoArrayValue,
           selectedUnits,
           selectedFormulas,
           label,
@@ -179,6 +196,14 @@ const QuestionType1: React.FC<QuestionType1Props> = ({
     } catch (error) {
       console.error("Error:", error);
     }
+  };
+
+  const handleDeleteOption = (key: string) => {
+    // Handle the deletion logic here
+    // updateOptionCount(optionCount - 1);
+    // updateDeletedKeys([...deletedKeys, key]);
+    updateDeletedKeys((prevDeletedKeys) => [...prevDeletedKeys, key]);
+    console.log("Option deleted!");
   };
 
   return (
@@ -243,35 +268,56 @@ const QuestionType1: React.FC<QuestionType1Props> = ({
                     paddingRight: "20px",
                   }}
                 >
-                  <div className="col">(Select Option)</div>
+                  <div className="col">Add Options</div>
 
-                  <div className="col">(Value In Carbon Footprints)</div>
+                  <div className="col">Value of Carbon (In lbs)</div>
+                  <div className="col">Delete Option</div>
                 </div>
-                {/* {1 <= optionCount && ( */}
-                {Array.from({ length: optionCount }).map((_, index) => (
-                  <OptionValue
-                    key={index}
-                    onValuesChange={(choice: string, value: number) => {
-                      // Use the spread operator to create a new array and update the specific index
-                      setTwoArrayOption((prevOptions) => {
-                        const newOptions = [...prevOptions];
-                        newOptions[0] = [...newOptions[0]];
-                        newOptions[0][index] = choice;
-                        return newOptions;
-                      });
+                <>
+                  {/* {1 <= optionCount && ( */}
+                  {Array.from({ length: optionCount }).map(
+                    (_, index) =>
+                      !deletedKeys.includes(String(index)) && (
+                        <span
+                          key={index}
+                          style={{ display: "flex", alignItems: "center" }}
+                        >
+                          <OptionValue
+                            onValuesChange={(choice: string, value: number) => {
+                              // Use the spread operator to create a new array and update the specific index
+                              setTwoArrayOption((prevOptions) => {
+                                const newOptions = [...prevOptions];
+                                newOptions[0] = [...newOptions[0]];
+                                newOptions[0][index] = choice;
+                                return newOptions;
+                              });
 
-                      setTwoArrayValue((prevValues) => {
-                        const newValues = [...prevValues];
-                        newValues[0] = [...newValues[0]];
-                        newValues[0][index] = value;
-                        return newValues;
-                      });
+                              setTwoArrayValue((prevValues) => {
+                                const newValues = [...prevValues];
+                                newValues[0] = [...newValues[0]];
+                                newValues[0][index] = value;
+                                return newValues;
+                              });
 
-                      // Call onChange with the updated values
-                      // onChange(twoArrayOption, twoArrayValue, questionType);
-                    }}
-                  />
-                ))}
+                              // Call onChange with the updated values
+                              // onChange(twoArrayOption, twoArrayValue, questionType);
+                            }}
+                          />
+                          <button
+                            className="btn btn-danger"
+                            onClick={() => handleDeleteOption(String(index))}
+                            style={{
+                              marginTop: "35px",
+                              marginRight: "30px",
+                              width: "30%",
+                            }}
+                          >
+                            Delete
+                          </button>
+                        </span>
+                      )
+                  )}
+                </>
               </div>
             }
           </div>
@@ -289,18 +335,16 @@ const QuestionType1: React.FC<QuestionType1Props> = ({
                 className="btn btn-primary"
                 style={{ backgroundColor: "#84D2F3", border: "0px" }}
                 onClick={() => {
-                  if (optionCount == 8) {
-                  } else {
-                    updateOptionCount(optionCount + 1);
-                  }
+                  updateOptionCount(optionCount + 1);
 
+                  console.log(deletedKeys);
                   console.log(twoArrayOption);
                 }}
               >
                 Add New Option
               </button>
             </div>
-            <div className="col">
+            {/* <div className="col">
               <button
                 className="btn btn-primary"
                 style={{ backgroundColor: "#e38181", border: "0px" }}
@@ -315,7 +359,7 @@ const QuestionType1: React.FC<QuestionType1Props> = ({
               >
                 Delete
               </button>
-            </div>
+            </div> */}
           </div>
         </div>
       )}
@@ -352,6 +396,12 @@ const QuestionType1: React.FC<QuestionType1Props> = ({
           <button
             className="btn btn-primary"
             style={{ backgroundColor: "#A7C8A3", border: "0px" }}
+            onClick={() => {
+              console.log(choiceAns);
+              console.log(isFib);
+              console.log(hasMultiple);
+              navigate("/questions");
+            }}
           >
             Back
           </button>

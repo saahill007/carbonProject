@@ -1,0 +1,58 @@
+.top-nav {
+    font-family: Arial, sans-serif;
+    font-size: large;
+    font-weight: 500;
+    margin-top: 40px;
+    text-align: right;
+    border-bottom: 3px solid #333;
+    margin-bottom: 50px;
+}
+
+a:link {
+    text-decoration: none;
+}
+
+.support_container {
+    position: absolute;
+    top: 20%;
+    left: 35%;
+    text-align: center;
+    width: 20%;
+    height: 10%;
+}
+
+.box_1,
+.box_2,
+.box_3 {
+    width: 180%;
+    /* Adjust the width as needed */
+    height: 100%;
+    /* Adjust the height as needed */
+    background: rgba(217, 217, 217, 0.18);
+    margin: 20px;
+    padding: 10px;
+}
+
+.query,
+.customer_data,
+.Email_notification {
+    font-family: Arial, sans-serif;
+    font-size: large;
+    font-weight: 500;
+    width: 120%;
+    height: 60%;
+    background: #84D2F3;
+    border-radius: 20px;
+    text-align: center;
+    left: 35%;
+    padding: 10px;
+}
+
+.bottom {
+    background-color: #A7C8A3;
+    height: 30px;
+    width: 100%;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+}

@@ -15,8 +15,27 @@ export default function AddQuestionPage() {
 
   const handleNextPage = (questionType) => {
     // Use the `navigate` function to go to the next page and pass the question as a URL parameter
-    navigate(`/questions/${questionType}?question=${question}`);
+    navigate(`/questions/${questionType}?question=${question}&source=add`);
   };
+
+  function getParameterByName(name, url) {
+    if (!url) url = window.location.href;
+    name = name.replace(/[\[\]]/g, '\\$&');
+    var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)');
+    var results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, ' '));
+  }
+
+  useEffect(() => {
+    const questionValue = getParameterByName('question');
+    const inputElement = document.getElementById('myInput');
+    if (inputElement) {
+      inputElement.value = questionValue || 'Type Your Question Here';
+    }
+  }, []);
+
   
   return (
     <div style={{ background: 'white'}}>
@@ -281,6 +300,7 @@ export default function AddQuestionPage() {
             <div style={{width: 1166.66, height: 111, left: 0, top: 0, position: 'absolute', background: '#84D2F3', borderRadius: 15}}></div>
             <input
             type="text"
+            id="myInput"
         value={question}
         onChange={handleQuestionInputChange}
         placeholder="Type in your question"

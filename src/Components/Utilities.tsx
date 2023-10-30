@@ -5,6 +5,7 @@ import axios from "axios";
 import addImg from "../assets/add.png";
 import delImg from "../assets/delete.png";
 import editImg from "../assets/edit.png";
+// import axiosInstance from "./axiosconfig";
 
 interface Utility {
   Val_Id: number;
@@ -37,7 +38,7 @@ const Utilities: React.FC = () => {
   const fetchData = async () => {
     try {
       const response = await axios.get<Utility[]>(
-        "http://localhost:3000/api/Utility"
+        "http://localhost:3001/api/utilities"
       );
       console.log("Response data:", response.data);
       setData(response.data);
@@ -120,9 +121,9 @@ const Utilities: React.FC = () => {
               <th>Utility</th>
               <th>Utility Value</th>
               <th>Utility_Units</th>
-              <th>Carbon Intensity</th>
+              {/* <th>Carbon Intensity</th>
               <th>Carbon Intensity_Unit</th>
-              <th>Ref Value(lbs of Co2)</th>
+              <th>Ref Value(lbs of Co2)</th> */}
               <th>Sources</th>
               <th>Date of Source</th>
             </tr>
@@ -141,9 +142,9 @@ const Utilities: React.FC = () => {
                 <td>{item.Utility}</td>
                 <td>{item.Utility_Value}</td>
                 <td>{item.Utility_Units}</td>
-                <td>{item.Carbon_Intensity}</td>
+                {/* <td>{item.Carbon_Intensity}</td>
                 <td>{item.Carbon_Intensity_Unit}</td>
-                <td>{item.Ref_Value}</td>
+                <td>{item.Ref_Value}</td> */}
                 <td>{item.Sources}</td>
                 <td>{item.Date_of_Source}</td>
               </tr>

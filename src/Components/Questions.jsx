@@ -8,7 +8,7 @@ export function Questions(props) {
   const [questions, setQuestions] = useState([]);
   const navigate = useNavigate();
   const handleaddquestion = () => {
-    navigate("/contact");
+    navigate("/questions/add");
   };
 
   // const fetchQuestions = async () => {
@@ -58,7 +58,7 @@ export function Questions(props) {
     // Make an HTTP request to update the database
     try {
       const updatedState = newQuestions[index].toggleState ? 1 : 0;
-      await axios.post("http://localhost:3000/api/updateToggleState", {
+      await axios.post("http://localhost:3001/api/updateToggleState", {
         questionId: newQuestions[index].ques_id,
         newState: updatedState,
       });
@@ -83,7 +83,7 @@ export function Questions(props) {
         {question.questionContent}
       </div>
     </div>      <div style={{width: 173, height: 57, left: 975, top: 31, position: 'absolute', background: '#F6A55A', boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)', borderRadius: 300, border: '1px black solid'}}></div>
-      <div style={{width: 37, left: 1040, top: 50, position: 'absolute', color: 'black', fontSize: 20, fontFamily: 'Outfit', fontWeight: '600', wordWrap: 'break-word',cursor: 'pointer',}}>Edit</div>
+      <div  onClick={()=>navigate("/contact/"+question.id)} style={{width: 37, left: 1040, top: 50, position: 'absolute', color: 'black', fontSize: 20, fontFamily: 'Outfit', fontWeight: '600', wordWrap: 'break-word',cursor: 'pointer',} }>Edit</div>
      <div style={{ width: 64, height: 32, left: 3, top: 40, position: 'absolute', background: 'white', justifyContent: 'flex-start', alignItems: 'flex-start', gap: 10, display: 'inline-flex', cursor: 'pointer', }} onClick={() => handleToggleClick(index)}>
       <div style={{ width: 64, height: 32, justifyContent: question.toggleState ? 'flex-end' : 'flex-start', alignItems: 'center', background: question.toggleState ? 'green' : 'white', borderRadius: '10%', transition: 'background-color 0.2s ease-in-out, transform 0.2s ease-in-out', display: 'flex', justifyContent: question.toggleState ? 'flex-end' : 'flex-start', alignItems: 'center', }}>
         <div style={{ width: 24, height: 24, background: 'white', borderRadius: '50%',border: '0.1px solid black', }}></div>
@@ -96,14 +96,8 @@ export function Questions(props) {
       <div style={{width: 150.66, height: 57.11, left: 0, top: 0, position: 'absolute', background: '#A3C7A0', boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)', borderRadius: 300, border: '1px black solid'}}></div>
       <div style={{width: 139.56, height: 25.50, left: 9, top: 14, position: 'absolute', color: 'black', fontSize: 20, fontFamily: 'Outfit', fontWeight: '600', wordWrap: 'break-word',cursor: 'pointer'}}onClick={handleaddquestion}>Add a question</div>
     </div>
-    <div style={{width: 189.56, height: 57.11, left: 1133, top: 1500, position: 'absolute'}}>
-      <div style={{width: 150.66, height: 57.11, left: 0, top: 0, position: 'absolute', background: '#A3C7A0', boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)', borderRadius: 300, border: '1px black solid'}}></div>
-      <div style={{width: 139.56, height: 25.50, left: 50, top: 16.18, position: 'absolute', color: 'black', fontSize: 20, fontFamily: 'Outfit', fontWeight: '600', wordWrap: 'break-word',cursor: 'pointer'}}>SAVE</div>
-    </div>
-    <div style={{width: 189.56, height: 57.11, right: 1133, top: 1500, position: 'absolute'}}>
-      <div style={{width: 150.66, height: 57.11, left: 0, top: 0, position: 'absolute', background: '#A3C7A0', boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)', borderRadius: 300, border: '1px black solid'}}></div>
-      <div style={{width: 139.56, height: 25.50, left: 50, top: 16.18, position: 'absolute', color: 'black', fontSize: 20, fontFamily: 'Outfit', fontWeight: '600', wordWrap: 'break-word',cursor: 'pointer'}}>BACK</div>
-    </div>
+    
+    
 
    
   </div>

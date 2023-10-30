@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from "axios";
+import axiosInstance from './axiosconfig';
 
 
 export default function FillInTheBlank() {
@@ -15,8 +16,15 @@ export default function FillInTheBlank() {
       setSelectedOption(option);
     };
     const handleback = () => {
-        navigate("/questions/add");
-      };
+      const questionValue = getParameterByName('question');
+      const source = getParameterByName('source');
+      if (source === 'add') {
+        navigate(`/questions/add?question=${questionValue}`);
+      } else if (source === 'edit') {
+        navigate(`/questions/edit?question=${questionValue}`);
+      }
+    };
+    
 
       const handleTextTypeSelect = (textType) => {
         setSelectedTextType(textType);
@@ -49,10 +57,10 @@ export default function FillInTheBlank() {
         };
     
         try {
-          const response = await axios.post('http://localhost:3000/api/question/fillintheblank', data);
+          const response = await axiosInstance.post('/api/question/fillintheblank', data);
       
           if (response.status === 201) {
-            setMessage('Question added successfully.');
+            setMessage('Question and Options added successfully.');
       setTimeout(() => {
         setMessage(null); 
       }, 2000);
@@ -82,11 +90,14 @@ export default function FillInTheBlank() {
         {/* <div style={{width: 1239, height: 754, left: 100, top: 100, position: 'absolute', background: 'rgba(217, 217, 217, 0.12)', borderRadius: 30}} /> */}
         <div style={{width: 604, height: 51, left: 170, top: 376, position: 'absolute'}}>
             <div style={{width: 604, height: 51, left: 18, top: 13, position: 'absolute', background: 'white'}} />
-            <input type='text' placeholder='Type the carbon offset value' value={carbonOffsetValue} onChange={(e) => setCarbonOffsetValue(e.target.value)} style={{width: 604, left: 18, top: 13, position: 'absolute', color: 'rgba(0, 0, 0, 0.47)', fontSize: 20, fontFamily: 'Outfit', fontWeight: '500', wordWrap: 'break-word'}}></input>
+            <input type='text' placeholder='Type the carbon offset value' value={carbonOffsetValue} onInput={(e) => {
+        e.target.value = e.target.value.replace(/[^0-9.]/g, '');
+        setCarbonOffsetValue(e.target.value);
+    }} style={{width: 604, left: 18, top: 13, position: 'absolute', color: 'rgba(0, 0, 0, 0.47)', fontSize: 20, fontFamily: 'Outfit', fontWeight: '500', wordWrap: 'break-word'}}></input>
         </div>
         <div style={{width: 604, height: 51, left: 170, top: 283, position: 'absolute'}}>
             <div style={{width: 604, height: 51, left: 18, top: 20, position: 'absolute', background: 'white'}} />
-            <input type='text' placeholder='Type your answer' value={answer} onChange={(e) => setAnswer(e.target.value)}  style={{width: 604, left: 18, top: 13, position: 'absolute', color: 'rgba(0, 0, 0, 0.47)', fontSize: 20, fontFamily: 'Outfit', fontWeight: '500', wordWrap: 'break-word'}}></input>
+            <input type='text' placeholder='Type your answer range' value={answer} onChange={(e) => setAnswer(e.target.value)}  style={{width: 604, left: 18, top: 13, position: 'absolute', color: 'rgba(0, 0, 0, 0.47)', fontSize: 20, fontFamily: 'Outfit', fontWeight: '500', wordWrap: 'break-word'}}></input>
         </div>
     {/* </div> */}
     <div style={{left: 200, top: 478, position: 'absolute', color: 'black', fontSize: 20, fontFamily: 'Outfit', fontWeight: '500', wordWrap: 'break-word'}}>Please select the text type below:</div>

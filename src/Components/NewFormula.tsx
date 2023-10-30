@@ -1,8 +1,16 @@
 import React, { useState, useEffect } from "react";
 import Choice from "./Choice";
 
-const NewFormula = () => {
+interface NewFormulaProps {
+  isZipDependent: boolean; // Add this prop
+}
+
+const NewFormula: React.FC<NewFormulaProps> = ({ isZipDependent }) => {
   const [variables, updateVariables] = useState<string[]>([]);
+  const [constVariables, updateConstVariables] = useState<string[]>([]);
+  const [utilities, setUtilities] = useState<string[]>([]);
+
+  const [successMessage, setSuccessMessage] = useState("");
   const [selectedVariable1, setSelectedVariable1] = useState<string | null>(
     null
   );
@@ -15,7 +23,7 @@ const NewFormula = () => {
   const [selectedVariable4, setSelectedVariable4] = useState<string | null>(
     null
   );
-
+  const [selectedUtility, setSelectedUtility] = useState<string | null>(null);
   const [newFormula, setNewFormula] = useState<string>("");
   const [newVar, updateVar] = useState<string>("");
   const [newVal, updateVal] = useState<number>(1);
@@ -30,6 +38,7 @@ const NewFormula = () => {
   useEffect(() => {
     // Fetch variables from the server when the component mounts
     fetchVariables();
+    fetchUtilities();
   }, []);
 
   const fetchVariables = async () => {
@@ -38,10 +47,24 @@ const NewFormula = () => {
       const data = await response.json();
       const variableNames = Object.keys(data);
       updateVariables(variableNames);
+      updateConstVariables(variableNames);
     } catch (error) {
       console.error("Error fetching variables:", error);
     }
   };
+
+  const fetchUtilities = async () => {
+    try {
+      const response = await fetch(
+        "http://localhost:3001/api/getUniqueUtilities"
+      );
+      const data = await response.json();
+      setUtilities(data);
+    } catch (error) {
+      console.error("Error fetching utilities:", error);
+    }
+  };
+
   const handleAddVariable = async (e: React.MouseEvent) => {
     // e.preventDefault();
 
@@ -91,6 +114,7 @@ const NewFormula = () => {
 
       if (response.ok) {
         console.log("Variable saved successfully!");
+        setSuccessMessage("Variable added successfully!");
         // Reset state variables
         fetchVariables();
         updateVar("");
@@ -103,42 +127,55 @@ const NewFormula = () => {
     }
   };
 
+  const [formulaError, setFormulaError] = useState<string | null>(null);
+  const handleCloseAlert = () => {
+    setFormulaError(null);
+  };
   const handleSaveFormula = async () => {
-    try {
-      // Ensure that selected variables are either the selected value or "1" if null
-      const var1 = selectedVariable1 || "1";
-      const var2 = selectedVariable2 || "1";
-      const var3 = selectedVariable3 || "1";
-      const var4 = selectedVariable4 || "1";
+    if (newFormula.trim() == "") {
+      console.log("Formula cannot be empty");
+      setFormulaError("Formula cannot be empty");
+    } else {
+      setFormulaError("");
+      try {
+        // Ensure that selected variables are either the selected value or "1" if null
+        const var1 = selectedVariable1 || "1";
+        const var2 = selectedVariable2 || "1";
+        const var3 = selectedVariable3 || "1";
+        const var4 = selectedVariable4 || "1";
 
-      // Your API endpoint for adding a new formula
-      const response = await fetch("http://localhost:3001/api/addFormula", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          formulaName: newFormula,
-          var1,
-          var2,
-          var3,
-          var4,
-        }),
-      });
+        // Your API endpoint for adding a new formula
+        const response = await fetch("http://localhost:3001/api/addFormula", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            formulaName: newFormula,
+            var1,
+            var2,
+            var3,
+            var4,
+          }),
+        });
 
-      if (response.ok) {
-        console.log("Formula saved successfully!");
-        // Reset state variables
-        setNewFormula("");
-        setSelectedVariable1(null);
-        setSelectedVariable2(null);
-        setSelectedVariable3(null);
-        setSelectedVariable4(null);
-      } else {
-        console.error("Failed to save formula.");
+        if (response.ok) {
+          console.log("Formula saved successfully!");
+          // Reset state variables
+          setNewFormula("");
+          setSuccessMessage("Formula added successfully!");
+          setSelectedVariable1(null);
+          setSelectedVariable2(null);
+          setSelectedVariable3(null);
+          setSelectedVariable4(null);
+        } else {
+          console.error("Failed to save formula.");
+          setFormulaError("Failed to Save formula");
+        }
+      } catch (error) {
+        console.error("Error saving formula:", error);
+        setFormulaError(String(error));
       }
-    } catch (error) {
-      console.error("Error saving formula:", error);
     }
   };
 
@@ -158,6 +195,42 @@ const NewFormula = () => {
           borderRadius: "10px",
         }}
       >
+        {isZipDependent && (
+          <div
+            className="row d-flex align-items-center"
+            style={{
+              justifyContent: "space-between",
+              marginLeft: "10%",
+              marginRight: "10%",
+              paddingTop: "40px",
+            }}
+          >
+            <div className="col" style={{ alignSelf: "end" }}>
+              Select the utility
+            </div>
+            <div className="col">
+              <select
+                className="form-select"
+                value={selectedUtility || ""}
+                onChange={(e) => {
+                  setSelectedUtility(e.target.value);
+
+                  updateVariables([...constVariables, e.target.value]);
+                }}
+                style={{ width: "200px" }}
+              >
+                <option value="" disabled>
+                  Select Utility
+                </option>
+                {utilities.map((utility) => (
+                  <option key={utility} value={utility}>
+                    {utility}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+        )}
         <div className="row d-flex align-items-center">
           <p
             style={{
@@ -267,6 +340,26 @@ const NewFormula = () => {
             </select>
           </div>
         </div>
+        {<p style={{ fontWeight: "bold", color: "red" }}>{formulaError}</p>}
+        {/* {formulaError !== "" ? (
+          <></>
+        ) : (
+          <>
+            <div
+              className="alert alert-warning alert-dismissible fade show"
+              role="alert"
+            >
+              <strong>{formulaError}</strong>
+              <button
+                type="button"
+                className="btn-close"
+                data-bs-dismiss="alert"
+                aria-label="Close"
+                onClick={handleCloseAlert}
+              ></button>
+            </div>
+          </>
+        )} */}
 
         <div className="row d-flex align-items-center">
           <p
@@ -286,6 +379,7 @@ const NewFormula = () => {
                 type="text"
                 className="form-control rounded"
                 placeholder="Variable Name"
+                value={newVar}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                   updateVar(e.target.value);
                 }}
@@ -296,6 +390,7 @@ const NewFormula = () => {
                 type="number"
                 className="form-control rounded"
                 placeholder="Variable Value"
+                value={newVal}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                   const newValue = parseFloat(e.target.value);
                   updateVal(newValue);
@@ -337,6 +432,18 @@ const NewFormula = () => {
             </button>
           </div>
         </div>
+        {successMessage && (
+          <div
+            className="alert alert-success"
+            role="alert"
+            style={{ marginTop: "20px" }}
+            onClick={() => {
+              setSuccessMessage("");
+            }}
+          >
+            {successMessage}
+          </div>
+        )}
       </div>
     </div>
   );
