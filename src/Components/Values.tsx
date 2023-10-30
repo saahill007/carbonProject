@@ -1,4 +1,3 @@
-// src/Values.tsx
 import React from "react";
 import "./Values.css";
 import { Link, Routes, Route, useNavigate } from "react-router-dom";
@@ -11,7 +10,10 @@ import AdminEdit from "./admin_edit";
 import Utilities from "./Utilities";
 import Admin_main from "./admin_main";
 import Formulas from "./Formulas";
-// import UnitsSelector from "./unitsSelector";
+import Category from "./category_main";
+import Category_add from "./category_add";
+import CategoryEdit from "./category_edit";
+import CategoryImg from "../assets/Category.png";
 // import { Link, Routes, Route, Outlet, useNavigate } from "react-router-dom";
 
 interface ValuesProps {
@@ -130,8 +132,38 @@ const ValuesPage: React.FC<ValuesProps> = ({ children }) => {
             <i className="bi bi-percent" style={{ fontSize: "2em" }}></i>
           )}
         </Link>
+        <Link
+          to="category"
+          className={selectedOption === "category" ? "selected" : ""}
+          onClick={() => handleOptionClick("category")}
+          style={{ position: "relative", zIndex: 1000 }}
+        >
+          <div className="side-panel-link">
+          <div className="icon-and-text">
+        <div className="icon">
+        <img
+          src={CategoryImg}
+          alt="Category"
+          style={{ height: "1.5em", width: "1.5em" }}
+        />
+        </div>
+        {isPanelExpanded ? (
+          <div className="text">Category</div>
+          ) : (
+          <div className="text" style={{ display: "none" }}>
+          Category
+          </div>
+          )}
+        </div>
+      </div>
+      </Link>
+
+        {/* <div className="Category-image">
+          <img src={CategoryImg} alt="Category" style={{ height: '100%', width: '100%' }} />
+        </div> */}
       </div>
       <div className="main-window">{children}</div>
+      <div className="bottom-border"></div>
     </div>
   );
 };
@@ -154,7 +186,11 @@ const Values: React.FC = () => {
       <Route path="zipcodes" element={<ZipCodes />} />
       <Route path="formulas" element={<Formulas />} />
       <Route path="/admin/admin_add" element={<Admin_add />} />
-      <Route path="/admin/admin_edit" element={<AdminEdit />} />
+      {/* <Route path="/admin/admin_edit" element={<AdminEdit />} /> */}
+      <Route path="/admin/admin_edit/:adminIds" element={<AdminEdit />} />
+      <Route path="category" element={<Category />} />
+      <Route path="/category/category_add" element={<Category_add />} />
+      <Route path="/category/category_edit/:categoryIds" element={<CategoryEdit />} />
     </Routes>
   );
 };

@@ -10,11 +10,23 @@ app.use(bodyParser.json());
 
 const port = 3000;
 const dbConfig = {
-  host: "127.0.0.1",
-  user: "root",
-  password: "",
-  database: "carbon",
+   host: "18.219.100.56",
+  user: "carbonuser",
+  password: "Carbon@123",
+  database: "CRBN",
+  port: 3306,
 };
+
+// const port = 3001;
+
+
+// const dbConfig = {
+//   host: "18.219.100.56",
+//   user: "carbonuser",
+//   password: "Carbon@123",
+//   database: "CRBN",
+//   port: 3306,
+// };
 
 // Create a MySQL connection
 const mysqlConnection = mysql.createConnection(dbConfig);
@@ -574,7 +586,7 @@ app.get("/api/category/:categoryId", (req, res) => {
   const { categoryId } = req.params;
   // Perform a query to retrieve the name and email based on the category_id
   const query =
-    "SELECT category_id , category_name FROM CRBN.category WHERE category_id = ?";
+    "SELECT category_id , category_name FROM CRBN.Category WHERE category_id = ?";
   mysqlConnection.query(query, [categoryId], (error, rows) => {
     if (error) {
       console.error(
@@ -625,7 +637,7 @@ app.post("/api/send-email", async (req, res) => {
 
   try {
     mysqlConnection.query(
-      "SELECT Email FROM carbon.customer",
+      "SELECT Email FROM CRBN.Customer",
       (error, results, fields) => {
         if (error) {
           console.error("Error querying the database:", error);
@@ -655,7 +667,7 @@ app.post("/api/send-email", async (req, res) => {
               };
 
               mysqlConnection.query(
-                "INSERT INTO carbon.notification SET ?",
+                "INSERT INTO CRBN.notification SET ?",
                 notificationData,
                 (error) => {
                   if (error) {
@@ -679,7 +691,7 @@ app.post("/api/send-email", async (req, res) => {
 // API route to fetch the total number of inquiries with flag 1
 app.get("/api/getTotalFlagOneInquiries", (req, res) => {
   // Query the database to get the total count of inquiries with flag 1
-  const query = `SELECT COUNT(*) AS totalFlagOneInquiries FROM carbon.enquiry WHERE enquiry_flag = 1;`;
+  const query = `SELECT COUNT(*) AS totalFlagOneInquiries FROM CRBN.enquiry WHERE enquiry_flag = 1;`;
 
   mysqlConnection.query(query, (error, rows) => {
     if (error) {
@@ -700,7 +712,7 @@ app.get("/api/goToNextInquiry", (req, res) => {
 
   // Query the database to find the next customer inquiry
   const query = `SELECT enquiry_id, firstname, enquiry_question, email
-    FROM carbon.enquiry
+    FROM CRBN.enquiry
     WHERE enquiry_flag = 1 AND enquiry_id > ? 
     ORDER BY enquiry_id ASC
     LIMIT 1;
@@ -714,7 +726,7 @@ app.get("/api/goToNextInquiry", (req, res) => {
       if (rows.length === 0) {
         // If there are no matching customer inquiries, fetch the last question
         const lastQuestionQuery = `SELECT enquiry_id, firstname, enquiry_question, email
-                FROM carbon.enquiry
+                FROM CRBN.enquiry
                 WHERE enquiry_flag = 1
                 ORDER BY enquiry_id DESC
                 LIMIT 1;
@@ -747,7 +759,7 @@ app.get("/api/goToPreviousInquiry", (req, res) => {
 
   // Query the database to find the previous customer inquiry
   const query = `SELECT enquiry_id, firstname, enquiry_question, email
-    FROM carbon.enquiry
+    FROM CRBN.enquiry
     WHERE enquiry_flag = 1 AND enquiry_id < ?
     ORDER BY enquiry_id DESC
     LIMIT 1;
@@ -797,7 +809,7 @@ app.post("/api/sendCustomerEnquiryEmail", (req, res) => {
 
       // Update the flag of the customer inquiry to 0 and store the response sent
       const query = `
-                UPDATE carbon.enquiry SET enquiry_flag = 0, enquiry_response = ?  WHERE enquiry_id = ?`;
+                UPDATE CRBN.enquiry SET enquiry_flag = 0, enquiry_response = ?  WHERE enquiry_id = ?`;
 
       mysqlConnection.query(query, [text, ID], (updateError, updateResults) => {
         if (updateError) {
@@ -811,7 +823,7 @@ app.post("/api/sendCustomerEnquiryEmail", (req, res) => {
 
 // Define a route to retrieve questions with a specific flag from the database
 app.get("/api/questionsuser", cors(), (req, res) => {
-  const sql = "SELECT * FROM CRBN.questions WHERE question_flag = 1";
+  const sql = "SELECT * FROM CRBN.questions_Table WHERE question_flag = 1 WHERE question_flag = 1 ORDER BY label, ques_id";
 
   // Execute the SQL query using the MySQL connection
   mysqlConnection.query(sql, (error, results) => {
@@ -833,7 +845,7 @@ app.get("/api/questions/:id", cors(), async (req, res) => {
     const questionId = req.params.id; // Get the ID from the route parameter
     const [results] = await mysqlConnection
       .promise()
-      .query("SELECT * FROM CRBN.questions WHERE ques_id = ?", [questionId]);
+      .query("SELECT * FROM CRBN.questions_Table WHERE ques_id = ?", [questionId]);
     if (results.length > 0) {
       res.json(results[0]); // Send back the specific question
     } else {
@@ -880,11 +892,11 @@ app.post("/api/ContactUs", cors(), (req, res) => {
 });
 
 // API for random fact fetching
-app.get("/api/randomfact", async (req, res) => {
+app.get("/api/randomfact/:index", async (req, res) => {
   try {
-    const [rows, fields] = await mysqlConnection
-      .promise()
-      .query("SELECT fact FROM CRBN.facts ORDER BY RAND() LIMIT 1;");
+    const questionIndex = req.params.index;
+    const [rows] = await mysqlConnection.promise().query("SELECT fact FROM CRBN.facts ORDER BY RAND() LIMIT 1;");
+    // console.log(rows);  // log the entire result
 
     if (rows && rows.length > 0) {
       return res.json(rows[0]);
@@ -902,7 +914,7 @@ app.get("/api/totalquestions", cors(), async (req, res) => {
     const [results] = await mysqlConnection
       .promise()
       .query(
-        "SELECT COUNT(*) as total FROM CRBN.questions Where question_flag=1"
+        "SELECT COUNT(*) as total FROM CRBN.questions_Table Where question_flag=1"
       );
     if (results.length > 0) {
       res.json(results[0].total);
@@ -947,7 +959,7 @@ app.get("/api/getvardata", async (req, res) => {
   try {
     const connection = await pool.getConnection();
     const [rows] = await connection.query(
-      "SELECT name, value FROM conversion_table"
+      "SELECT name, value FROM CRBN.conversion_table"
     );
     connection.release();
     const variableValues = {};
@@ -960,116 +972,413 @@ app.get("/api/getvardata", async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
-app.get("/api/allformulas", async (req, res) => {
-  try {
-    const connection = await pool.getConnection();
-    const [rows] = await connection.query(
-      "SELECT formulaName FROM formulasTable"
-    );
-    connection.release();
-    const formulaNames = rows.map((row) => row.formulaName);
-    res.json(formulaNames);
-  } catch (error) {
-    console.error("Error fetching formula names:", error);
-    res.status(500).json({ error: "Internal Server Error" });
-  }
-});
-// API endpoint to update a variable value
-app.put("/api/updatevar/:name", async (req, res) => {
-  const { name } = req.params;
-  const { value } = req.body;
-  try {
-    const connection = await pool.getConnection();
-    await connection.query(
-      "UPDATE conversion_table SET value = ? WHERE name = ?",
-      [value, name]
-    );
-    connection.release();
-    res.json({ value });
-  } catch (error) {
-    console.error("Error updating variable value:", error);
-    res.status(500).json({ error: "Internal Server Error" });
-  }
-});
-app.post("/api/addConversion", async (req, res) => {
-  const { name, value } = req.body;
-  try {
-    const connection = await pool.getConnection();
-    await connection.query(
-      "INSERT INTO conversion_table (name, value) VALUES (?, ?)",
-      [name, value]
-    );
-    connection.release();
-    res.status(201).json({ message: "Var added successfully" });
-  } catch (error) {
-    console.error("Error adding Var:", error);
-    res.status(500).json({ error: "Internal Server Error" });
-  }
-});
-app.post("/api/addQuestion", async (req, res) => {
-  const {
-    questionContent,
-    household,
-    zipcode,
-    questionType,
-    enabled,
-    choiceAns,
-    choices,
-    refs,
-    selectedUnits,
-    selectedFormulas,
-    label,
-  } = req.body;
-  try {
-    const connection = await pool.getConnection();
-    await connection.query(
-      "INSERT INTO questionsTable (questionContent, household, zipcode, questionType, enabled, choiceAns, choices, refs, selectedUnits, selectedFormulas, label) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-      [
-        questionContent,
-        household,
-        zipcode,
-        questionType,
-        enabled,
-        choiceAns,
-        JSON.stringify(choices),
-        JSON.stringify(refs),
-        JSON.stringify(selectedUnits),
-        JSON.stringify(selectedFormulas),
-        label,
-      ]
-    );
-    connection.release();
-    res.status(201).json({ message: "Question added successfully" });
-  } catch (error) {
-    console.error("Error adding question:", error);
-    res.status(500).json({ error: "Internal Server Error" });
-  }
-});
-app.post("/api/addFormula", async (req, res) => {
-  const { formulaName, var1, var2, var3, var4 } = req.body;
-  try {
-    const connection = await pool.getConnection();
-    await connection.query(
-      "INSERT INTO formulasTable (formulaName, var1, var2, var3, var4) VALUES (?, ?, ?, ?, ?)",
-      [formulaName, var1, var2, var3, var4]
-    );
-    connection.release();
-    res.status(201).json({ message: "Formula added successfully" });
-  } catch (error) {
-    console.error("Error adding formula:", error);
-    res.status(500).json({ error: "Internal Server Error" });
-  }
-});
-app.get("/api/questions", async (req, res) => {
-  try {
-    const connection = await pool.getConnection();
-    const [rows] = await connection.query("SELECT * FROM questionsTable");
-    connection.release();
-    res.json(rows);
-  } catch (error) {
-    console.error("Error fetching questions:", error);
-    res.status(500).json({ error: "Internal Server Error" });
-  }
+
+app.get("/api/data", async (req, res) => {
+    try {
+      const connection = await createConnection(dbConfig);
+      const [rows] = await connection.execute("SELECT * FROM CRBN.conversion_table");
+      connection.end();
+  
+      res.json(rows);
+    } catch (error) {
+      console.error(error);
+      res.status(500).send("Internal Server Error");
+    }
+  });
+  
+  // New endpoint to add data
+  app.post("/api/addData", async (req, res) => {
+    const {
+      questionContent,
+      household,
+      zipcode,
+      questionType,
+      enabled,
+      choiceAns,
+      choice1,
+      choice2,
+      choice3,
+      choice4,
+      ref1,
+      ref2,
+      ref3,
+      ref4,
+      selectedUnits,
+      selectedUnitRefs,
+    } = req.body;
+  
+    try {
+      const connection = await createConnection(dbConfig);
+  
+      // Adjust this query based on your table structure
+      await connection.execute(
+        `
+        INSERT INTO CRBN.admin_questions (
+          questionContent,
+          household,
+          zipcode,
+          questionType,
+          enabled,
+          choiceAns,
+          choice1,
+          choice2,
+          choice3,
+          choice4,
+          ref1,
+          ref2,
+          ref3,
+          ref4,
+          selectedUnits,
+          selectedUnitRefs
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `,
+        [
+          questionContent,
+          household,
+          zipcode,
+          questionType,
+          enabled,
+          choiceAns,
+          choice1,
+          choice2,
+          choice3,
+          choice4,
+          ref1,
+          ref2,
+          ref3,
+          ref4,
+          selectedUnits,
+          selectedUnitRefs,
+        ]
+      );
+  
+      connection.end();
+  
+      res.status(201).json({ message: "Data added successfully" });
+    } catch (error) {
+      console.error(error);
+      res.status(500).send("Internal Server Error");
+    }
+  });
+  
+  app.get("/api/getUniqueUtilities", async (req, res) => {
+    try {
+      const connection = await pool.getConnection();
+      const [rows] = await connection.query(
+        "SELECT DISTINCT Utility FROM CRBN.utilities"
+      );
+      connection.release();
+  
+      const uniqueUtilities = rows.map((row) => row.Utility);
+      res.json(uniqueUtilities);
+    } catch (error) {
+      console.error("Error fetching unique utilities:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  });
+  
+  // ... (previous code)
+  
+  app.get("/api/getUnits", async (req, res) => {
+    try {
+      const connection = await pool.getConnection();
+      const [rows] = await connection.query("SELECT name FROM CRBN.units_table");
+      connection.release();
+      const unitNames = rows.map((row) => row.name);
+      res.json(unitNames);
+    } catch (error) {
+      console.error("Error fetching unit names:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  });
+  
+  app.get("/api/allformulas", async (req, res) => {
+    try {
+      const connection = await pool.getConnection();
+      const [rows] = await connection.query(
+        "SELECT formulaName FROM CRBN.formulasTable"
+      );
+      connection.release();
+      const formulaNames = rows.map((row) => row.formulaName);
+      res.json(formulaNames);
+    } catch (error) {
+      console.error("Error fetching formula names:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  });
+  
+  // API endpoint to update a variable value
+  app.put("/api/updatevar/:name", async (req, res) => {
+    const { name } = req.params;
+    const { value } = req.body;
+  
+    try {
+      const connection = await pool.getConnection();
+      await connection.query(
+        "UPDATE CRBN.conversion_table SET value = ? WHERE name = ?",
+        [value, name]
+      );
+      connection.release();
+      res.json({ value });
+    } catch (error) {
+      console.error("Error updating variable value:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  });
+  
+  app.post("/api/addConversion", async (req, res) => {
+    const { name, value } = req.body;
+  
+    try {
+      const connection = await pool.getConnection();
+      await connection.query(
+        "INSERT INTO CRBN.conversion_table (name, value) VALUES (?, ?)",
+        [name, value]
+      );
+      connection.release();
+      res.status(201).json({ message: "Var added successfully" });
+    } catch (error) {
+      console.error("Error adding Var:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  });
+  
+  app.post("/api/addUnit", async (req, res) => {
+    const { name, value } = req.body;
+  
+    try {
+      const connection = await pool.getConnection();
+      await connection.query("INSERT INTO CRBN.units_table (name) VALUES (?)", [name]);
+      connection.release();
+      res.status(201).json({ message: "Var added successfully" });
+    } catch (error) {
+      console.error("Error adding Var:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  });
+  
+  app.post("/api/addQuestion", async (req, res) => {
+    const {
+      questionContent,
+      household,
+      zipcode,
+      questionType,
+      enabled,
+      choiceAns,
+      choices,
+      refs,
+      selectedUnits,
+      selectedFormulas,
+      label,
+    } = req.body;
+  
+    try {
+      const connection = await pool.getConnection();
+      await connection.query(
+        "INSERT INTO CRBN.questionsTable (questionContent, household, zipcode, questionType, enabled, choiceAns, choices, refs, selectedUnits, selectedFormulas, label) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        [
+          questionContent,
+          household,
+          zipcode,
+          questionType,
+          enabled,
+          choiceAns,
+          JSON.stringify(choices),
+          JSON.stringify(refs),
+          JSON.stringify(selectedUnits),
+          JSON.stringify(selectedFormulas),
+          label,
+        ]
+      );
+      connection.release();
+      res.status(201).json({ message: "Question added successfully" });
+    } catch (error) {
+      console.error("Error adding question:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  });
+  
+  app.post("/api/addFormula", async (req, res) => {
+    const { formulaName, var1, var2, var3, var4 } = req.body;
+  
+    try {
+      const connection = await pool.getConnection();
+      await connection.query(
+        "INSERT INTO CRBN.formulasTable (formulaName, var1, var2, var3, var4) VALUES (?, ?, ?, ?, ?)",
+        [formulaName, var1, var2, var3, var4]
+      );
+      connection.release();
+      res.status(201).json({ message: "Formula added successfully" });
+    } catch (error) {
+      console.error("Error adding formula:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  });
+  
+  app.get("/api/questions", async (req, res) => {
+    try {
+      const connection = await pool.getConnection();
+      const [rows] = await connection.query("SELECT * FROM CRBN.questionsTable");
+      connection.release();
+      res.json(rows);
+    } catch (error) {
+      console.error("Error fetching questions:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  });
+  
+  app.get("/api/question/:id", async (req, res) => {
+    const { id } = req.params;
+  
+    try {
+      const connection = await pool.getConnection();
+      const [rows] = await connection.query(
+        "SELECT * FROM CRBN.questionsTable WHERE id = ?",
+        [id]
+      );
+      connection.release();
+  
+      if (rows.length === 0) {
+        res.status(404).json({ error: "Question not found" });
+      } else {
+        res.json(rows[0]); // Assuming that ID is unique, so there should be only one result
+      }
+    } catch (error) {
+      console.error("Error fetching a specific question:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  });
+  app.patch("/api/updateQuestion/:id", async (req, res) => {
+    const { id } = req.params;
+  
+    // Destructure the properties you want to update from the request body
+    const {
+      questionContent,
+      household,
+      zipcode,
+      questionType,
+      enabled,
+      choiceAns,
+      choices,
+      refs,
+      selectedUnits,
+      selectedFormulas,
+      label,
+    } = req.body;
+  
+    try {
+      const connection = await pool.getConnection();
+  
+      // Update the corresponding row in the questionsTable
+      await connection.query(
+        `
+        UPDATE CRBN.questionsTable 
+        SET 
+          questionContent = ?, 
+          household = ?, 
+          zipcode = ?, 
+          questionType = ?, 
+          enabled = ?, 
+          choiceAns = ?, 
+          choices = ?, 
+          refs = ?, 
+          selectedUnits = ?, 
+          selectedFormulas = ?, 
+          label = ?
+        WHERE id = ?
+        `,
+        [
+          questionContent,
+          household,
+          zipcode,
+          questionType,
+          enabled,
+          choiceAns,
+          JSON.stringify(choices),
+          JSON.stringify(refs),
+          JSON.stringify(selectedUnits),
+          JSON.stringify(selectedFormulas),
+          label,
+          id,
+        ]
+      );
+  
+      connection.release();
+      res.status(200).json({ message: "Question updated successfully" });
+    } catch (error) {
+      console.error("Error updating question:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  });
+  app.get("/api/utilities", async (req, res) => {
+    try {
+      const connection = await pool.getConnection();
+      const [rows] = await connection.query("SELECT * FROM CRBN.utilities");
+      connection.release();
+      res.json(rows);
+    } catch (error) {
+      console.error("Error fetching utilities:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  });
+  
+  app.get("/api/getCategories", async (req, res) => {
+    try {
+      const connection = await pool.getConnection();
+      const [rows] = await connection.query("SELECT * FROM CRBN.Category");
+      connection.release();
+  
+      const categories = rows.map((row) => ({
+        categoryId: row.category_id,
+        categoryName: row.category_name,
+      }));
+  
+      res.json(categories);
+    } catch (error) {
+      console.error("Error fetching Category:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  });
+
+  app.post('/api/calculateFootprint', cors(), async (req, res) => {
+    const answers = req.body; // Array or object containing question IDs and user answers
+    console.log("Received answers:", answers);
+
+    let totalCarbonFootprint = 0;
+
+    try {
+        for (let answer of answers) {
+            const ques_id = answer.ques_id;
+            const userValue = answer.value; 
+            console.log("Querying for ques_id:", ques_id);
+
+
+            // Fetch ref (constant or formula) for the question
+            const [results] = await mysqlConnection.promise().query("SELECT refs FROM CRBN.questions_Table WHERE ques_id = ?", [ques_id]);
+            if(results.length === 0) {
+                console.error(`No data found for ques_id: ${ques_id}`);
+                continue;  // Skip the rest of this iteration and proceed to next ques_id in the loop
+            }
+            console.log("Results from database:", results);
+            const refValue = parseFloat(results[0].refs);
+
+            // Calculate carbon footprint for this answer
+            const carbonValue = refValue * userValue; // Modify this line if refs stores complex data
+
+            totalCarbonFootprint += Math.ceil(carbonValue);
+        }
+
+        const CO2_PER_TREE_PER_YEAR = 48;
+        const totalTreesRequired = Math.ceil(totalCarbonFootprint / CO2_PER_TREE_PER_YEAR);
+
+        res.json({
+            carbonFootprint: totalCarbonFootprint,
+            numberOfTrees: totalTreesRequired
+        });
+    } catch (error) {
+        console.error("Error calculating values:", error);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
 });
 
 // Start the server
