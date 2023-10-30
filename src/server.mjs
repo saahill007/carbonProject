@@ -13,8 +13,8 @@ const port = 3000;
 const dbConfig = {
     host: '127.0.0.1',
     user: 'root',
-    password: "",
-    database: "CRBN"
+    password: "Lakshmi@24",
+    database: "carbon"
 };
 
 // Create a MySQL connection
@@ -540,7 +540,7 @@ app.post('/api/send-email', async (req, res) => {
     });
 
     try {
-        mysqlConnection.query('SELECT Email FROM CRBN.customer', (error, results, fields) => {
+        mysqlConnection.query('SELECT Email FROM carbon.customer', (error, results, fields) => {
             if (error) {
                 console.error('Error querying the database:', error);
                 res.status(500).send('Failed to fetch customer emails');
@@ -560,6 +560,19 @@ app.post('/api/send-email', async (req, res) => {
                 transporter.sendMail(mailOptions, (error, info) => {
                     if (error) {
                         console.error('Error sending email:', error);
+                    } else {
+                        // If the email was sent successfully, insert a record into the notifications table
+                        const notificationData = {
+                            customer_Emailid: customerEmail,
+                            notification_subject: subject,
+                            notification_message: body,
+                        };
+
+                        mysqlConnection.query('INSERT INTO carbon.notification SET ?', notificationData, (error) => {
+                            if (error) {
+                                console.error('Error inserting notification:', error);
+                            }
+                        });
                     }
                 });
             });
@@ -574,8 +587,140 @@ app.post('/api/send-email', async (req, res) => {
 
 
 
+// API route to fetch the total number of inquiries with flag 1
+app.get('/api/getTotalFlagOneInquiries', (req, res) => {
+    // Query the database to get the total count of inquiries with flag 1
+    const query = `SELECT COUNT(*) AS totalFlagOneInquiries FROM carbon.enquiry WHERE enquiry_flag = 1;`;
+
+    mysqlConnection.query(query, (error, rows) => {
+        if (error) {
+            console.error('Error fetching data:', error);
+            res.status(500).json({ error: 'Internal server error' });
+        } else {
+            // Extract the total count from the result
+            const totalFlagOneInquiries = rows[0].totalFlagOneInquiries;
+            res.json({ total: totalFlagOneInquiries });
+        }
+    });
+});
+
+// API route to fetch the next customer inquiry
+app.get('/api/goToNextInquiry', (req, res) => {
+    // Get the current customer's `enquiry_id`
+    const currentEnquiryId = req.query.enquiryId;
+
+    // Query the database to find the next customer inquiry
+    const query = `SELECT enquiry_id, firstname, enquiry_question, email
+    FROM carbon.enquiry
+    WHERE enquiry_flag = 1 AND enquiry_id > ? 
+    ORDER BY enquiry_id ASC
+    LIMIT 1;
+  `;
+
+    mysqlConnection.query(query, [currentEnquiryId], (error, rows) => {
+        if (error) {
+            console.error('Error fetching data:', error);
+            res.status(500).json({ error: 'Internal server error' });
+        } else {
+            if (rows.length === 0) {
+                // If there are no matching customer inquiries, fetch the last question
+                const lastQuestionQuery = `SELECT enquiry_id, firstname, enquiry_question, email
+                FROM carbon.enquiry
+                WHERE enquiry_flag = 1
+                ORDER BY enquiry_id DESC
+                LIMIT 1;
+                `;
+
+                mysqlConnection.query(lastQuestionQuery, (lastQuestionError, lastQuestionRows) => {
+                    if (lastQuestionError) {
+                        console.error('Error fetching last question:', lastQuestionError);
+                        res.status(500).json({ error: 'Internal server error' });
+                    } else if (lastQuestionRows.length === 0) {
+                        res.json({ message: 'No more matching customer inquiries' });
+                    } else {
+                        res.json(lastQuestionRows[0]);
+                    }
+                });
+            } else {
+                res.json(rows[0]);
+            }
+        }
+    });
+});
+
+// API route to fetch the previous customer inquiry
+app.get('/api/goToPreviousInquiry', (req, res) => {
+    // Get the current customer's `enquiry_id`
+    const currentEnquiryId = req.query.enquiryId;
+
+    // Query the database to find the previous customer inquiry
+    const query = `SELECT enquiry_id, firstname, enquiry_question, email
+    FROM carbon.enquiry
+    WHERE enquiry_flag = 1 AND enquiry_id < ?
+    ORDER BY enquiry_id DESC
+    LIMIT 1;
+  `;
+
+    mysqlConnection.query(query, [currentEnquiryId], (error, rows) => {
+        if (error) {
+            console.error('Error fetching data:', error);
+            res.status(500).json({ error: 'Internal server error' });
+        } else {
+            if (rows.length === 0) {
+                res.json({ message: 'No previous matching customer inquiries' });
+            } else {
+                res.json(rows[0]);
+            }
+        }
+    });
+});
+
+// Extend the /api/sendCustomerEnquiryEmail route
+app.post('/api/sendCustomerEnquiryEmail', (req, res) => {
+    const { ID, to, subject, text } = req.body;
+
+    const transporter = nodemailer.createTransport({
+        service: 'Gmail',
+        auth: {
+            user: 'carbonoffset08@gmail.com',
+            pass: 'vjbv uaeq cpro lsub',
+        },
+    });
+
+    const mailOptions = {
+        from: 'carbonoffset08@gmail.com',
+        to,
+        subject,
+        text,
+    };
+
+    // Send the email
+    transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+            console.error('Error sending email:', error);
+            res.status(500).json({ error: 'Internal server error' });
+        } else {
+            console.log('Email sent:', info.response);
+            res.json({ message: 'Email sent successfully' });
+
+            // Update the flag of the customer inquiry to 0 and store the response sent
+            const query = `
+                UPDATE carbon.enquiry SET enquiry_flag = 0, enquiry_response = ?  WHERE enquiry_id = ?`;
+
+            mysqlConnection.query(query, [text, ID], (updateError, updateResults) => {
+                if (updateError) {
+                    console.error('Error updating customer inquiry:', updateError);
+                }
+                // Handle success or failure here
+            });
+        }
+    });
+});
+
+
+
 // Define a route to retrieve questions with a specific flag from the database
-app.get('/api/questionsuser', cors(),(req, res) => {
+app.get('/api/questionsuser', cors(), (req, res) => {
     const sql = 'SELECT * FROM CRBN.questions WHERE question_flag = 1';
 
     // Execute the SQL query using the MySQL connection
@@ -637,7 +782,7 @@ app.post('/api/ContactUs', cors(), (req, res) => {
 app.get('/api/randomfact', async (req, res) => {
     try {
         const [rows, fields] = await mysqlConnection.promise().query("SELECT fact FROM CRBN.facts ORDER BY RAND() LIMIT 1;");
-        
+
         if (rows && rows.length > 0) {
             return res.json(rows[0]);
         } else {
@@ -690,132 +835,132 @@ app.get('/api/utility/:zipcode', cors(), (req, res) => {
 
 app.get("/api/getvardata", async (req, res) => {
     try {
-      const connection = await pool.getConnection();
-      const [rows] = await connection.query(
-        "SELECT name, value FROM conversion_table"
-      );
-      connection.release();
-      const variableValues = {};
-      rows.forEach((row) => {
-        variableValues[row.name] = row.value;
-      });
-      res.json(variableValues);
+        const connection = await pool.getConnection();
+        const [rows] = await connection.query(
+            "SELECT name, value FROM conversion_table"
+        );
+        connection.release();
+        const variableValues = {};
+        rows.forEach((row) => {
+            variableValues[row.name] = row.value;
+        });
+        res.json(variableValues);
     } catch (error) {
-      console.error("Error fetching variable values:", error);
-      res.status(500).json({ error: "Internal Server Error" });
+        console.error("Error fetching variable values:", error);
+        res.status(500).json({ error: "Internal Server Error" });
     }
-  });
-  app.get("/api/allformulas", async (req, res) => {
+});
+app.get("/api/allformulas", async (req, res) => {
     try {
-      const connection = await pool.getConnection();
-      const [rows] = await connection.query(
-        "SELECT formulaName FROM formulasTable"
-      );
-      connection.release();
-      const formulaNames = rows.map((row) => row.formulaName);
-      res.json(formulaNames);
+        const connection = await pool.getConnection();
+        const [rows] = await connection.query(
+            "SELECT formulaName FROM formulasTable"
+        );
+        connection.release();
+        const formulaNames = rows.map((row) => row.formulaName);
+        res.json(formulaNames);
     } catch (error) {
-      console.error("Error fetching formula names:", error);
-      res.status(500).json({ error: "Internal Server Error" });
+        console.error("Error fetching formula names:", error);
+        res.status(500).json({ error: "Internal Server Error" });
     }
-  });
-  // API endpoint to update a variable value
-  app.put("/api/updatevar/:name", async (req, res) => {
+});
+// API endpoint to update a variable value
+app.put("/api/updatevar/:name", async (req, res) => {
     const { name } = req.params;
     const { value } = req.body;
     try {
-      const connection = await pool.getConnection();
-      await connection.query(
-        "UPDATE conversion_table SET value = ? WHERE name = ?",
-        [value, name]
-      );
-      connection.release();
-      res.json({ value });
+        const connection = await pool.getConnection();
+        await connection.query(
+            "UPDATE conversion_table SET value = ? WHERE name = ?",
+            [value, name]
+        );
+        connection.release();
+        res.json({ value });
     } catch (error) {
-      console.error("Error updating variable value:", error);
-      res.status(500).json({ error: "Internal Server Error" });
+        console.error("Error updating variable value:", error);
+        res.status(500).json({ error: "Internal Server Error" });
     }
-  });
-  app.post("/api/addConversion", async (req, res) => {
+});
+app.post("/api/addConversion", async (req, res) => {
     const { name, value } = req.body;
     try {
-      const connection = await pool.getConnection();
-      await connection.query(
-        "INSERT INTO conversion_table (name, value) VALUES (?, ?)",
-        [name, value]
-      );
-      connection.release();
-      res.status(201).json({ message: "Var added successfully" });
+        const connection = await pool.getConnection();
+        await connection.query(
+            "INSERT INTO conversion_table (name, value) VALUES (?, ?)",
+            [name, value]
+        );
+        connection.release();
+        res.status(201).json({ message: "Var added successfully" });
     } catch (error) {
-      console.error("Error adding Var:", error);
-      res.status(500).json({ error: "Internal Server Error" });
+        console.error("Error adding Var:", error);
+        res.status(500).json({ error: "Internal Server Error" });
     }
-  });
-  app.post("/api/addQuestion", async (req, res) => {
+});
+app.post("/api/addQuestion", async (req, res) => {
     const {
-      questionContent,
-      household,
-      zipcode,
-      questionType,
-      enabled,
-      choiceAns,
-      choices,
-      refs,
-      selectedUnits,
-      selectedFormulas,
-      label,
+        questionContent,
+        household,
+        zipcode,
+        questionType,
+        enabled,
+        choiceAns,
+        choices,
+        refs,
+        selectedUnits,
+        selectedFormulas,
+        label,
     } = req.body;
     try {
-      const connection = await pool.getConnection();
-      await connection.query(
-        "INSERT INTO questionsTable (questionContent, household, zipcode, questionType, enabled, choiceAns, choices, refs, selectedUnits, selectedFormulas, label) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-        [
-          questionContent,
-          household,
-          zipcode,
-          questionType,
-          enabled,
-          choiceAns,
-          JSON.stringify(choices),
-          JSON.stringify(refs),
-          JSON.stringify(selectedUnits),
-          JSON.stringify(selectedFormulas),
-          label,
-        ]
-      );
-      connection.release();
-      res.status(201).json({ message: "Question added successfully" });
+        const connection = await pool.getConnection();
+        await connection.query(
+            "INSERT INTO questionsTable (questionContent, household, zipcode, questionType, enabled, choiceAns, choices, refs, selectedUnits, selectedFormulas, label) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            [
+                questionContent,
+                household,
+                zipcode,
+                questionType,
+                enabled,
+                choiceAns,
+                JSON.stringify(choices),
+                JSON.stringify(refs),
+                JSON.stringify(selectedUnits),
+                JSON.stringify(selectedFormulas),
+                label,
+            ]
+        );
+        connection.release();
+        res.status(201).json({ message: "Question added successfully" });
     } catch (error) {
-      console.error("Error adding question:", error);
-      res.status(500).json({ error: "Internal Server Error" });
+        console.error("Error adding question:", error);
+        res.status(500).json({ error: "Internal Server Error" });
     }
-  });
-  app.post("/api/addFormula", async (req, res) => {
+});
+app.post("/api/addFormula", async (req, res) => {
     const { formulaName, var1, var2, var3, var4 } = req.body;
     try {
-      const connection = await pool.getConnection();
-      await connection.query(
-        "INSERT INTO formulasTable (formulaName, var1, var2, var3, var4) VALUES (?, ?, ?, ?, ?)",
-        [formulaName, var1, var2, var3, var4]
-      );
-      connection.release();
-      res.status(201).json({ message: "Formula added successfully" });
+        const connection = await pool.getConnection();
+        await connection.query(
+            "INSERT INTO formulasTable (formulaName, var1, var2, var3, var4) VALUES (?, ?, ?, ?, ?)",
+            [formulaName, var1, var2, var3, var4]
+        );
+        connection.release();
+        res.status(201).json({ message: "Formula added successfully" });
     } catch (error) {
-      console.error("Error adding formula:", error);
-      res.status(500).json({ error: "Internal Server Error" });
+        console.error("Error adding formula:", error);
+        res.status(500).json({ error: "Internal Server Error" });
     }
-  });
-  app.get("/api/questions", async (req, res) => {
+});
+app.get("/api/questions", async (req, res) => {
     try {
-      const connection = await pool.getConnection();
-      const [rows] = await connection.query("SELECT * FROM questionsTable");
-      connection.release();
-      res.json(rows);
+        const connection = await pool.getConnection();
+        const [rows] = await connection.query("SELECT * FROM questionsTable");
+        connection.release();
+        res.json(rows);
     } catch (error) {
-      console.error("Error fetching questions:", error);
-      res.status(500).json({ error: "Internal Server Error" });
+        console.error("Error fetching questions:", error);
+        res.status(500).json({ error: "Internal Server Error" });
     }
-  });
+});
 
 // Start the server
 app.listen(port, () => {
