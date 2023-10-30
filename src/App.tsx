@@ -20,6 +20,7 @@ import Dropdown from "./Components/Dropdown";
 import Editquestion from "./Components/editquestion";
 import CategoryDrop from "./Components/catedrop";
 import Email_notification from "./Components/email_notification"
+import Customer_queries from "./Components/customer_queries"
 
 const Home: React.FC = () => <div>Home Page</div>;
 
@@ -67,6 +68,7 @@ const App: React.FC = () => {
             <Route path="/questions/dropdown" element={<Dropdown />} />
             <Route path="/Categorydropdown" element={<CategoryDrop />} />
             <Route path="/email_notification" element={<Email_notification />} />
+            <Route path="/customer_queries" element={<Customer_queries />} />
           </Routes>
         </div>
       </div>
