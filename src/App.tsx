@@ -10,7 +10,7 @@ import "./App.css";
 import { ValuesPage, Values } from "./Components/Values";
 import Questions from "./Components/Questions";
 import AddQuestionPage from "./Components/Addquestionpage";
-import MultipleChoice from "./Components/multiplechoice";
+
 // import FillInTheBlank from "./Components/fillintheblank";
 import Support from "./Components/Support";
 import Contact from "./Components/Contact";
@@ -67,11 +67,11 @@ const App: React.FC = () => {
             <Route path="/logout" element={<Logout />} />
             <Route path="/questions/slider" element={<Slider />} />
             <Route path="/questions/dropdown" element={<Dropdown />} />
-            <Route path="/Categorydropdown" element={<CategoryDrop />} />
+            {/* <Route path="/Categorydropdown" element={<CategoryDrop />} />
             <Route
               path="/email_notification"
               element={<Email_notification />}
-            />
+            /> */}
             <Route path="/customer_queries" element={<Customer_queries />} />
           </Routes>
         </div>

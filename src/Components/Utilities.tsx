@@ -6,6 +6,7 @@ import addImg from "../assets/add.png";
 import delImg from "../assets/delete.png";
 import editImg from "../assets/edit.png";
 // import axiosInstance from "./axiosconfig";
+import axios from "axios";
 
 interface Utility {
   Val_Id: number;
@@ -142,9 +143,7 @@ const Utilities: React.FC = () => {
                 <td>{item.Utility}</td>
                 <td>{item.Utility_Value}</td>
                 <td>{item.Utility_Units}</td>
-                {/* <td>{item.Carbon_Intensity}</td>
-                <td>{item.Carbon_Intensity_Unit}</td>
-                <td>{item.Ref_Value}</td> */}
+
                 <td>{item.Sources}</td>
                 <td>{item.Date_of_Source}</td>
               </tr>
