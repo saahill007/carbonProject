@@ -21,6 +21,7 @@ import QuestionAdmin from "./Components/QuestionAdmin";
 import Customer_queries from "./Components/customer_queries";
 import Email_notification from "./Components/email_notification"
 import CategoryDropdown from "./Components/catedrop"
+import Dashboard from "./Components/Dashboard"
 
 const Home: React.FC = () => <div>Home Page</div>;
 
@@ -69,6 +70,7 @@ const App: React.FC = () => {
             <Route path="/logout" element={<Logout />} />
             <Route path="/questions/slider" element={<Slider />} />
             <Route path="/questions/dropdown" element={<Dropdown />} />
+            <Route path="/dashboard" element={<Dashboard />} />
             {/* <Route path="/Categorydropdown" element={<CategoryDrop />} /> */}
             <Route
               path="/email_notification"
