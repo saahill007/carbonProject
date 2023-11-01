@@ -5,10 +5,9 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'rec
 import { PieChart, Pie, Cell} from 'recharts';
 import { LineChart, Line} from 'recharts';
 import moment from 'moment';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import OpenCageGeocode from 'opencage-api-client';
-import L from 'leaflet';
+import axiosInstance from './axiosconfig';
+
 // import axiosInstance from './axiosconfig';
 
 type CustomerData = {
@@ -44,7 +43,7 @@ const Dashboard: React.FC = () => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get<CustomerData[]>('http://localhost:3000/api/Customer');
+      const response = await axiosInstance.get<CustomerData[]>('/api/Customer');
       setCustomerData(response.data);
       setFilteredData(response.data); // Initialize filteredData with the fetched data
     } catch (error) {
@@ -59,37 +58,37 @@ const Dashboard: React.FC = () => {
 
   const handleFilter = async () => {
     try {
-      let url = 'http://localhost:3000/api/Customer';
+      let url = '/api/Customer';
       
       if (fromDate && toDate && zipcodeFilter && carbonFootprintFilter && treesFilter) {
-        url = `http://localhost:3000/api/filterCustomer?fromDate=${fromDate}&toDate=${toDate}&zipcode=${zipcodeFilter}&carbonComparison=${carbonComparison}&carbonFootprintFilter=${carbonFootprintFilter}&treesComparison=${treesComparison}&treesFilter=${treesFilter}`;
+        url = `/api/filterCustomer?fromDate=${fromDate}&toDate=${toDate}&zipcode=${zipcodeFilter}&carbonComparison=${carbonComparison}&carbonFootprintFilter=${carbonFootprintFilter}&treesComparison=${treesComparison}&treesFilter=${treesFilter}`;
       }
       else if (fromDate && toDate && carbonFootprintFilter && treesFilter) {
-        url = `http://localhost:3000/api/filterCustomer?fromDate=${fromDate}&toDate=${toDate}&carbonComparison=${carbonComparison}&carbonFootprintFilter=${carbonFootprintFilter}&treesComparison=${treesComparison}&treesFilter=${treesFilter}`;
+        url = `/api/filterCustomer?fromDate=${fromDate}&toDate=${toDate}&carbonComparison=${carbonComparison}&carbonFootprintFilter=${carbonFootprintFilter}&treesComparison=${treesComparison}&treesFilter=${treesFilter}`;
       }
       else if (fromDate && toDate && zipcodeFilter) {
-        url = `http://localhost:3000/api/filterCustomer?fromDate=${fromDate}&toDate=${toDate}&zipcode=${zipcodeFilter}`;
+        url = `/api/filterCustomer?fromDate=${fromDate}&toDate=${toDate}&zipcode=${zipcodeFilter}`;
       } else if (fromDate && toDate && carbonFootprintFilter) {
-        url = `http://localhost:3000/api/filterCustomer?fromDate=${fromDate}&toDate=${toDate}&carbonComparison=${carbonComparison}&carbonFootprintFilter=${carbonFootprintFilter}`;
+        url = `/api/filterCustomer?fromDate=${fromDate}&toDate=${toDate}&carbonComparison=${carbonComparison}&carbonFootprintFilter=${carbonFootprintFilter}`;
       }else if (fromDate && toDate && treesFilter) {
-        url = `http://localhost:3000/api/filterCustomer?fromDate=${fromDate}&toDate=${toDate}&treesComparison=${treesComparison}&treesFilter=${treesFilter}`;
+        url = `/api/filterCustomer?fromDate=${fromDate}&toDate=${toDate}&treesComparison=${treesComparison}&treesFilter=${treesFilter}`;
       }else if (fromDate && toDate) {
-        url = `http://localhost:3000/api/filterCustomer?fromDate=${fromDate}&toDate=${toDate}`;
+        url = `/api/filterCustomer?fromDate=${fromDate}&toDate=${toDate}`;
       } else if (zipcodeFilter) {
-        url = `http://localhost:3000/api/filterCustomer?zipcode=${zipcodeFilter}`;
+        url = `/api/filterCustomer?zipcode=${zipcodeFilter}`;
       } else if (carbonFootprintFilter && treesFilter) {
-        url = `http://localhost:3000/api/filterCustomer?carbonComparison=${carbonComparison}&carbonFootprintFilter=${carbonFootprintFilter}&treesComparison=${treesComparison}&treesFilter=${treesFilter}`;
+        url = `/api/filterCustomer?carbonComparison=${carbonComparison}&carbonFootprintFilter=${carbonFootprintFilter}&treesComparison=${treesComparison}&treesFilter=${treesFilter}`;
       } else if (carbonFootprintFilter) {
-        url = `http://localhost:3000/api/filterCustomer?carbonComparison=${carbonComparison}&carbonFootprintFilter=${carbonFootprintFilter}`;
+        url = `/api/filterCustomer?carbonComparison=${carbonComparison}&carbonFootprintFilter=${carbonFootprintFilter}`;
       } else if (treesFilter) {
-        url = `http://localhost:3000/api/filterCustomer?treesComparison=${treesComparison}&treesFilter=${treesFilter}`;
+        url = `/api/filterCustomer?treesComparison=${treesComparison}&treesFilter=${treesFilter}`;
       }else if (zipcodeFilter && carbonFootprintFilter) {
-        url = `http://localhost:3000/api/filterCustomer?zipcode=${zipcodeFilter}&carbonComparison=${carbonComparison}&carbonFootprintFilter=${carbonFootprintFilter}`;
+        url = `/api/filterCustomer?zipcode=${zipcodeFilter}&carbonComparison=${carbonComparison}&carbonFootprintFilter=${carbonFootprintFilter}`;
       } else if (zipcodeFilter && treesFilter) {
-        url = `http://localhost:3000/api/filterCustomer?zipcode=${zipcodeFilter}&treesComparison=${treesComparison}&treesFilter=${treesFilter}`;
+        url = `/api/filterCustomer?zipcode=${zipcodeFilter}&treesComparison=${treesComparison}&treesFilter=${treesFilter}`;
       }
   
-      const response = await axios.get<CustomerData[]>(url);
+      const response = await axiosInstance.get<CustomerData[]>(url);
       setFilteredData(response.data);
     } catch (error) {
       console.error('Error fetching filtered data:', error);
