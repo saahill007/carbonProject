@@ -15,7 +15,7 @@ export function Questions(props) {
 
   const fetchQuestions = async () => {
     try {
-      const response = await axios.get("http://localhost:3001/api/questions");
+      const response = await axios.get("http://localhost:3000/api/questions");
       console.log(response);
   
       // Check if response.data is an array before mapping

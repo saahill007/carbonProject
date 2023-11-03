@@ -23,7 +23,7 @@ const RefValueSelector: React.FC<RefValueSelectorProps> = ({
 
   const fetchData = () => {
     axios
-      .get("http://localhost:3001/api/data")
+      .get("http://localhost:3000/api/data")
       .then((response) => setData(response.data))
       .catch((error) => console.error("Error fetching data:", error));
   };
@@ -51,7 +51,7 @@ const RefValueSelector: React.FC<RefValueSelectorProps> = ({
       if (newName && !isNaN(parsedValue)) {
         // Make a POST request to the server to add data
         axios
-          .post("http://localhost:3001/api/addData", {
+          .post("http://localhost:3000/api/addData", {
             name: newName,
             value: parsedValue,
           })
