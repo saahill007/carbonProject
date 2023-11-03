@@ -10,7 +10,7 @@
 //   const [unitLabels, updateUnitLabels] = useState<String[]>([]);
 //   const fetchVariables = async () => {
 //     try {
-//       const response = await fetch("http://localhost:3001/api/getUnits");
+//       const response = await fetch("http://localhost:3000/api/getUnits");
 //       const data = await response.json();
 //       updateUnitLabels(data);
 //       // updateUnitLabels([...unitLabels, ...unitNames]);
@@ -139,7 +139,7 @@ const UnitsSelector: React.FC<UnitsSelectorProps> = ({
   const [selectedUnitLabels, updateSelectedUnitLabels] = useState<String[]>([]);
   const fetchVariables = async () => {
     try {
-      const response = await fetch("http://localhost:3001/api/getUnits");
+      const response = await fetch("http://localhost:3000/api/getUnits");
       const data = await response.json();
       updateUnitLabels(data);
     } catch (error) {

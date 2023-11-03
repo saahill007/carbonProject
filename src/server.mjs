@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import mysql from "mysql2";
+import mysql1 from "mysql2/promise";
 import bodyParser from "body-parser";
 import nodemailer from "nodemailer";
 
@@ -9,11 +10,13 @@ app.use(cors());
 app.use(bodyParser.json());
 
 const port = 3000;
+
 const dbConfig = {
-    host: '127.0.0.1',
-    user: 'root',
-    password: 'Carbon@123', // Fix the case of 'PASSWORD' to 'password'
-    database: 'CRBN' // Fix the case of 'DB' to 'database'
+  host: "3.143.110.232",
+  user: "carbonuser",
+  password: "Carbon@123",
+  database: "CRBN",
+  port: 3306,
 };
 
 // const port = 3001;
@@ -30,7 +33,7 @@ const dbConfig = {
 // Create a MySQL connection
 const mysqlConnection = mysql.createConnection(dbConfig);
 
-const pool = mysql.createPool(dbConfig);
+const pool = mysql1.createPool(dbConfig);
 
 mysqlConnection.connect((err) => {
   if (!err) {
@@ -41,7 +44,7 @@ mysqlConnection.connect((err) => {
 });
 
 app.get('/api/Customer', cors(), (req, res) => {
-  const query = 'SELECT cust_id, first_name,last_name, Email, total_carbon_footprint, number_of_trees, date_answered, zipcode FROM CRBN.Customer';
+  const query = 'SELECT cust_id, first_name,last_name, email, total_carbon_footprint, number_of_trees, date_answered, zipcode FROM CRBN.Customer';
   mysqlConnection.query(query, (error, results) => {
     if (error) throw error;
     res.send(results);
@@ -107,7 +110,7 @@ app.post("/api/slider", cors(), (req, res) => {
 
   // Replace this with your actual query to update the question in the database
   const sql =
-    'INSERT INTO CRBN.questions (questions, question_flag, type_of_question) VALUES (?, 1, "Slider")';
+    'INSERT INTO CRBN.questions (questions, enabled, type_of_question) VALUES (?, 1, "Slider")';
   mysqlConnection.query(sql, [question], (err, results) => {
     if (err) {
       console.error("Database query error:", err);
@@ -153,7 +156,7 @@ app.post("/api/dropdown", cors(), (req, res) => {
 
   // Insert the question into the "questions" table
   const insertQuestionSql =
-    'INSERT INTO CRBN.questions (questions, question_flag, type_of_question) VALUES (?, 1, "Dropdown")';
+    'INSERT INTO CRBN.questions (questions, enabled, type_of_question) VALUES (?, 1, "Dropdown")';
   mysqlConnection.query(insertQuestionSql, [question], (err, results) => {
     if (err) {
       console.error("Database query error:", err);
@@ -241,7 +244,7 @@ app.use(express.json());
 // Define a route to handle the toggle state update
 app.post("/api/updateToggleState", (req, res) => {
   const { questionId, newState } = req.body;
-  const sql = "UPDATE CRBN.questions SET question_flag = ? WHERE ques_id = ?;";
+  const sql = "UPDATE CRBN.questions SET enabled = ? WHERE ques_id = ?;";
 
   // Execute the SQL query using the MySQL connection
   mysqlConnection.query(sql, [newState, questionId], (error, results) => {
@@ -314,14 +317,14 @@ app.get("/api/category_name", cors(), (req, res) => {
 
 // Define a route to add a question to question table
 app.post("/api/newquestion", (req, res) => {
-  const { question, question_flag, type_of_question } = req.body;
+  const { question, enabled, type_of_question } = req.body;
   const sql =
-    "INSERT INTO CRBN.questions (questions, question_flag, type_of_question) VALUES (?, ?, ?);";
+    "INSERT INTO CRBN.questions (questions, enabled, type_of_question) VALUES (?, ?, ?);";
 
   // Execute the SQL query using the MySQL connection
   mysqlConnection.query(
     sql,
-    [question, question_flag, type_of_question],
+    [question, enabled, type_of_question],
     (error, results) => {
       if (error) {
         console.error("Error executing SQL query:", error.message);
@@ -383,13 +386,13 @@ app.post("/api/optionsfind", (req, res) => {
 
 // Define a route to add new question and its options by its content
 app.post("/api/question/multiplechoice", cors(), (req, res) => {
-  const { question, question_flag, type_of_question, options } = req.body;
+  const { question, enabled, type_of_question, options } = req.body;
   const sql =
-    "INSERT INTO CRBN.questions (questions, question_flag, type_of_question) VALUES (?, ?, ?);";
+    "INSERT INTO CRBN.questions (questions, enabled, type_of_question) VALUES (?, ?, ?);";
 
   mysqlConnection.query(
     sql,
-    [question, question_flag, type_of_question],
+    [question, enabled, type_of_question],
     (err, results) => {
       if (err) {
         console.error("Database query error:", err);
@@ -437,7 +440,7 @@ app.post("/api/question/multiplechoice", cors(), (req, res) => {
 app.post("/api/question/fillintheblank", cors(), (req, res) => {
   const { question, carbonOffsetValue, answer, selectedTextType } = req.body;
   const sql =
-    "INSERT INTO CRBN.questions (questions, question_flag, type_of_question) VALUES (?, 0, 'Fill in the blank');";
+    "INSERT INTO CRBN.questions (questions, enabled, type_of_question) VALUES (?, 0, 'Fill in the blank');";
 
   mysqlConnection.query(sql, [question], (err, results) => {
     if (err) {
@@ -883,7 +886,7 @@ app.post("/api/sendCustomerEnquiryEmail", (req, res) => {
 
 // Define a route to retrieve questions with a specific flag from the database
 app.get("/api/questionsuser", cors(), (req, res) => {
-  const sql = "SELECT * FROM CRBN.questions_Table WHERE question_flag = 1 WHERE question_flag = 1 ORDER BY label, ques_id";
+  const sql = "SELECT * FROM CRBN.questionsTable WHERE enabled = 1 ORDER BY label, id";
 
   // Execute the SQL query using the MySQL connection
   mysqlConnection.query(sql, (error, results) => {
@@ -905,7 +908,7 @@ app.get("/api/questions/:id", cors(), async (req, res) => {
     const questionId = req.params.id; // Get the ID from the route parameter
     const [results] = await mysqlConnection
       .promise()
-      .query("SELECT * FROM CRBN.questions_Table WHERE ques_id = ?", [questionId]);
+      .query("SELECT * FROM CRBN.questionsTable WHERE ques_id = ?", [questionId]);
     if (results.length > 0) {
       res.json(results[0]); // Send back the specific question
     } else {
@@ -922,7 +925,7 @@ app.post("/api/ContactUs", cors(), (req, res) => {
 
   // 1) Adding query to the Enquiry table
   const insertEnquirySql =
-    "INSERT INTO CRBN.Enquiry (enquiry_question, enquiry_flag) VALUES (?, ?)";
+    "INSERT INTO CRBN.enquiry (enquiry_question, enquiry_flag) VALUES (?, ?)";
   mysqlConnection.query(insertEnquirySql, [query, 1], (err, result) => {
     if (err) {
       console.error("Error inserting into Enquiry table:", err);
@@ -974,7 +977,7 @@ app.get("/api/totalquestions", cors(), async (req, res) => {
     const [results] = await mysqlConnection
       .promise()
       .query(
-        "SELECT COUNT(*) as total FROM CRBN.questions_Table Where question_flag=1"
+        "SELECT COUNT(*) as total FROM CRBN.questionsTable Where enabled=1"
       );
     if (results.length > 0) {
       res.json(results[0].total);
@@ -985,6 +988,21 @@ app.get("/api/totalquestions", cors(), async (req, res) => {
     console.error("Error fetching total number of questions:", error);
     res.status(500).send("Server error");
   }
+});
+
+// Route to calculate total number of qustions to display progress bar percentage in each question page
+app.get('/api/totalquestions', cors(), async (req, res) => {
+    try {
+        const [results] = await mysqlConnection.promise().query("SELECT COUNT(*) as total FROM CRBN.questionsTable Where enabled=1");
+        if (results.length > 0) {
+            res.json(results[0].total);
+        } else {
+            res.status(404).send('No questions found');
+        }
+    } catch (error) {
+        console.error('Error fetching total number of questions:', error);
+        res.status(500).send('Server error');
+    }
 });
 
 // Define a route to retrieve utility data based on the zipcode
@@ -1414,7 +1432,7 @@ app.get("/api/data", async (req, res) => {
 
 
             // Fetch ref (constant or formula) for the question
-            const [results] = await mysqlConnection.promise().query("SELECT refs FROM CRBN.questions_Table WHERE ques_id = ?", [ques_id]);
+            const [results] = await mysqlConnection.promise().query("SELECT refs FROM CRBN.questionsTable WHERE ques_id = ?", [ques_id]);
             if(results.length === 0) {
                 console.error(`No data found for ques_id: ${ques_id}`);
                 continue;  // Skip the rest of this iteration and proceed to next ques_id in the loop
@@ -1440,6 +1458,63 @@ app.get("/api/data", async (req, res) => {
         res.status(500).json({ message: "Internal Server Error" });
     }
 });
+
+// Route to handle "Forgot Password" request
+app.post('/api/forgotpassword', cors(), async (req, res) => {
+    const { email } = req.body;
+    // Check if the email exists in the 'admin' table
+    const sql = `SELECT * FROM CRBN.admin WHERE email = ?`;
+    try {
+        const [user] = await mysqlConnection.promise().query(sql, [email]);
+
+        if (!user || user.length === 0) {
+            // Email not found in the 'admin' table
+            return res.status(404).json({ error: 'Email not found' });
+        }
+
+        // Generate a password reset token
+        const resetToken = generateResetToken();
+
+        // Store the reset token in the database along with the email (for validation)
+        const updateTokenSql = `UPDATE CRBN.admin SET reset_token = ? WHERE email = ?`;
+        await mysqlConnection.promise().query(updateTokenSql, [resetToken, email]);
+
+        // Send a password reset email with a link to a reset page
+        const resetLink = `http://example.com/reset-password?token=${resetToken}`;
+        await sendPasswordResetEmail(email, resetLink);
+
+        return res.status(200).json({ message: 'Password reset email sent. Check your inbox.' });
+    }
+    catch (error) {
+        console.error('Error processing password reset:', error);
+        return res.status(500).json({ error: 'Error resetting password. Please try again later.' });
+    }
+});
+
+// Helper function to generate a random reset token
+function generateResetToken() {
+    // Generate a random 32-character token
+    return crypto.randomBytes(16).toString('hex');
+}
+
+// Helper function to send a password reset email
+async function sendPasswordResetEmail(email, resetLink) {
+    const transporter = nodemailer.createTransport({
+        service: 'Gmail', // Replace with your email service provider
+        auth: {
+            user: 'carbonoffset08@gmail.com', // Replace with your email address
+            pass: 'vjbv uaeq cpro lsub', // Replace with your email password
+        },
+    });
+    const mailOptions = {
+        from: 'carbonoffset08@gmail.com',
+        to: email,
+        subject: 'Password Reset',
+        text: `Click on the following link to reset your password: ${resetLink}`,
+    };
+
+    return transporter.sendMail(mailOptions);
+}
 
 // Start the server
 app.listen(port, () => {

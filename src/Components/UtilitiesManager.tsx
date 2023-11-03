@@ -80,7 +80,7 @@ const UtilitiesManager: React.FC<UtilitiesManagerProps> = () => {
   // Modify the handleUpdateUtility function
   //   const handleUpdateUtility = async (id: number, disabled: boolean) => {
   //     try {
-  //       await axios.put(`http://localhost:3001/api/updateUtility/${id}`, {
+  //       await axios.put(`http://localhost:3000/api/updateUtility/${id}`, {
   //         disabled,
   //         name: editUtility?.name,
   //         reference: editUtility?.reference,

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+// import axios from 'axios';
 import './Dashboard.css';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 import { PieChart, Pie, Cell} from 'recharts';
@@ -36,7 +36,7 @@ const Dashboard: React.FC = () => {
   const [carbonFootprintFilter, setCarbonFootprintFilter] = useState<number | undefined>(undefined);
   const [treesFilter, setTreesFilter] = useState<number | undefined>(undefined);
   const [searchTerm, setSearchTerm] = useState<string>('');
-  const [data, setData] = useState<CustomerData[]>([]);
+  // const [data, setData] = useState<CustomerData[]>([]);
   const [carbonComparison, setCarbonComparison] = useState<ComparisonOperator>('<');
   const [treesComparison, setTreesComparison] = useState<ComparisonOperator>('<');
   const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#AF19FF', '#FF6666', '#00C5CD', '#F08080'];
@@ -345,9 +345,13 @@ const Dashboard: React.FC = () => {
               fill="#8884d8"
               label
             >
-              {formattedCarbonFootprintData.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-              ))}
+              {formattedCarbonFootprintData.map((entry, index) => {
+        console.log(`Entry at index ${index}:`, entry);
+
+        return (
+          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+        );
+      })}
             </Pie>
             <Tooltip />
             <Legend />
