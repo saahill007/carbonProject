@@ -200,6 +200,7 @@
 // export default MultipleSelections;
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { apiUrlBase } from "../config";
 interface MultipleSelectionsProps {
   stringArray: String[];
   isFib: boolean;
@@ -292,7 +293,7 @@ const MultipleSelections: React.FC<MultipleSelectionsProps> = ({
   const saveOptionsToDatabase = async () => {
     const { choices, refs } = getChoicesAndRefs();
     try {
-      const response = await fetch("http://localhost:3001/api/addQuestion", {
+      const response = await fetch(`${apiUrlBase}/api/addQuestion`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

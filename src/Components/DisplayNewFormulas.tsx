@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import "./DisplayFormulas.css";
 import { Modal, Button } from "react-bootstrap";
 import axios from "axios";
+import { apiUrlBase } from "../config";
 interface Formula {
   formulaName: string;
   var1: string;
@@ -24,9 +25,7 @@ const DisplayNewFormulas = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get<Formula[]>(
-          "http://localhost:3001/formulas"
-        );
+        const response = await axios.get<Formula[]>(`${apiUrlBase}/formulas`);
         setFormulas(response.data);
       } catch (error) {
         console.error("Error fetching formulas:", error);
@@ -42,7 +41,7 @@ const DisplayNewFormulas = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get<{ [key: string]: number }>(
-          "http://localhost:3001/api/getvardata"
+          `${apiUrlBase}/api/getvardata`
         );
 
         // Convert the object to an array of objects
@@ -78,7 +77,7 @@ const DisplayNewFormulas = () => {
   const handleSave = async () => {
     // Make an API call to save all the variables
     try {
-      await axios.post("http://localhost:3001/api/savevariables", {
+      await axios.post(`${apiUrlBase}/api/savevariables`, {
         variables: variables,
       });
       console.log("Variables saved successfully!");
@@ -91,12 +90,9 @@ const DisplayNewFormulas = () => {
   const calculateFormula = async (formulaName) => {
     // Make an API call to calculate the formula
     try {
-      const response = await axios.post(
-        "http://localhost:3001/api/calculateFormula",
-        {
-          formulaName,
-        }
-      );
+      const response = await axios.post(`${apiUrlBase}/api/calculateFormula`, {
+        formulaName,
+      });
 
       // Get the result from the response
       const result = response.data.result;

@@ -4,6 +4,7 @@ import SwitchContent from "./SwitchContent";
 // import OptionValue from "./OptionValue";
 import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
+import { apiUrlBase } from "../config";
 
 interface QuestionData {
   questionContent: string;
@@ -220,8 +221,8 @@ const QuestionType1: React.FC<QuestionType1Props> = ({
       console.log(id);
       const url =
         id == ""
-          ? "http://localhost:3001/api/addQuestion"
-          : `http://localhost:3001/api/updateQuestion/${id}`;
+          ? `${apiUrlBase}/api/addQuestion`
+          : `${apiUrlBase}/api/updateQuestion/${id}`;
 
       const response = await fetch(url, {
         method: id == "" ? "POST" : "PATCH",
@@ -262,8 +263,8 @@ const QuestionType1: React.FC<QuestionType1Props> = ({
       console.log(id);
       const url =
         id == ""
-          ? "http://localhost:3001/api/addQuestion"
-          : `http://localhost:3001/api/updateQuestion/${id}`;
+          ? `${apiUrlBase}/api/addQuestion`
+          : `${apiUrlBase}/api/updateQuestion/${id}`;
 
       const response = await fetch(url, {
         method: id == "" ? "POST" : "PATCH",
@@ -445,6 +446,7 @@ const QuestionType1: React.FC<QuestionType1Props> = ({
                       type="text"
                       className="form-control rounded"
                       id="newName"
+                      placeholder="Option..."
                       value={newName}
                       onChange={(e) => setNewName(e.target.value)}
                     />
@@ -454,6 +456,7 @@ const QuestionType1: React.FC<QuestionType1Props> = ({
                       type="number"
                       className="form-control rounded"
                       id="newValue"
+                      placeholder="value..."
                       value={newValue}
                       onChange={(e) => setNewValue(e.target.value)}
                     />

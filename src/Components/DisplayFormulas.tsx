@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./DisplayFormulas.css";
+import { apiUrlBase } from "../config";
 
 interface VariableValues {
   co2PerGallonFuel: string;
@@ -42,7 +43,7 @@ const DisplayFormulas: React.FC = () => {
 
   const fetchInitialValues = async () => {
     try {
-      const response = await fetch(`http://localhost:3000/api/getvardata`);
+      const response = await fetch(`${apiUrlBase}/api/getvardata`);
       const data = await response.json();
 
       setVariableValues(data); // Directly update the state with the received data
@@ -70,7 +71,7 @@ const DisplayFormulas: React.FC = () => {
     try {
       // Make API call to save the variable value
       const response = await fetch(
-        `http://localhost:3000/api/updatevar/${variableName}`,
+        `${apiUrlBase}/api/updatevar/${variableName}`,
         {
           method: "PUT",
           headers: {

@@ -5,6 +5,7 @@ import UnitsSelector from "./UnitsSelector";
 import SwitchContent from "./SwitchContent";
 import { useNavigate } from "react-router-dom";
 import MultipleSelections from "./MultipleSelections";
+import { apiUrlBase } from "../config";
 // import FormulaSelector2 from "../FormulaSelector2";
 
 // interface Formula {
@@ -210,7 +211,7 @@ const AllTypesUnits: React.FC<AllTypesUnitsProps> = ({
   const [selectedUnitLabels, updateSelectedUnitLabels] = useState<String[]>([]);
   const fetchUnits = async () => {
     try {
-      const response = await fetch("http://localhost:3001/api/getUnits");
+      const response = await fetch(`${apiUrlBase}/api/getUnits`);
       const data = await response.json();
       updateUnitLabels(data);
     } catch (error) {
@@ -228,7 +229,7 @@ const AllTypesUnits: React.FC<AllTypesUnitsProps> = ({
   }, [selectedUnits, unitsSelectorKey]);
   const fetchVariables = async () => {
     try {
-      const response = await fetch("http://localhost:3001/api/getUnits");
+      const response = await fetch(`${apiUrlBase}/api/getUnits`);
       const data = await response.json();
       const variableNames = Object.keys(data);
       updateVariables(variableNames);
@@ -243,7 +244,7 @@ const AllTypesUnits: React.FC<AllTypesUnitsProps> = ({
       // const var1 = newVar;
 
       // Your API endpoint for adding a new formula
-      const response = await fetch("http://localhost:3001/api/addUnit", {
+      const response = await fetch(`${apiUrlBase}/api/addUnit`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -279,7 +280,7 @@ const AllTypesUnits: React.FC<AllTypesUnitsProps> = ({
   // Function to fetch formulas
   const fetchFormulas = async () => {
     try {
-      const response = await fetch("http://localhost:3001/api/allformulas");
+      const response = await fetch(`${apiUrlBase}/api/allformulas`);
       const data = await response.json();
       console.log("Formula response:", data);
       setFormulas(data);
@@ -338,7 +339,7 @@ const AllTypesUnits: React.FC<AllTypesUnitsProps> = ({
   const navigate = useNavigate();
   const saveOptionsToDatabase = async () => {
     try {
-      const response = await fetch("http://localhost:3001/api/addQuestion", {
+      const response = await fetch(`${apiUrlBase}/api/addQuestion`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -509,7 +510,7 @@ const AllTypesUnits: React.FC<AllTypesUnitsProps> = ({
                     }}
                     onClick={handleAddVariable}
                   >
-                    Add Variable
+                    Add Unit
                   </button>
                 </div>
               </div>
@@ -584,6 +585,53 @@ const AllTypesUnits: React.FC<AllTypesUnitsProps> = ({
             />
           ))}
         </div>
+        {/* <div>
+          {selectedLabels.map((unit) => {
+            let ans = "";
+            return (
+              <div>
+                <div className="row">
+                  <div className="col">{unit}</div>
+                  <div className="col">
+                    <select
+                      className="form-select"
+                      value={ans || ""}
+                      onChange={(e) => {
+                        // onFormulaChange(unitIndex, e.target.value);
+                        ans = e.target.value;
+                      }}
+                      style={{ width: "200px" }}
+                      onClick={() => {
+                        // fetchFormulas(); // You may want to fetch formulas here
+                      }}
+                    >
+                      <option value="" disabled>
+                        Select Formula
+                      </option>
+                      {formulas.map((f, index) => (
+                        <option key={index}>{f}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div> */}
+
+        {/* <div>
+          {selectedLabels.map((unit) => {
+            return (
+              <div>
+                <div className="row">
+                  <div className="col">{unit}</div>
+                  <div className="col"></div>
+                </div>
+              </div>
+            );
+          })}
+        </div> */}
+
         <div className="row d-flex align-items-center">
           <div className="col-md text-center">
             <button

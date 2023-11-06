@@ -3,6 +3,7 @@ import React from "react";
 import { useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
 import axios from "axios";
+import { apiUrlBase } from "../config";
 
 export function Questions(props) {
   const [questions, setQuestions] = useState([]);
@@ -15,7 +16,7 @@ export function Questions(props) {
 
   const fetchQuestions = async () => {
     try {
-      const response = await axios.get("http://localhost:3001/api/questions");
+      const response = await axios.get(`${apiUrlBase}/api/questions`);
       console.log(response);
   
       // Check if response.data is an array before mapping
@@ -44,7 +45,7 @@ export function Questions(props) {
     // Make an HTTP request to update the database
     try {
       const updatedState = newQuestions[index].toggleState ? 1 : 0;
-      await axios.post("http://localhost:3001/api/updateToggleState", {
+      await axios.post(`${apiUrlBase}/api/updateToggleState`, {
         questionId: newQuestions[index].ques_id,
         newState: updatedState,
       });

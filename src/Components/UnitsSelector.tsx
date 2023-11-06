@@ -123,6 +123,7 @@
 // export default UnitsSelector;
 
 import React, { useEffect, useState } from "react";
+import { apiUrlBase } from "../config";
 
 interface UnitsSelectorProps {
   onSelectionChange: (selectedButtonIds: number[]) => void;
@@ -139,7 +140,7 @@ const UnitsSelector: React.FC<UnitsSelectorProps> = ({
   const [selectedUnitLabels, updateSelectedUnitLabels] = useState<String[]>([]);
   const fetchVariables = async () => {
     try {
-      const response = await fetch("http://localhost:3001/api/getUnits");
+      const response = await fetch(`${apiUrlBase}/api/getUnits`);
       const data = await response.json();
       updateUnitLabels(data);
     } catch (error) {

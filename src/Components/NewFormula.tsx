@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Choice from "./Choice";
+import { apiUrlBase } from "../config";
 
 interface NewFormulaProps {
   isZipDependent: boolean; // Add this prop
@@ -43,7 +44,7 @@ const NewFormula: React.FC<NewFormulaProps> = ({ isZipDependent }) => {
 
   const fetchVariables = async () => {
     try {
-      const response = await fetch("http://localhost:3001/api/getvardata");
+      const response = await fetch(`${apiUrlBase}/api/getvardata`);
       const data = await response.json();
       const variableNames = Object.keys(data);
       updateVariables(variableNames);
@@ -55,9 +56,7 @@ const NewFormula: React.FC<NewFormulaProps> = ({ isZipDependent }) => {
 
   const fetchUtilities = async () => {
     try {
-      const response = await fetch(
-        "http://localhost:3001/api/getUniqueUtilities"
-      );
+      const response = await fetch(`${apiUrlBase}/api/getUniqueUtilities`);
       const data = await response.json();
       setUtilities(data);
     } catch (error) {
@@ -101,7 +100,7 @@ const NewFormula: React.FC<NewFormulaProps> = ({ isZipDependent }) => {
       const val1 = newVal;
 
       // Your API endpoint for adding a new formula
-      const response = await fetch("http://localhost:3001/api/addConversion", {
+      const response = await fetch(`${apiUrlBase}/api/addConversion`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -145,7 +144,7 @@ const NewFormula: React.FC<NewFormulaProps> = ({ isZipDependent }) => {
         const var4 = selectedVariable4 || "1";
 
         // Your API endpoint for adding a new formula
-        const response = await fetch("http://localhost:3001/api/addFormula", {
+        const response = await fetch(`${apiUrlBase}/api/addFormula`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
