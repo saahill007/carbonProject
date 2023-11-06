@@ -12,22 +12,12 @@ app.use(bodyParser.json());
 const port = 3000;
 
 const dbConfig = {
-  host: '127.0.0.1',
-  user: 'root',
+  host: '18.216.140.96',
+  user: 'carbonuser',
   password: 'Carbon@123', // Fix the case of 'PASSWORD' to 'password'
   database: 'CRBN' // Fix the case of 'DB' to 'database'
 };
 
-// const port = 3001;
-
-
-// const dbConfig = {
-//   host: "18.219.100.56",
-//   user: "carbonuser",
-//   password: "Carbon@123",
-//   database: "CRBN",
-//   port: 3306,
-// };
 
 // Create a MySQL connection
 const mysqlConnection = mysql.createConnection(dbConfig);
