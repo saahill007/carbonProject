@@ -12,11 +12,10 @@ app.use(bodyParser.json());
 const port = 3000;
 
 const dbConfig = {
-  host: "18.216.140.96",
-  user: "carbonuser",
-  password: "Carbon@123",
-  database: "CRBN",
-  port: 3306,
+  host: '127.0.0.1',
+  user: 'root',
+  password: 'Carbon@123', // Fix the case of 'PASSWORD' to 'password'
+  database: 'CRBN' // Fix the case of 'DB' to 'database'
 };
 
 // const port = 3001;
@@ -44,7 +43,7 @@ mysqlConnection.connect((err) => {
 });
 
 app.get('/api/Customer', cors(), (req, res) => {
-  const query = 'SELECT cust_id, first_name,last_name, email, total_carbon_footprint, number_of_trees, date_answered, zipcode FROM CRBN.Customer';
+  const query = 'SELECT cust_id, first_name,last_name, age, Email, total_carbon_footprint, number_of_trees, date_answered, zipcode FROM CRBN.Customer';
   mysqlConnection.query(query, (error, results) => {
     if (error) throw error;
     res.send(results);
@@ -53,7 +52,7 @@ app.get('/api/Customer', cors(), (req, res) => {
 
 app.get('/api/filterCustomer', cors(), (req, res) => {
   const { fromDate, toDate, zipcode, carbonComparison, carbonFootprintFilter, treesComparison, treesFilter } = req.query;
-  let query = 'SELECT cust_id, first_name, last_name, Email, total_carbon_footprint, number_of_trees, date_answered, zipcode FROM CRBN.Customer';
+  let query = 'SELECT cust_id, first_name, last_name, age, Email, total_carbon_footprint, number_of_trees, date_answered, zipcode FROM CRBN.Customer';
 
 
   if (fromDate && toDate && zipcode && carbonComparison && carbonFootprintFilter && treesComparison && treesFilter) {

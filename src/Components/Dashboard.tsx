@@ -1,9 +1,8 @@
+/// <reference lib="dom" />
 import React, { useState, useEffect } from 'react';
 // import axios from 'axios';
 import './Dashboard.css';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
-import { PieChart, Pie, Cell} from 'recharts';
-import { LineChart, Line} from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend,PieChart, Pie, Cell,LineChart, Line} from 'recharts';
 import moment from 'moment';
 import 'leaflet/dist/leaflet.css';
 import axiosInstance from './axiosconfig';
@@ -16,6 +15,7 @@ type CustomerData = {
   session_id: string;
   first_name: string;
   last_name: string;
+  age: number;
   Email: string;
   total_carbon_footprint: number;
   number_of_trees: number;
@@ -115,6 +115,92 @@ const Dashboard: React.FC = () => {
     }));
   };
   const formattedData = groupDataByDate(filteredData);
+
+  const groupDataByAge = (data: CustomerData[]) => {
+    const ageGroups: { [ageGroup: string]: { carbonFootprints: number[]; treeCounts: number[]; count: number } } = {
+      'age<20': { carbonFootprints: [], treeCounts: [], count: 0 },
+      '20-30': { carbonFootprints: [], treeCounts: [], count: 0 },
+      '30-40': { carbonFootprints: [], treeCounts: [], count: 0 },
+      '40-50': { carbonFootprints: [], treeCounts: [], count: 0 },
+      '50-60': { carbonFootprints: [], treeCounts: [], count: 0 },
+      '60+': { carbonFootprints: [], treeCounts: [], count: 0 },
+      // add more age groups as needed
+    };
+  
+    data.forEach((item) => {
+      const { age, total_carbon_footprint, number_of_trees } = item;
+  
+      if (age <= 20) {
+        ageGroups['age<20'].carbonFootprints.push(total_carbon_footprint);
+        ageGroups['age<20'].treeCounts.push(number_of_trees);
+        ageGroups['age<20'].count++;
+      } else if (age > 20 && age <= 30) {
+        ageGroups['20-30'].carbonFootprints.push(total_carbon_footprint);
+        ageGroups['20-30'].treeCounts.push(number_of_trees);
+        ageGroups['20-30'].count++;
+      } else if (age > 30 && age <= 40) {
+        ageGroups['30-40'].carbonFootprints.push(total_carbon_footprint);
+        ageGroups['30-40'].treeCounts.push(number_of_trees);
+        ageGroups['30-40'].count++;
+      } else if (age > 40 && age <= 50) {
+        ageGroups['40-50'].carbonFootprints.push(total_carbon_footprint);
+        ageGroups['40-50'].treeCounts.push(number_of_trees);
+        ageGroups['40-50'].count++;
+      } else if (age > 50 && age <= 60) {
+        ageGroups['50-60'].carbonFootprints.push(total_carbon_footprint);
+        ageGroups['50-60'].treeCounts.push(number_of_trees);
+        ageGroups['50-60'].count++;
+      } else if (age > 60) {
+        ageGroups['60+'].carbonFootprints.push(total_carbon_footprint);
+        ageGroups['60+'].treeCounts.push(number_of_trees);
+        ageGroups['60+'].count++;
+      }
+      // add more conditions for other age groups
+    });
+  
+    const formattedAverageData: {
+      ageGroup: string;
+      averageCarbonFootprint: number;
+      averageTreeCount: number;
+      count: number;
+    }[] = [];
+  
+    for (const [ageGroup, { carbonFootprints, treeCounts, count }] of Object.entries(ageGroups)) {
+      if (carbonFootprints.length > 0 && treeCounts.length > 0) {
+        const averageCarbonFootprint =
+          carbonFootprints.reduce((acc, curr) => acc + curr, 0) / carbonFootprints.length;
+  
+        const averageTreeCount = treeCounts.reduce((acc, curr) => acc + curr, 0) / treeCounts.length;
+  
+        formattedAverageData.push({ ageGroup, averageCarbonFootprint, averageTreeCount, count });
+      }
+    }
+  
+    return formattedAverageData;
+  };
+  
+  const formattedAverageData = groupDataByAge(filteredData);
+
+  const CustomTooltip = ({ active, label }) => {
+    if (active) {
+      const data = formattedAverageData.find(item => item.ageGroup === label);
+      if (data) {
+        return (
+          <div className="custom-tooltip">
+            <p className="label">{`${label}`}</p>
+            <p className="label">{`Average Carbon Footprint: ${data.averageCarbonFootprint}`}</p>
+            <p className="label">{`Average Tree Count: ${data.averageTreeCount}`}</p>
+            <p className="label">{`Count: ${data.count}`}</p>
+          </div>
+        );
+      }
+    }
+  
+    return null;
+  };
+  
+  
+  
   
   
   
@@ -277,6 +363,7 @@ const Dashboard: React.FC = () => {
             <th>Customer ID</th>
             <th>Name</th>
             <th>Email</th>
+            <th>Age</th>
             <th>Total Carbon Footprint</th>
             <th>Number of Trees</th>
             <th>Date Answered</th>
@@ -289,6 +376,7 @@ const Dashboard: React.FC = () => {
               <td>{item.cust_id}</td>
               <td>{item.first_name + ' ' + item.last_name}</td>
               <td>{item.Email}</td>
+              <td>{item.age}</td>
               <td>{item.total_carbon_footprint}</td>
               <td>{item.number_of_trees}</td>
               <td>{formatDate(item.date_answered)}</td>
@@ -314,7 +402,27 @@ const Dashboard: React.FC = () => {
         <Line type="monotone" dataKey="count" stroke="#8884d8" />
       </LineChart>
     </div>
-    <div className='chart-container'>
+    <div className='average-data-graph'>
+        <BarChart
+          width={600}
+          height={300}
+          data={formattedAverageData}
+          margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+        >
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="ageGroup" />
+          <YAxis yAxisId="left" />
+          <YAxis yAxisId="right" orientation="right" />
+          <Tooltip content={<CustomTooltip active={true} label="exampleLabel" />} />
+
+          <Legend />
+          <Bar dataKey="averageCarbonFootprint" fill="#8884d8" yAxisId="left" />
+          <Bar dataKey="averageTreeCount" fill="#82ca9d" yAxisId="right"/>
+          {/* <Bar dataKey="count" fill="#ffc658" yAxisId="left"/> */}
+        </BarChart>
+        
+      </div>
+    {/* <div className='chart-container'>
         <BarChart
           width={600}
           height={300}
@@ -330,7 +438,7 @@ const Dashboard: React.FC = () => {
           <Bar dataKey="total_carbon_footprint" fill="#8884d8" yAxisId="left" />
           <Bar dataKey="number_of_trees" fill="#82ca9d" yAxisId="right" />
         </BarChart>
-      </div>
+      </div> */}
       </div>
       <div className='graph2'>
       <div className="chart-container">
@@ -357,10 +465,7 @@ const Dashboard: React.FC = () => {
             <Legend />
           </PieChart>
         </div>
-        {/* <div className="map-container">
-        <MapVisualization customerData={filteredData} />
-      </div> */}
-
+      
       </div>
 
      </div>
