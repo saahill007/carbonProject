@@ -52,7 +52,7 @@ const QuestionAdmin: React.FC = () => {
         if (id) {
           // Fetch question data if ID is provided
           const response = await fetch(
-            `http://localhost:3000/api/question/${id}`
+            `http://localhost:3001/api/question/${id}`
           );
           if (!response.ok) {
             throw new Error("Error fetching question data");
@@ -86,7 +86,7 @@ const QuestionAdmin: React.FC = () => {
 
   const fetchCategories = async () => {
     try {
-      const response = await fetch("http://localhost:3000/api/getCategories");
+      const response = await fetch("http://localhost:3001/api/getCategories");
       const data = await response.json();
 
       if (Array.isArray(data)) {

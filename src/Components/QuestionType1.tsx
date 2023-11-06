@@ -1,14 +1,9 @@
 // QuestionType1 Component
 import React, { useEffect, useState } from "react";
 import SwitchContent from "./SwitchContent";
-import OptionValue from "./OptionValue";
+// import OptionValue from "./OptionValue";
 import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
-interface InputOptions {
-  index: string;
-  name: string;
-  value: number;
-}
 
 interface QuestionData {
   questionContent: string;
@@ -225,8 +220,8 @@ const QuestionType1: React.FC<QuestionType1Props> = ({
       console.log(id);
       const url =
         id == ""
-          ? "http://localhost:3000/api/addQuestion"
-          : `http://localhost:3000/api/updateQuestion/${id}`;
+          ? "http://localhost:3001/api/addQuestion"
+          : `http://localhost:3001/api/updateQuestion/${id}`;
 
       const response = await fetch(url, {
         method: id == "" ? "POST" : "PATCH",
