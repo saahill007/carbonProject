@@ -43,7 +43,7 @@ mysqlConnection.connect((err) => {
 });
 
 app.get('/api/Customer', cors(), (req, res) => {
-  const query = 'SELECT cust_id, first_name,last_name, age, Email, total_carbon_footprint, number_of_trees, date_answered, zipcode FROM CRBN.Customer';
+  const query = 'SELECT cust_id, first_name,last_name, age, email, total_carbon_footprint, number_of_trees, date_answered, zipcode FROM CRBN.Customer';
   mysqlConnection.query(query, (error, results) => {
     if (error) throw error;
     res.send(results);
@@ -52,7 +52,7 @@ app.get('/api/Customer', cors(), (req, res) => {
 
 app.get('/api/filterCustomer', cors(), (req, res) => {
   const { fromDate, toDate, zipcode, carbonComparison, carbonFootprintFilter, treesComparison, treesFilter } = req.query;
-  let query = 'SELECT cust_id, first_name, last_name, age, Email, total_carbon_footprint, number_of_trees, date_answered, zipcode FROM CRBN.Customer';
+  let query = 'SELECT cust_id, first_name, last_name, age, email, total_carbon_footprint, number_of_trees, date_answered, zipcode FROM CRBN.Customer';
 
 
   if (fromDate && toDate && zipcode && carbonComparison && carbonFootprintFilter && treesComparison && treesFilter) {
@@ -901,8 +901,8 @@ app.post("/api/ContactUs", cors(), (req, res) => {
     const enquiryId = result.insertId;
 
     // 2) Inserting a new entry into the Customer table
-    const insertCustomerSql = `INSERT INTO CRBN.Customer (date_answered, session_id, first_name, last_name, email, total_carbon_footprint, answers, number_of_trees, enquiry_id) 
-        VALUES (CURDATE(), "N/A", ?, ?, ?, 0, "N/A", 0, ?)`;
+    const insertCustomerSql = `INSERT INTO CRBN.Customer (date_answered, session_id, first_name, last_name, age, email, total_carbon_footprint, answers, number_of_trees, enquiry_id) 
+        VALUES (CURDATE(), "N/A", ?, ?, ?, ?, 0, "N/A", 0, ?)`;
     mysqlConnection.query(
       insertCustomerSql,
       [firstName, lastName, email, enquiryId],
