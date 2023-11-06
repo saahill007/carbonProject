@@ -700,7 +700,7 @@ app.post("/api/send-email", async (req, res) => {
 
   try {
     mysqlConnection.query(
-      "SELECT Email FROM carbon.Customer",
+      "SELECT Email FROM CRBN.Customer",
       (error, results, fields) => {
         if (error) {
           console.error("Error querying the database:", error);
@@ -753,7 +753,7 @@ app.post("/api/send-email", async (req, res) => {
 
 app.get("/api/enquiry_main_fetch_waiting_for_response", (req, res) => {
   const query =
-    "SELECT enquiry_id ,firstname,lastname,enquiry_date,email,enquiry_question,enquiry_response FROM carbon.enquiry where enquiry_flag=1";
+    "SELECT enquiry_id ,firstname,lastname,enquiry_date,email,enquiry_question,enquiry_response FROM CRBN.enquiry where enquiry_flag=1";
   // Execute the SQL query using the MySQL connection
   mysqlConnection.query(query, (error, results) => { // Change 'sql' to 'query'
     if (error) {
@@ -770,7 +770,7 @@ app.get("/api/enquiry_main_fetch_waiting_for_response", (req, res) => {
 
 app.get("/api/enquiry_main_fetch_answered_enquiries", (req, res) => {
   const query =
-    "SELECT enquiry_id ,firstname,lastname,enquiry_date,email,enquiry_question,enquiry_response FROM carbon.enquiry where enquiry_flag=0";
+    "SELECT enquiry_id ,firstname,lastname,enquiry_date,email,enquiry_question,enquiry_response FROM CRBN.enquiry where enquiry_flag=0";
   // Execute the SQL query using the MySQL connection
   mysqlConnection.query(query, (error, results) => { // Change 'sql' to 'query'
     if (error) {
@@ -793,7 +793,7 @@ app.get('/api/getenquiryCustomerDetails', (req, res) => {
     return res.status(400).json({ error: 'enquiry_id is required' });
   }
   // SQL query to fetch customer details by enquiry_id
-  const sql = 'SELECT enquiry_id,firstname,lastname,email,enquiry_question  FROM carbon.enquiry WHERE enquiry_id = ?';
+  const sql = 'SELECT enquiry_id,firstname,lastname,email,enquiry_question  FROM CRBN.enquiry WHERE enquiry_id = ?';
 
   mysqlConnection.query(sql, [enquiry_id], (err, results) => {
     if (err) {
@@ -839,7 +839,7 @@ app.post("/api/sendCustomerEnquiryEmail", (req, res) => {
 
       // Update the flag of the customer inquiry to 0 and store the response sent
       const query = `
-                UPDATE carbon.enquiry SET enquiry_flag = 0, enquiry_response = ?  WHERE enquiry_id = ?`;
+                UPDATE CRBN.enquiry SET enquiry_flag = 0, enquiry_response = ?  WHERE enquiry_id = ?`;
 
       mysqlConnection.query(query, [text, ID], (updateError, updateResults) => {
         if (updateError) {
