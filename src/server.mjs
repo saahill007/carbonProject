@@ -12,10 +12,10 @@ app.use(bodyParser.json());
 const port = 3000;
 
 const dbConfig = {
-  host: "127.0.0.1",
-  user: "root",
-  password: "",
-  database: "",
+  host: "18.216.140.96",
+  user: "carbonuser",
+  password: "Carbon@123",
+  database: "CRBN",
   port: 3306,
 };
 
@@ -122,7 +122,7 @@ app.post("/api/slider", cors(), (req, res) => {
 
       // Insert options into the "Options" table with queId as a foreign key
       const insertOptionsSql =
-        "INSERT INTO CRBN.Options (ques_id, given_option, option_type, equivalent_carbon) VALUES ?";
+        "INSERT INTO CRBN.Options (id, given_option, option_type, equivalent_carbon) VALUES ?";
       const optionsData = options.map((option) => [
         queId,
         option.baseline,
@@ -168,7 +168,7 @@ app.post("/api/dropdown", cors(), (req, res) => {
 
       // Insert options into the "Options" table with queId as a foreign key
       const insertOptionsSql =
-        "INSERT INTO CRBN.Options (ques_id, given_option, option_type, equivalent_carbon) VALUES ?";
+        "INSERT INTO CRBN.Options (id, given_option, option_type, equivalent_carbon) VALUES ?";
       const optionsData = options.map((option) => [
         queId,
         option.dropdown,
@@ -244,7 +244,7 @@ app.use(express.json());
 // Define a route to handle the toggle state update
 app.post("/api/updateToggleState", (req, res) => {
   const { questionId, newState } = req.body;
-  const sql = "UPDATE CRBN.questions SET enabled = ? WHERE ques_id = ?;";
+  const sql = "UPDATE CRBN.questions SET enabled = ? WHERE id = ?;";
 
   // Execute the SQL query using the MySQL connection
   mysqlConnection.query(sql, [newState, questionId], (error, results) => {
@@ -363,11 +363,11 @@ app.post("/api/questionsfind", (req, res) => {
 
 // Define a route to get a question by its content
 app.post("/api/optionsfind", (req, res) => {
-  const { ques_id } = req.body;
-  const sql = "SELECT * FROM CRBN.Options WHERE ques_id = ?";
+  const { id } = req.body;
+  const sql = "SELECT * FROM CRBN.Options WHERE id = ?";
 
   // Execute the SQL query using the MySQL connection
-  mysqlConnection.query(sql, [ques_id], (error, results) => {
+  mysqlConnection.query(sql, [id], (error, results) => {
     if (error) {
       console.error("Error executing SQL query:", error.message);
       res
@@ -406,7 +406,7 @@ app.post("/api/question/multiplechoice", cors(), (req, res) => {
 
         // Insert options into the "Options" table with queId as a foreign key
         const insertOptionsSql =
-          "INSERT INTO Options (ques_id, given_option, option_type, equivalent_carbon) VALUES ?";
+          "INSERT INTO Options (id, given_option, option_type, equivalent_carbon) VALUES ?";
         const optionsData = options.map((option) => [
           queId,
           option.option,
@@ -455,7 +455,7 @@ app.post("/api/question/fillintheblank", cors(), (req, res) => {
 
       // Insert options into the "Options" table with queId as a foreign key
       const insertOptionsSql =
-        "INSERT INTO Options (ques_id, given_option, option_type, equivalent_carbon) VALUES (?, ?, ?, ?)";
+        "INSERT INTO Options (id, given_option, option_type, equivalent_carbon) VALUES (?, ?, ?, ?)";
 
       mysqlConnection.query(
         insertOptionsSql,
@@ -875,7 +875,7 @@ app.get("/api/questions/:id", cors(), async (req, res) => {
     const questionId = req.params.id; // Get the ID from the route parameter
     const [results] = await mysqlConnection
       .promise()
-      .query("SELECT * FROM CRBN.questionsTable WHERE ques_id = ?", [questionId]);
+      .query("SELECT * FROM CRBN.questionsTable WHERE id = ?", [questionId]);
     if (results.length > 0) {
       res.json(results[0]); // Send back the specific question
     } else {
@@ -1393,16 +1393,16 @@ app.post('/api/calculateFootprint', cors(), async (req, res) => {
 
   try {
     for (let answer of answers) {
-      const ques_id = answer.ques_id;
+      const id = answer.id;
       const userValue = answer.value;
-      console.log("Querying for ques_id:", ques_id);
+      console.log("Querying for id:", id);
 
 
       // Fetch ref (constant or formula) for the question
-      const [results] = await mysqlConnection.promise().query("SELECT refs FROM CRBN.questionsTable WHERE ques_id = ?", [ques_id]);
+      const [results] = await mysqlConnection.promise().query("SELECT refs FROM CRBN.questionsTable WHERE id = ?", [id]);
       if (results.length === 0) {
-        console.error(`No data found for ques_id: ${ques_id}`);
-        continue;  // Skip the rest of this iteration and proceed to next ques_id in the loop
+        console.error(`No data found for id: ${id}`);
+        continue;  // Skip the rest of this iteration and proceed to next id in the loop
       }
       console.log("Results from database:", results);
       const refValue = parseFloat(results[0].refs);
@@ -1482,6 +1482,24 @@ async function sendPasswordResetEmail(email, resetLink) {
 
   return transporter.sendMail(mailOptions);
 }
+
+// API for random image fetching
+app.get("/api/randomimage/:index", async (req, res) => {
+  try {
+      const questionIndex = req.params.index;
+      const [rows] = await mysqlConnection.promise().query("SELECT img_name FROM CRBN.facts_img ORDER BY RAND() LIMIT 1;");
+      // console.log(rows);  // log the entire result
+
+      if (rows && rows.length > 0) {
+          return res.json(rows[0]);
+      } else {
+          return res.status(404).json({ message: "No image found" });
+      }
+  } catch (error) {
+      console.error("Error fetching random image:", error);
+      return res.status(500).json({ message: "Internal Server Error" });
+  }
+});
 
 // Start the server
 app.listen(port, () => {
