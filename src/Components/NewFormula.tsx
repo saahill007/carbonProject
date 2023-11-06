@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Choice from "./Choice";
+// import Choice from "./Choice";
 import { apiUrlBase } from "../config";
 
 interface NewFormulaProps {

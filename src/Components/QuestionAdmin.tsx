@@ -8,7 +8,7 @@ import QuestionType1 from "./QuestionType1";
 // import NewFormula from "./NewFormula";
 import AllTypesUnits from "./AllTypesUnits";
 import { useParams } from "react-router-dom";
-import axiosInstance from "./axiosconfig";
+// import axiosInstance from "./axiosconfig";
 type Category = {
   categoryId: number;
   categoryName: string;

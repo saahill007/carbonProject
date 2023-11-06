@@ -21,7 +21,7 @@ import QuestionAdmin from "./Components/QuestionAdmin";
 import Customer_queries from "./Components/customer_queries";
 import Customer_enquiry_main from "./Components/customer_enquiry_main";
 import Email_notification from "./Components/email_notification";
-import CategoryDropdown from "./Components/catedrop";
+// import CategoryDropdown from "./Components/catedrop";
 import Dashboard from "./Components/Dashboard";
 
 const Home: React.FC = () => <div>Home Page</div>;
