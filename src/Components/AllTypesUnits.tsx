@@ -228,7 +228,7 @@ const AllTypesUnits: React.FC<AllTypesUnitsProps> = ({
   }, [selectedUnits, unitsSelectorKey]);
   const fetchVariables = async () => {
     try {
-      const response = await fetch("http://localhost:3001/api/getUnits");
+      const response = await fetch("http://localhost:3000/api/getUnits");
       const data = await response.json();
       const variableNames = Object.keys(data);
       updateVariables(variableNames);
@@ -243,7 +243,7 @@ const AllTypesUnits: React.FC<AllTypesUnitsProps> = ({
       // const var1 = newVar;
 
       // Your API endpoint for adding a new formula
-      const response = await fetch("http://localhost:3001/api/addUnit", {
+      const response = await fetch("http://localhost:3000/api/addUnit", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -279,7 +279,7 @@ const AllTypesUnits: React.FC<AllTypesUnitsProps> = ({
   // Function to fetch formulas
   const fetchFormulas = async () => {
     try {
-      const response = await fetch("http://localhost:3001/api/allformulas");
+      const response = await fetch("http://localhost:3000/api/allformulas");
       const data = await response.json();
       console.log("Formula response:", data);
       setFormulas(data);
@@ -335,7 +335,7 @@ const AllTypesUnits: React.FC<AllTypesUnitsProps> = ({
   const navigate = useNavigate();
   const saveOptionsToDatabase = async () => {
     try {
-      const response = await fetch("http://localhost:3001/api/addQuestion", {
+      const response = await fetch("http://localhost:3000/api/addQuestion", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

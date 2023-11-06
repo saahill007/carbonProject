@@ -42,16 +42,12 @@ const Category_main: React.FC = () => {
 
 
 
-    const handleDeleteClick = async () => {
-    };
-
     const handleEditClick = () => {
-        if (selectedCategory.length > 0) {
-            // Redirect to the edit page with selected admin IDs as query parameters
-            const categoryIdsQueryParam = selectedCategory.join(",");
+        if (data.length > 0) {
+            const categoryIdsQueryParam = data.map((item) => item.category_id).join(",");
             navigate(`/values/category/category_edit/${categoryIdsQueryParam}`);
         } else {
-            console.error('Select one or more admins to edit.');
+            console.error('No data available to edit.');
         }
     };
 
@@ -100,9 +96,9 @@ const Category_main: React.FC = () => {
                     <a href="#">
                         <img className="CateImg" src={editImg} alt="edit" onClick={() => handleEditClick()} />
                     </a>
-                    <a href="#">
+                    {/* <a href="#">
                         <img className="CateImg" src={delImg} alt="delete" onClick={() => handleDeleteClick()} />
-                    </a>
+                    </a> */}
                 </div>
             </div>
     
@@ -122,7 +118,6 @@ const Category_main: React.FC = () => {
                 <table className="tabl-sapce">
                     <thead>
                         <tr className="bg-info sticky-header">
-                            <th>Select</th>
                             <th>Category_id</th>
                             <th>Category_Name</th>
                         </tr>
@@ -130,10 +125,6 @@ const Category_main: React.FC = () => {
                     <tbody id="myTable">
                         {data.map((item) => (
                             <tr key={item.category_id}>
-                                <td>
-                                    <input type="checkbox" checked={selectedCategory.includes(item.category_id)}
-                                        onChange={() => handleCheckboxChange(item.category_id)} />
-                                </td>
                                 <td>{item.category_id}</td>
                                 <td>{item.category_name}</td>
                             </tr>

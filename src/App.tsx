@@ -19,6 +19,10 @@ import Slider from "./Components/Slider";
 import Dropdown from "./Components/Dropdown";
 import QuestionAdmin from "./Components/QuestionAdmin";
 import Customer_queries from "./Components/customer_queries";
+import Customer_enquiry_main from "./Components/customer_enquiry_main";
+import Email_notification from "./Components/email_notification"
+import CategoryDropdown from "./Components/catedrop"
+import Dashboard from "./Components/Dashboard"
 
 const Home: React.FC = () => <div>Home Page</div>;
 
@@ -67,12 +71,13 @@ const App: React.FC = () => {
             <Route path="/logout" element={<Logout />} />
             <Route path="/questions/slider" element={<Slider />} />
             <Route path="/questions/dropdown" element={<Dropdown />} />
-            {/* <Route path="/Categorydropdown" element={<CategoryDrop />} />
-            <Route
-              path="/email_notification"
-              element={<Email_notification />}
-            /> */}
-            <Route path="/customer_queries" element={<Customer_queries />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/customer_enquiry_main" element={<Customer_enquiry_main />} />
+            {/* <Route path="/Categorydropdown" element={<CategoryDrop />} /> */}
+            <Route path="/email_notification" element={<Email_notification />} />
+            <Route path="/customer_enquiries/:enquiry_id" element={<Customer_queries />} />
+
+
           </Routes>
         </div>
       </div>
@@ -81,3 +86,4 @@ const App: React.FC = () => {
 };
 
 export default App;
+

@@ -225,8 +225,8 @@ const QuestionType1: React.FC<QuestionType1Props> = ({
       console.log(id);
       const url =
         id == ""
-          ? "http://localhost:3001/api/addQuestion"
-          : `http://localhost:3001/api/updateQuestion/${id}`;
+          ? "http://localhost:3000/api/addQuestion"
+          : `http://localhost:3000/api/updateQuestion/${id}`;
 
       const response = await fetch(url, {
         method: id == "" ? "POST" : "PATCH",

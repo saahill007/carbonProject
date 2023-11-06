@@ -5,7 +5,7 @@ import SwitchContent from "./SwitchContent";
 import Content from "./Content";
 import AnswerTypeSelector from "./AnswerTypeSelector";
 import QuestionType1 from "./QuestionType1";
-import NewFormula from "./NewFormula";
+// import NewFormula from "./NewFormula";
 import AllTypesUnits from "./AllTypesUnits";
 import { useParams } from "react-router-dom";
 type Category = {
@@ -52,7 +52,7 @@ const QuestionAdmin: React.FC = () => {
         if (id) {
           // Fetch question data if ID is provided
           const response = await fetch(
-            `http://localhost:3001/api/question/${id}`
+            `http://localhost:3000/api/question/${id}`
           );
           if (!response.ok) {
             throw new Error("Error fetching question data");
@@ -86,7 +86,7 @@ const QuestionAdmin: React.FC = () => {
 
   const fetchCategories = async () => {
     try {
-      const response = await fetch("http://localhost:3001/api/getCategories");
+      const response = await fetch("http://localhost:3000/api/getCategories");
       const data = await response.json();
 
       if (Array.isArray(data)) {
@@ -149,7 +149,7 @@ const QuestionAdmin: React.FC = () => {
 
   const saveDataToServer = async () => {
     try {
-      const response = await fetch("http://localhost:3001/api/addData/", {
+      const response = await fetch("http://localhost:3000/api/addData/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

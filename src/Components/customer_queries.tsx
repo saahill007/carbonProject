@@ -1,32 +1,37 @@
 import React, { useEffect, useState } from 'react';
 import { AxiosResponse, AxiosError } from 'axios';
 import axiosInstance from './axiosconfig';
+import { useParams, useNavigate } from 'react-router-dom'; // Import the useParams hook
 import "./customer_queries.css";
 
 const CustomerQueries: React.FC = () => {
+    const { enquiry_id } = useParams(); // Get the enquiry_id from the URL
+    const navigate = useNavigate();
+
     const [customerDetails, setCustomerDetails] = useState({
         enquiry_id: '',
-        enquiry_name: '',
+        firstname: '',
+        lastname: '',
+        email: '',
         enquiry_question: '',
-        email_id: '',
     });
 
     const [response, setResponse] = useState('');
     const [error, setError] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
-    const [totalFlagOneInquiries, setTotalFlagOneInquiries] = useState(0);
-    const [enquirypresent, setenquirypresent] = useState(false);
 
+    // Fetch customer details using the enquiry_id
     useEffect(() => {
-        // Fetch the total number of inquiries with flag 1
-        axiosInstance.get('/api/getTotalFlagOneInquiries')
-            .then((response: AxiosResponse) => {
-                setTotalFlagOneInquiries(response.data.total);
-            })
-            .catch((error: AxiosError) => {
-                console.error("Error fetching total flag 1 inquiries: " + error);
-            });
-    }, []);
+        if (enquiry_id) {
+            axiosInstance.get(`/api/getenquiryCustomerDetails?enquiry_id=${enquiry_id}`)
+                .then((response: AxiosResponse) => {
+                    setCustomerDetails(response.data);
+                })
+                .catch((error: AxiosError) => {
+                    console.error("Error fetching customer details: " + error);
+                });
+        }
+    }, [enquiry_id]);
 
     const sendResponse = () => {
         if (!response) {
@@ -34,21 +39,24 @@ const CustomerQueries: React.FC = () => {
             setTimeout(() => setError(''), 3000);
             return;
         }
+        // Add this line to log the recipient's email address
+        console.log('Recipient Email:', customerDetails.email);
         // Make a POST request to your server to send the response via email
         axiosInstance.post('/api/sendCustomerEnquiryEmail', {
             ID: customerDetails.enquiry_id,
-            to: customerDetails.email_id,
+            to: customerDetails.email,
             subject: `Response to Customer Enquiry: ${customerDetails.enquiry_question}`,
             text: response,
         })
             .then((response: AxiosResponse) => {
                 setSuccessMessage('Email sent successfully.');
-                setTimeout(() => setSuccessMessage(''), 5000);
+                setTimeout(() => {
+                    setSuccessMessage('');
+                    navigate('/customer_enquiry_main'); // Navigate back to customer_enquiry_main
+                }, 500);
                 setError(''); // Clear any previous error message
                 console.error("Email sent successfully: " + response);
 
-                // Trigger a re-fetch of the next customer's inquiry details
-                fetchNextCustomerInquiry();
             })
             .catch((error: AxiosError) => {
                 setSuccessMessage('');
@@ -58,85 +66,28 @@ const CustomerQueries: React.FC = () => {
             });
     };
 
-    const fetchNextCustomerInquiry = () => {
-        axiosInstance.get('/api/goToNextInquiry', {
-            params: { enquiryId: customerDetails.enquiry_id },
-        })
-            .then((response: AxiosResponse) => {
-                if (response.data.message) {
-                    setenquirypresent(true);
-                } else {
-                    setCustomerDetails({
-                        enquiry_id: response.data.enquiry_id,
-                        enquiry_name: response.data.firstname,
-                        enquiry_question: response.data.enquiry_question,
-                        email_id: response.data.email,
-                    });
-                    setResponse(''); // Clear the response textarea
-                }
-            })
-            .catch((error: AxiosError) => {
-                console.error("Error fetching data: " + error);
-            });
-    };
-
-    const fetchPreviousCustomerInquiry = () => {
-        axiosInstance.get('/api/goToPreviousInquiry', {
-            params: { enquiryId: customerDetails.enquiry_id },
-        })
-            .then((response: AxiosResponse) => {
-                if (response.data.message) {
-                } else {
-                    setCustomerDetails({
-                        enquiry_id: response.data.enquiry_id,
-                        enquiry_name: response.data.firstname,
-                        enquiry_question: response.data.enquiry_question,
-                        email_id: response.data.email,
-                    });
-                    setResponse('');
-                }
-            })
-            .catch((error: AxiosError) => {
-                console.error("Error fetching data: " + error);
-            });
-    };
-
-    useEffect(() => {
-        fetchNextCustomerInquiry();
-    }, []);
-
     return (
         <div>
             <div className='customer_query_container'>
                 <h2>Customer Enquiries</h2>
                 <div className='background_container1'>
                     <div className='background_container2'>
-                        {totalFlagOneInquiries === 0 || enquirypresent ? (
-                            <div>
-                                <h3 className='customer_details1'>No customer enquiry to answer</h3>
+                        <div>
+                            <h3 className='customer_details'>Customer: {customerDetails.firstname} {customerDetails.lastname}</h3>
+                            <p className='enquiry_question'>{customerDetails.enquiry_question}</p>
+                            <div className='Response_box'>
+                                <textarea
+                                    rows={60}
+                                    placeholder='Response'
+                                    style={{ width: '95%', height: '130px' }}
+                                    value={response}
+                                    onChange={(e) => setResponse(e.target.value)}
+                                />
                             </div>
-                        ) : (
-                            <div>
-                                <h3 className='customer_details'>Customer: {customerDetails.enquiry_name}</h3>
-                                <p className='enquiry_question'>{customerDetails.enquiry_question}</p>
-                                <div className='Response_box'>
-                                    <textarea
-                                        rows={6}
-                                        placeholder='Response'
-                                        style={{ width: '95%', height: '130px' }}
-                                        value={response}
-                                        onChange={(e) => setResponse(e.target.value)}
-                                    />
-                                </div>
-                                <button className='send_response' onClick={sendResponse}>Send</button>
-                                {successMessage && <div className='success_message_enquiry'>{successMessage}</div>}
-                                {error && <div className='error_message_enquiry'>{error}</div>}
-                            </div>
-                        )}
-                    </div>
-                    <div className='back_next_buttons'>
-                        <button className='back_button' onClick={fetchPreviousCustomerInquiry}>Back</button>
-                        <button className='next_button' onClick={fetchNextCustomerInquiry}>Next</button>
+                            <button className='send_response' onClick={sendResponse}>Send</button>
+                            {successMessage && <div className='success_message_enquiry'>{successMessage}</div>}
+                            {error && <div className='error_message_enquiry'>{error}</div>}
+                        </div>
                     </div>
                 </div>
             </div>

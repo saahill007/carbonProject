@@ -1,0 +1,126 @@
+.TopFilter {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    background-color: #84d2f3;
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+  
+.date-input,
+.zipcode {
+    margin-right: 10px;
+}
+  
+.date-input {
+    /* background-color: #84d2f3; */
+    border-radius: 10px;
+ }
+  
+.datein {
+    border-radius: 10px;
+}
+  
+.secondline {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px; /* Added margin-top to separate from the table */
+    margin-bottom: 1vh;
+}
+  
+.compare {
+    display: flex;
+    align-items: center;
+    margin-right: 10px;
+}
+  
+.compare select {
+    display: flex;
+    border-radius: 5px;
+    padding: 2px;
+    margin-right: 5px;
+}
+  
+.secondline .apply-button {
+    height: 50px;
+    width: 100px;
+    border-radius: 15px;
+    background-color:  hsl(114, 25%, 71%);
+}
+
+.secondline button {
+    margin-top: 0;
+    position: relative;
+    margin-bottom: 0vh;
+    z-index: 1;
+    right: 0;
+    display: block;
+}
+
+/* Any other specific styles for buttons within .secondline */
+  
+.secondline .apply-button:hover {
+    background-color: hsl(114, 25%, 71%);
+}
+  
+.secondline .apply-button:active {
+    background-color: hsl(114, 25%, 71%);
+}
+
+.search-container{
+    display: flex;
+    align-items: end;
+    margin: 0;
+    /* margin-right: 5vw !important; */
+}
+
+.carbon-table {
+    max-height: 35vh; /* Set the maximum height for the table */
+    overflow-y: auto; /* Enable vertical scrolling */
+  }
+
+.tableclass {
+    width: 100%;
+    margin: 0;
+    padding: 0vh;
+    border-collapse: collapse;
+}
+  
+
+.tableclass th{
+    position: sticky;
+    top: 0;
+  
+}
+
+.tableclass th,
+.tableclass td {
+    padding: 8px;
+    text-align: center;
+    vertical-align: middle;
+    border: 1px solid #ddd;
+}
+  
+.tableclass th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+}
+  
+  
+.tableclass tbody tr:hover {
+    background-color: #f5f5f5;
+}
+
+.graphs {
+    display: flex;
+    justify-content: center;
+}
+  
+.chart-container {
+    width: 50%;
+    margin: auto;
+}
+  

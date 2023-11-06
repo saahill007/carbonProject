@@ -7,12 +7,14 @@ const Support: React.FC = () => {
     <div>
       <div className='support_container'>
         <div className='box_1'>
-          <Link to="/customer_queries">
+          <Link to="/customer_enquiry_main">
             <button className='query'>Respond to Customer Queries</button>
           </Link>
         </div>
         <div className='box_2'>
-          <button className='customer_data'>View Customer emission data</button>
+          <Link to="/Dashboard">
+            <button className='customer_data'>View Customer emission data</button>
+          </Link>
         </div>
         <div className='box_3'>
           <Link to="/email_notification">
