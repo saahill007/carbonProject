@@ -195,7 +195,7 @@ const NewFormula: React.FC<NewFormulaProps> = ({ isZipDependent }) => {
           borderRadius: "10px",
         }}
       >
-        {isZipDependent && (
+        {isZipDependent ? (
           <div
             className="row d-flex align-items-center"
             style={{
@@ -230,6 +230,8 @@ const NewFormula: React.FC<NewFormulaProps> = ({ isZipDependent }) => {
               </select>
             </div>
           </div>
+        ) : (
+          <></>
         )}
         <div className="row d-flex align-items-center">
           <p
@@ -341,25 +343,6 @@ const NewFormula: React.FC<NewFormulaProps> = ({ isZipDependent }) => {
           </div>
         </div>
         {<p style={{ fontWeight: "bold", color: "red" }}>{formulaError}</p>}
-        {/* {formulaError !== "" ? (
-          <></>
-        ) : (
-          <>
-            <div
-              className="alert alert-warning alert-dismissible fade show"
-              role="alert"
-            >
-              <strong>{formulaError}</strong>
-              <button
-                type="button"
-                className="btn-close"
-                data-bs-dismiss="alert"
-                aria-label="Close"
-                onClick={handleCloseAlert}
-              ></button>
-            </div>
-          </>
-        )} */}
 
         <div className="row d-flex align-items-center">
           <p

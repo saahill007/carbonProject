@@ -4,6 +4,25 @@ import SwitchContent from "./SwitchContent";
 import OptionValue from "./OptionValue";
 import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
+interface InputOptions {
+  index: string;
+  name: string;
+  value: number;
+}
+
+interface QuestionData {
+  questionContent: string;
+  household: boolean;
+  zipcode: boolean;
+  questionType: number;
+  enabled: boolean;
+  choiceAns: string;
+  choices: string[][];
+  refs: number[][];
+  selectedUnits: any[]; // Update the type based on your actual data structure
+  selectedFormulas: string[];
+  label: string;
+}
 interface QuestionType1Props {
   onChange: (option: string[][], value: number[][], type: string) => void;
   questionContent: string;
@@ -14,7 +33,11 @@ interface QuestionType1Props {
   selectedUnits: any[]; // Replace 'any' with the actual type of selectedUnits
   selectedFormulas: string[]; // Replace 'string' with the actual type of selectedFormulas
   label: string;
-  id?: string;
+  questionData: QuestionData;
+}
+interface DataItem {
+  name: string;
+  value: number;
 }
 
 const QuestionType1: React.FC<QuestionType1Props> = ({
@@ -27,42 +50,71 @@ const QuestionType1: React.FC<QuestionType1Props> = ({
   selectedUnits,
   selectedFormulas,
   label,
+  questionData,
 }) => {
   const { id } = useParams<{ id: string }>();
-  const [twoArrayOption, setTwoArrayOption] = useState<string[][]>([]);
-  const [twoArrayValue, setTwoArrayValue] = useState<number[][]>([]);
-  const [optionCount, updateOptionCount] = useState<number>(4);
+
+  // const [twoArrayOption, setTwoArrayOption] = useState<string[][]>([]);
+  // const [twoArrayValue, setTwoArrayValue] = useState<number[][]>([]);
+  // const [optionCount, updateOptionCount] = useState<number>(4);
   const [choiceAns, updateChoiceAns] = useState("1");
   const [deletedKeys, updateDeletedKeys] = useState<string[]>([]);
+  const [type1Ans, updateType1Ans] = useState<number>(1);
+  // const [inputs, updateInputs] = useState<InputOptions[]>([]);
   const navigate = useNavigate();
+  const [data, setData] = useState<DataItem[]>([
+    { name: "Name1", value: 1 },
+    { name: "Name2", value: 2 },
+    // ... add more initial data as needed
+  ]);
+  const [newName, setNewName] = useState<string>("");
+  const [newValue, setNewValue] = useState<number | string>("");
   // Function to initialize arrays
-  const initializeArrays = () => {
-    const numRows: number = 7;
-    const numCols: number = 8;
+  // const initializeArrays = () => {
+  //   const numRows: number = 7;
+  //   const numCols: number = 8;
 
-    // Initialize the 2D array with empty strings
-    const optionArray: string[][] = [];
-    for (let i = 0; i < numRows; i++) {
-      let row: string[] = [];
-      for (let j = 0; j < numCols; j++) {
-        row.push("");
-      }
-      optionArray.push(row);
+  //   // Initialize the 2D array with empty strings
+  //   const optionArray: string[][] = [];
+  //   for (let i = 0; i < numRows; i++) {
+  //     let row: string[] = [];
+  //     for (let j = 0; j < numCols; j++) {
+  //       row.push("");
+  //     }
+  //     optionArray.push(row);
+  //   }
+
+  //   // Initialize the 2D array with number 1
+  //   const valueArray: number[][] = [];
+  //   for (let i = 0; i < numRows; i++) {
+  //     let row: number[] = [];
+  //     for (let j = 0; j < numCols; j++) {
+  //       row.push(1);
+  //     }
+  //     valueArray.push(row);
+  //   }
+
+  //   // Set state variables
+  //   setTwoArrayOption(optionArray);
+  //   setTwoArrayValue(valueArray);
+  // };
+  const handleAddValue = () => {
+    // Validate that both name and value are provided
+    if (newName && newValue !== "") {
+      // Update the data state with the new value
+      setData([...data, { name: newName, value: Number(newValue) }]);
+      // Clear the input fields
+      setNewName("");
+      setNewValue("");
     }
+  };
 
-    // Initialize the 2D array with number 1
-    const valueArray: number[][] = [];
-    for (let i = 0; i < numRows; i++) {
-      let row: number[] = [];
-      for (let j = 0; j < numCols; j++) {
-        row.push(1);
-      }
-      valueArray.push(row);
-    }
-
-    // Set state variables
-    setTwoArrayOption(optionArray);
-    setTwoArrayValue(valueArray);
+  // Function to handle deleting a value
+  const handleDeleteValue = (index: number) => {
+    // Create a copy of the data array without the item to be deleted
+    const newData = [...data.slice(0, index), ...data.slice(index + 1)];
+    // Update the data state
+    setData(newData);
   };
   const [isFib, updateFib] = useState(true);
   const determineQuestionType = () => {
@@ -76,9 +128,9 @@ const QuestionType1: React.FC<QuestionType1Props> = ({
   };
 
   const [hasMultiple, updateHasMultiple] = useState(false);
-  React.useEffect(() => {
-    initializeArrays();
-  }, [isFib, hasMultiple]);
+  // React.useEffect(() => {
+  //   initializeArrays();
+  // }, [isFib, hasMultiple]);
 
   useEffect(() => {
     determineQuestionType();
@@ -123,39 +175,50 @@ const QuestionType1: React.FC<QuestionType1Props> = ({
     // onChange(twoArrayOption, twoArrayValue, questionType);
   };
 
-  const handleReferenceValueChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const value = parseFloat(event.target.value);
-    setTwoArrayValue((prevTwoArrayValue) => {
-      const newTwoArrayValue = [...prevTwoArrayValue];
-      newTwoArrayValue[0][0] = isNaN(value) ? 0 : value;
-      return newTwoArrayValue;
-    });
+  // const handleReferenceValueChange = (
+  //   event: React.ChangeEvent<HTMLInputElement>
+  // ) => {
+  //   const value = parseFloat(event.target.value);
+  //   setTwoArrayValue((prevTwoArrayValue) => {
+  //     const newTwoArrayValue = [...prevTwoArrayValue];
+  //     newTwoArrayValue[0][0] = isNaN(value) ? 0 : value;
+  //     return newTwoArrayValue;
+  //   });
 
-    // Call onChange with the updated values
-    // onChange(twoArrayOption, twoArrayValue, questionType);
-  };
+  //   // Call onChange with the updated values
+  //   // onChange(twoArrayOption, twoArrayValue, questionType);
+  // };
 
-  const handleValuesChange = (index: number, choice: string, value: number) => {
-    // Update twoArrayOption
-    setTwoArrayOption((prevTwoArrayOption) => {
-      const newTwoArrayOption = [...prevTwoArrayOption];
-      newTwoArrayOption[0][index] = choice;
-      return newTwoArrayOption;
-    });
+  // const handleValuesChange = (index: number, choice: string, value: number) => {
+  //   // Update twoArrayOption
+  //   setTwoArrayOption((prevTwoArrayOption) => {
+  //     const newTwoArrayOption = [...prevTwoArrayOption];
+  //     newTwoArrayOption[0][index] = choice;
+  //     return newTwoArrayOption;
+  //   });
 
-    // Update twoArrayValue
-    setTwoArrayValue((prevTwoArrayValue) => {
-      const newTwoArrayValue = [...prevTwoArrayValue];
-      newTwoArrayValue[0][index] = value;
-      return newTwoArrayValue;
-    });
+  //   // Update twoArrayValue
+  //   setTwoArrayValue((prevTwoArrayValue) => {
+  //     const newTwoArrayValue = [...prevTwoArrayValue];
+  //     newTwoArrayValue[0][index] = value;
+  //     return newTwoArrayValue;
+  //   });
 
-    // Call onChange with the updated values
-    // onChange(twoArrayOption, twoArrayValue, questionType);
-  };
+  //   // Call onChange with the updated values
+  //   // onChange(twoArrayOption, twoArrayValue, questionType);
+  // };
   //
+  const generateChoiceAndRefsArrays = (data: DataItem[]) => {
+    const choicess: string[] = [];
+    const refss: number[] = [];
+
+    data.forEach((item) => {
+      choicess.push(item.name);
+      refss.push(item.value);
+    });
+
+    return { choicess, refss };
+  };
 
   const saveOptionsToDatabase = async () => {
     try {
@@ -179,8 +242,50 @@ const QuestionType1: React.FC<QuestionType1Props> = ({
           questionType,
           enabled,
           choiceAns,
-          choices: twoArrayOption,
-          refs: twoArrayValue,
+          choices: [],
+          refs: [[type1Ans]],
+          selectedUnits,
+          selectedFormulas,
+          label,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Error saving options to the database");
+      }
+
+      console.log("Options saved successfully!");
+      navigate("/questions");
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
+  const saveOptionsToDatabase2 = async () => {
+    const { choicess, refss } = generateChoiceAndRefsArrays(data);
+    try {
+      console.log(id);
+      const url =
+        id == ""
+          ? "http://localhost:3001/api/addQuestion"
+          : `http://localhost:3001/api/updateQuestion/${id}`;
+
+      const response = await fetch(url, {
+        method: id == "" ? "POST" : "PATCH",
+
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          // Remove id from the request body, as it's already in the URL
+          questionContent,
+          household,
+          zipcode,
+          questionType,
+          enabled,
+          choiceAns,
+          choices: choicess,
+          refs: refss,
           selectedUnits,
           selectedFormulas,
           label,
@@ -202,221 +307,215 @@ const QuestionType1: React.FC<QuestionType1Props> = ({
     // Handle the deletion logic here
     // updateOptionCount(optionCount - 1);
     // updateDeletedKeys([...deletedKeys, key]);
+
     updateDeletedKeys((prevDeletedKeys) => [...prevDeletedKeys, key]);
     console.log("Option deleted!");
   };
+  // const [inputArr, updateInputArr] = useState<String[]>([]);
 
   return (
-    <div>
-      <div
-        className="row"
-        style={{
-          fontFamily: "Outfit-SemiBold, Helvetica",
-          fontSize: "16px",
-          fontWeight: "bold",
-        }}
-      >
-        <div className="col-sm-2">
-          <input
-            type="radio"
-            name="radioGrp"
-            style={{ width: "30px", height: "30px" }}
-            onChange={() => handleRadioChange(true)}
-            defaultChecked
-          />
+    <>
+      <div className="container" style={{ width: "60%" }}>
+        <div
+          className="row"
+          style={{
+            fontFamily: "Outfit-SemiBold, Helvetica",
+            fontSize: "18px",
+            fontWeight: "bold",
+          }}
+        >
+          <div className="col-sm-2">
+            <input
+              type="radio"
+              name="radioGrp"
+              style={{ width: "30px", height: "30px" }}
+              onChange={() => handleRadioChange(true)}
+              defaultChecked
+            />
+          </div>
+          <div className="col-lg">Fill In the Blank</div>
+          <div className="col-sm-2">
+            <input
+              type="radio"
+              name="radioGrp"
+              style={{ width: "30px", height: "30px" }}
+              onChange={() => handleRadioChange(false)}
+            />
+          </div>
+          <div className="col-lg">Single / Multiple Selection</div>
         </div>
-        <div className="col-lg">Fill In the Blank</div>
-        <div className="col-sm-2">
-          <input
-            type="radio"
-            name="radioGrp"
-            style={{ width: "30px", height: "30px" }}
-            onChange={() => handleRadioChange(false)}
-          />
-        </div>
-        <div className="col-lg">Single / Multiple Selection</div>
-      </div>
-
-      {!isFib && (
-        <div>
+        {isFib && (
           <div
             className="container"
-            style={{ paddingTop: "10px", paddingBottom: "10px" }}
+            style={{ paddingTop: "10px", marginTop: "10px", width: "70%" }}
           >
-            <SwitchContent
-              label="Allow Multiple"
-              onChange={handleSwitchChange}
-            />
-            {
+            <p style={{ fontSize: "18px", textAlign: "center" }}>
+              Carbon Footprint Reference Value
+            </p>
+            <p
+              style={{
+                fontSize: "18px",
+                fontWeight: "400",
+                textAlign: "center",
+              }}
+            >
+              (This value will be multiplied to the answer)
+            </p>
+            <input
+              className="form-control rounded"
+              type="number"
+              // onChange={handleReferenceValueChange}
+              onChange={(e) => updateType1Ans(parseFloat(e.target.value))}
+            ></input>
+            <button
+              className="btn btn-primary"
+              style={{ backgroundColor: "#A7C8A3", border: "0px" }}
+              // onClick={saveOptionsToDatabase}
+              onClick={() => {
+                saveOptionsToDatabase();
+              }}
+            >
+              Save
+            </button>
+          </div>
+        )}
+        {!isFib && (
+          <div>
+            <div
+              className="container"
+              style={{ paddingTop: "10px", paddingBottom: "10px" }}
+            >
+              <SwitchContent
+                label="Allow Multiple"
+                onChange={handleSwitchChange}
+              />
+            </div>
+            <div style={{}}>
               <div
-                className="unitOptions"
+                className="Updatedtable"
                 style={{
-                  background: "#c2c1be",
-                  marginTop: "10px",
-                  borderRadius: "20px",
+                  background: "#fffafa",
+                  paddingLeft: "20px",
+                  paddingTop: "30px",
+                  borderRadius: "10px",
+                  marginBottom: "30px",
                 }}
               >
                 <div
-                  className="row"
-                  style={{
-                    fontFamily: "Outfit-SemiBold, Helvetica",
-                    fontSize: "16px",
-                    fontWeight: "bold",
-                    textAlign: "center",
-                    paddingLeft: "20px",
-                    paddingTop: "20px",
-                    paddingRight: "20px",
+                  className="row align-items-center justify-content-center"
+                  style={{ fontSize: "16px" }}
+                >
+                  <div className="col">Name</div>
+                  <div className="col">Value</div>
+                  <div className="col">Action</div>
+                </div>
+                {data.map((item, index) => (
+                  <div
+                    className="row align-items-center justify-content-center"
+                    key={index}
+                  >
+                    <div className="col" style={{}}>
+                      <button
+                        className="btn btn-info"
+                        style={{ width: "180px" }}
+                      >
+                        {item.name}
+                      </button>
+                    </div>
+                    <div className="col">
+                      <button
+                        className="btn btn-info"
+                        style={{ width: "180px" }}
+                      >
+                        {item.value}
+                      </button>
+                    </div>
+                    <div className="col">
+                      <button
+                        className="btn btn-danger btn-sm"
+                        onClick={() => handleDeleteValue(index)}
+                        style={{ width: "150px" }}
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div>
+                <div className="row">
+                  <div className="col">
+                    <input
+                      type="text"
+                      className="form-control rounded"
+                      id="newName"
+                      value={newName}
+                      onChange={(e) => setNewName(e.target.value)}
+                    />
+                  </div>
+                  <div className="col">
+                    <input
+                      type="number"
+                      className="form-control rounded"
+                      id="newValue"
+                      value={newValue}
+                      onChange={(e) => setNewValue(e.target.value)}
+                    />
+                  </div>
+                  <div className="col">
+                    <button
+                      className="btn btn-primary"
+                      onClick={handleAddValue}
+                      style={{ width: "180px", marginBottom: "25px" }}
+                    >
+                      Add Option
+                    </button>
+                  </div>
+                </div>
+                <button
+                  className="btn btn-primary"
+                  style={{ backgroundColor: "#A7C8A3", border: "0px" }}
+                  // onClick={saveOptionsToDatabase}
+                  onClick={() => {
+                    console.log(questionData);
+                    console.log(type1Ans);
+                    console.log(data);
+                    saveOptionsToDatabase2();
                   }}
                 >
-                  <div className="col">Add Options</div>
-
-                  <div className="col">Value of Carbon (In lbs)</div>
-                  <div className="col">Delete Option</div>
-                </div>
-                <>
-                  {/* {1 <= optionCount && ( */}
-                  {Array.from({ length: optionCount }).map(
-                    (_, index) =>
-                      !deletedKeys.includes(String(index)) && (
-                        <span
-                          key={index}
-                          style={{ display: "flex", alignItems: "center" }}
-                        >
-                          <OptionValue
-                            onValuesChange={(choice: string, value: number) => {
-                              // Use the spread operator to create a new array and update the specific index
-                              setTwoArrayOption((prevOptions) => {
-                                const newOptions = [...prevOptions];
-                                newOptions[0] = [...newOptions[0]];
-                                newOptions[0][index] = choice;
-                                return newOptions;
-                              });
-
-                              setTwoArrayValue((prevValues) => {
-                                const newValues = [...prevValues];
-                                newValues[0] = [...newValues[0]];
-                                newValues[0][index] = value;
-                                return newValues;
-                              });
-
-                              // Call onChange with the updated values
-                              // onChange(twoArrayOption, twoArrayValue, questionType);
-                            }}
-                          />
-                          <button
-                            className="btn btn-danger"
-                            onClick={() => handleDeleteOption(String(index))}
-                            style={{
-                              marginTop: "35px",
-                              marginRight: "30px",
-                              width: "30%",
-                            }}
-                          >
-                            Delete
-                          </button>
-                        </span>
-                      )
-                  )}
-                </>
+                  Save
+                </button>
               </div>
-            }
-          </div>
-          <div
-            className="row"
-            style={{
-              marginLeft: "10%",
-              marginRight: "10%",
-              marginBottom: "10px",
-              marginTop: "20px",
-            }}
-          >
-            <div className="col">
-              <button
-                className="btn btn-primary"
-                style={{ backgroundColor: "#84D2F3", border: "0px" }}
-                onClick={() => {
-                  updateOptionCount(optionCount + 1);
-
-                  console.log(deletedKeys);
-                  console.log(twoArrayOption);
-                }}
-              >
-                Add New Option
-              </button>
             </div>
-            {/* <div className="col">
-              <button
-                className="btn btn-primary"
-                style={{ backgroundColor: "#e38181", border: "0px" }}
-                onClick={() => {
-                  if (optionCount == 0) {
-                    updateOptionCount(0);
-                  } else {
-                    updateOptionCount(optionCount - 1);
-                  }
-                  console.log(optionCount);
-                }}
-              >
-                Delete
-              </button>
+            {/* <div
+              className="row"
+              style={{
+                marginLeft: "10%",
+                marginRight: "10%",
+                marginBottom: "10px",
+                marginTop: "20px",
+              }}
+            >
+              <div className="col">
+                <button
+                  className="btn btn-primary"
+                  style={{ backgroundColor: "#84D2F3", border: "0px" }}
+                  onClick={() => {
+                    updateOptionCount(optionCount + 1);
+
+                    console.log(deletedKeys);
+                    console.log(twoArrayOption);
+                  }}
+                >
+                  Add New Option
+                </button>
+              </div>
             </div> */}
           </div>
-        </div>
-      )}
-      {isFib && (
-        <div
-          className="container"
-          style={{ paddingTop: "10px", marginTop: "10px" }}
-        >
-          <p style={{ fontSize: "18px", textAlign: "center" }}>
-            Carbon Footprint Reference Value
-          </p>
-          <p
-            style={{ fontSize: "18px", fontWeight: "400", textAlign: "center" }}
-          >
-            (This value will be multiplied to the answer)
-          </p>
-          <input
-            className="form-control rounded"
-            type="number"
-            onChange={handleReferenceValueChange}
-          ></input>
-        </div>
-      )}
-      <div
-        className="row"
-        style={{
-          marginLeft: "10%",
-          marginRight: "10%",
-          marginBottom: "30px",
-          marginTop: "20px",
-        }}
-      >
-        <div className="col">
-          <button
-            className="btn btn-primary"
-            style={{ backgroundColor: "#A7C8A3", border: "0px" }}
-            onClick={() => {
-              console.log(choiceAns);
-              console.log(isFib);
-              console.log(hasMultiple);
-              navigate("/questions");
-            }}
-          >
-            Back
-          </button>
-        </div>
-        <div className="col">
-          <button
-            className="btn btn-primary"
-            style={{ backgroundColor: "#A7C8A3", border: "0px" }}
-            onClick={saveOptionsToDatabase}
-          >
-            Save
-          </button>
-        </div>
+        )}
       </div>
-    </div>
+    </>
   );
 };
 

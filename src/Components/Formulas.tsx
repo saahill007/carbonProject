@@ -2,6 +2,7 @@ import AddVar from "./AddVar";
 import Choice from "./Choice";
 import { Desktop } from "./Desktop";
 import DisplayFormulas from "./DisplayFormulas";
+import DisplayNewFormulas from "./DisplayNewFormulas";
 import NewFormula from "./NewFormula";
 import Ques from "./Ques";
 import QuestionAdmin from "./QuestionAdmin";
@@ -49,7 +50,8 @@ const Formulas = () => {
       {/* <QuestionAdmin /> */}
       {/* <Desktop />
       {/* <Choice onValuesChange={handleValuesChange} /> */}
-      <DisplayFormulas />
+      {/* <DisplayFormulas /> */}
+      <DisplayNewFormulas />
     </div>
   );
 };

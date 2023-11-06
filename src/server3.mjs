@@ -6,7 +6,7 @@ const app = express();
 const port = 3001;
 
 const dbConfig = {
-  host: "3.16.38.171",
+  host: "18.216.140.96",
   user: "carbonuser",
   password: "Carbon@123",
   database: "CRBN",
@@ -103,6 +103,8 @@ app.put("/api/updatevar/:name", async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
+// API endpoint to fetch formula names
 
 app.post("/api/addConversion", async (req, res) => {
   const { name, value } = req.body;
@@ -226,6 +228,29 @@ app.get("/api/question/:id", async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
+let connection;
+
+app.get("/formulas", async (req, res) => {
+  try {
+    // Use the global connection variable
+    connection = await pool.getConnection();
+    const [rows] = await connection.query(
+      "SELECT formulaName, var1, var2, var3, var4 FROM formulasTable"
+    );
+    connection.release();
+    const formulaNames = rows.map((row) => ({
+      formulaName: row.formulaName,
+      var1: row.var1,
+      var2: row.var2,
+      var3: row.var3,
+      var4: row.var4,
+    }));
+    res.json(formulaNames);
+  } catch (error) {
+    console.error("Error fetching formula names:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
 app.patch("/api/updateQuestion/:id", async (req, res) => {
   const { id } = req.params;
 
@@ -317,6 +342,81 @@ app.get("/api/getCategories", async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
+app.post("/api/savevariables", async (req, res) => {
+  const { variables } = req.body;
+
+  try {
+    const connection = await pool.getConnection();
+
+    // Loop through the variables and update the database
+    for (const { name, value } of variables) {
+      await connection.query(
+        "UPDATE conversion_table SET value = ? WHERE name = ?",
+        [value, name]
+      );
+    }
+
+    connection.release();
+    res.status(200).json({ message: "Variables saved successfully" });
+  } catch (error) {
+    console.error("Error saving variables:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+// Update the /api/calculateFormula route in your server file
+
+app.post("/api/calculateFormula", async (req, res) => {
+  try {
+    const { formulaName, zipcode, utility } = req.body;
+
+    // Fetch the formula from the database based on the formulaName
+    const connection = await pool.getConnection();
+    const [rows] = await connection.query(
+      "SELECT var1, var2, var3, var4 FROM formulasTable WHERE formulaName = ?",
+      [formulaName]
+    );
+    connection.release();
+
+    if (rows.length === 0) {
+      // Formula not found
+      res.status(404).json({ error: "Formula not found" });
+      return;
+    }
+
+    // Extract variables from the database response
+    const { var1, var2, var3, var4 } = rows[0];
+
+    // Check if var1 is present in the conversion_table, if not, parse as float
+    const parsedVar1 = await getVariableValue(var1);
+    // Repeat for var2, var3, and var4
+    const parsedVar2 = await getVariableValue(var2);
+    const parsedVar3 = await getVariableValue(var3);
+    const parsedVar4 = await getVariableValue(var4);
+
+    // Perform the calculation based on the parsed variables
+    const result = (parsedVar1 * parsedVar2) / (parsedVar3 * parsedVar4);
+
+    res.json({ result });
+  } catch (error) {
+    console.error("Error calculating formula:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+// Helper function to get the variable value from the conversion_table
+const getVariableValue = async (variableName) => {
+  const connection = await pool.getConnection();
+  const [rows] = await connection.query(
+    "SELECT value FROM conversion_table WHERE name = ?",
+    [variableName]
+  );
+  connection.release();
+
+  // If the variable is present in the conversion_table, return its value, otherwise parse as float
+  return rows.length > 0 ? rows[0].value : parseFloat(variableName);
+};
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
