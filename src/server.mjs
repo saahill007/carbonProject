@@ -141,6 +141,37 @@ app.get("/api/filterCustomer", cors(), (req, res) => {
   });
 });
 
+app.post('/api/ContactUs', cors(), (req, res) => {
+  const { email, query, firstName, lastName } = req.body;
+
+  if (!email) {
+    return res.status(400).json({ error: 'Email is required' });
+  }
+
+  // 1) Adding query to the Enquiry table
+  const insertEnquirySql = 'INSERT INTO enquiry (firstname, lastname, email, enquiry_question, enquiry_flag) VALUES (?, ?, ?, ?, ?)';
+  mysqlConnection.query(insertEnquirySql, [firstName, lastName, email, query, 1], (err, result) => {
+      if (err) {
+          console.error('Error inserting into Enquiry table:', err);
+          return res.status(500).json({ error: 'Internal Server Error' });
+      }
+
+      // const enquiryId = result.insertId;
+
+      // 2) Inserting a new entry into the Customer table
+      const insertCustomerSql = `INSERT INTO Customer (date_answered, session_id, first_name, last_name, email, total_carbon_footprint, answers, number_of_trees, zipcode) 
+      VALUES (CURDATE(), "N/A", ?, ?, ?, 0, "N/A", 0, "N/A")`;
+      mysqlConnection.query(insertCustomerSql, [firstName, lastName, email], (err, insertResult) => {
+          if (err) {
+              console.error('Error inserting into Customer table:', err);
+              return res.status(500).json({ error: 'Internal Server Error' });
+          }
+
+          return res.status(200).json({ message: 'Enquiry and Customer added successfully' });
+      });
+  });
+});
+
 app.get("/api/utility_add", cors(), (req, res) => {
   const sql = "SELECT * FROM CRBN.utilities";
 
@@ -1676,75 +1707,73 @@ app.post('/api/calculateFootprint', cors(), async (req, res) => {
   let totalCarbonFootprint = 0;
 
   try {
-    for (let answer of answers) {
-      console.log("answer is", answer);
-      //console.log("answers is :",answers);
-      const id = answer.id;
-      console.log("question id", id);
-      const userValue = answer.value;
-      //console.log("user value",userValue);
-      // Fetch refs (constants or formulas) for the question based on questionType and choiceAns
-      const [results] = await mysqlConnection.promise().query("SELECT refs, questionType, household, choiceAns FROM CRBN.questionsTable WHERE id = ?", [id]);
-
-
-
-      if (results.length === 0) {
-        console.error(`No data found for id: ${id}`);
-        continue; // Skip the rest of this iteration and proceed to the next id in the loop
-      }
-      console.log("array :", results);
-      const refs = results[0].refs;
-      let household = results[0].household;
-      console.log("Househole value", household);
-      const questionType = results[0].questionType;
-      const choiceAns = results[0].choiceAns;
-
-      // Calculate carbon footprint based on questionType and choiceAns using the dynamically set familyMembers
-      let carbonValue = 0;
-
-      if (questionType === 1) {
-        if (choiceAns === "1") {
-          carbonValue = household ? (refs * userValue) / familyMembers : (refs * userValue); // Use the user-selected choice's refValue
-        } else if (choiceAns === "2") {
-          if (userValue >= 0 && userValue < refs[0].length) {
-            carbonValue = household ? (refs[0][userValue]) / familyMembers : refs[0][userValue];
-          } else {
-            console.error("Invalid user-selected choice index:", userValue);
+      for (let answer of answers) {
+          console.log("answer is",answer);
+          //console.log("answers is :",answers);
+          const id = answer.id;
+          console.log("question id",id);
+          const userValue = answer.value;
+          //console.log("user value",userValue);
+          // Fetch refs (constants or formulas) for the question based on questionType and choiceAns
+          const [results] = await mysqlConnection.promise().query("SELECT refs, questionType, household, choiceAns FROM CRBN.questionsTable WHERE id = ?", [id]);
+          
+          
+          
+          if (results.length === 0) {
+              console.error(`No data found for id: ${id}`);
+              continue; // Skip the rest of this iteration and proceed to the next id in the loop
           }
-        } else if (choiceAns === "3") {
-          // User can select multiple choices
-          if (Array.isArray(userValue)) {
-            const selectedChoices = userValue;
-            // Calculate footprint based on selected choices
-            for (const choiceIndex of selectedChoices) {
-              if (choiceIndex >= 0 && choiceIndex < refs[0].length) {
-                carbonValue += household ? (refs[0][choiceIndex]) / familyMembers : (refs[0][choiceIndex]);
-              } else {
-                console.error("Invalid user-selected choice index:", choiceIndex);
+          console.log("array :",results);
+          const refs = results[0].refs;
+          let household= results[0].household;
+          console.log("Househole value",household);
+          const questionType = results[0].questionType;
+          const choiceAns = results[0].choiceAns;
+
+          // Calculate carbon footprint based on questionType and choiceAns using the dynamically set familyMembers
+          let carbonValue = 0;
+          if (questionType === 1) {
+              if (choiceAns === "1") {
+                  carbonValue = household ? (refs * userValue)/1 : (refs * userValue); // Use the user-selected choice's refValue
+              } else if (choiceAns === "2") {
+                  if (userValue >= 0 && userValue < refs[0].length) {
+                      carbonValue = household ? (refs[0][userValue])/1 : refs[0][userValue] ; 
+                  } else {
+                      console.error("Invalid user-selected choice index:", userValue);
+                  }
+              } else if (choiceAns === "3") {
+                  // User can select multiple choices
+                  if (Array.isArray(userValue)) {
+                      const selectedChoices = userValue;
+                      // Calculate footprint based on selected choices
+                      for (const choiceIndex of selectedChoices) {
+                          if (choiceIndex >= 0 && choiceIndex < refs[0].length) {
+                              carbonValue += household ? (refs[0][choiceIndex])/1 : (refs[0][choiceIndex]);
+                          } else {
+                              console.error("Invalid user-selected choice index:", choiceIndex);
+                          }
+                      }
+                  } else {
+                      console.error("Invalid user-selected choices:", userValue);
+                  }
               }
-            }
-          } else {
-            console.error("Invalid user-selected choices:", userValue);
           }
-        }
+
+          totalCarbonFootprint += Math.ceil(carbonValue);
       }
 
-      totalCarbonFootprint += Math.ceil(carbonValue);
-    }
+      const CO2_PER_TREE_PER_YEAR = 48;
+      const totalTreesRequired = Math.ceil(totalCarbonFootprint / CO2_PER_TREE_PER_YEAR);
 
-    const CO2_PER_TREE_PER_YEAR = 48;
-    const totalTreesRequired = Math.ceil(totalCarbonFootprint / CO2_PER_TREE_PER_YEAR);
-
-    res.json({
-      carbonFootprint: totalCarbonFootprint,
-      numberOfTrees: totalTreesRequired
-    });
+      res.json({
+          carbonFootprint: totalCarbonFootprint,
+          numberOfTrees: totalTreesRequired
+      });
   } catch (error) {
-    console.error("Error calculating values:", error);
-    res.status(500).json({ message: "Internal Server Error" });
+      console.error("Error calculating values:", error);
+      res.status(500).json({ message: "Internal Server Error" });
   }
 });
-
 
 const getVariableValue = async (variableName) => {
   const connection = await pool.getConnection();
