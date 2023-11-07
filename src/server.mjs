@@ -12,7 +12,7 @@ app.use(bodyParser.json());
 const port = 3000;
 
 const dbConfig = {
-  host: "18.217.86.185",
+  host: "18.220.46.102",
   user: "carbonuser",
   password: "Carbon@123", // Fix the case of 'PASSWORD' to 'password'
   database: "CRBN", // Fix the case of 'DB' to 'database'
@@ -49,6 +49,7 @@ app.get("/api/Customer", cors(), (req, res) => {
     res.send(results);
   });
 });
+let connection;
 
 app.get("/api/filterCustomer", cors(), (req, res) => {
   const {
@@ -1014,23 +1015,23 @@ app.get("/api/randomfact/:index", async (req, res) => {
   }
 });
 // Route to calculate total number of qustions to display progress bar percentage in each question page
-app.get("/api/totalquestions", cors(), async (req, res) => {
-  try {
-    const [results] = await mysqlConnection
-      .promise()
-      .query(
-        "SELECT COUNT(*) as total FROM CRBN.questionsTable Where enabled=1"
-      );
-    if (results.length > 0) {
-      res.json(results[0].total);
-    } else {
-      res.status(404).send("No questions found");
-    }
-  } catch (error) {
-    console.error("Error fetching total number of questions:", error);
-    res.status(500).send("Server error");
-  }
-});
+// app.get("/api/totalquestions", cors(), async (req, res) => {
+//   try {
+//     const [results] = await mysqlConnection
+//       .promise()
+//       .query(
+//         "SELECT COUNT(*) as total FROM CRBN.questionsTable Where enabled=1"
+//       );
+//     if (results.length > 0) {
+//       res.json(results[0].total);
+//     } else {
+//       res.status(404).send("No questions found");
+//     }
+//   } catch (error) {
+//     console.error("Error fetching total number of questions:", error);
+//     res.status(500).send("Server error");
+//   }
+// });
 
 // Route to calculate total number of qustions to display progress bar percentage in each question page
 app.get("/api/totalquestions", cors(), async (req, res) => {
@@ -1526,27 +1527,27 @@ app.post("/api/calculateFormula", async (req, res) => {
   }
 });
 
-app.get("/formulas", async (req, res) => {
-  try {
-    // Use the global connection variable
-    connection = await pool.getConnection();
-    const [rows] = await connection.query(
-      "SELECT formulaName, var1, var2, var3, var4 FROM formulasTable"
-    );
-    connection.release();
-    const formulaNames = rows.map((row) => ({
-      formulaName: row.formulaName,
-      var1: row.var1,
-      var2: row.var2,
-      var3: row.var3,
-      var4: row.var4,
-    }));
-    res.json(formulaNames);
-  } catch (error) {
-    console.error("Error fetching formula names:", error);
-    res.status(500).json({ error: "Internal Server Error" });
-  }
-});
+// app.get("/formulas", async (req, res) => {
+//   try {
+//     // Use the global connection variable
+//     connection = await pool.getConnection();
+//     const [rows] = await connection.query(
+//       "SELECT formulaName, var1, var2, var3, var4 FROM formulasTable"
+//     );
+//     connection.release();
+//     const formulaNames = rows.map((row) => ({
+//       formulaName: row.formulaName,
+//       var1: row.var1,
+//       var2: row.var2,
+//       var3: row.var3,
+//       var4: row.var4,
+//     }));
+//     res.json(formulaNames);
+//   } catch (error) {
+//     console.error("Error fetching formula names:", error);
+//     res.status(500).json({ error: "Internal Server Error" });
+//   }
+// });
 
 app.post("/api/calculateFootprint", cors(), async (req, res) => {
   const answers = req.body; // Array or object containing question IDs and user answers
