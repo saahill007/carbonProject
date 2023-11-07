@@ -12,12 +12,12 @@ app.use(bodyParser.json());
 
 const port = 3000;
 
-// const dbConfig = {
-//   host: "18.220.46.102",
-//   user: "carbonuser",
-//   password: "Carbon@123", // Fix the case of 'PASSWORD' to 'password'
-//   database: "CRBN", // Fix the case of 'DB' to 'database'
-// };
+const dbConfig = {
+  host: "18.220.46.102",
+  user: "carbonuser",
+  password: "Carbon@123", // Fix the case of 'PASSWORD' to 'password'
+  database: "CRBN", // Fix the case of 'DB' to 'database'
+};
 
 // const port = 3001;
 
@@ -1883,7 +1883,7 @@ app.post("/api/contact/insert", cors(), (req, res) => {
   const { email, phone } = req.body;
 
   // Replace this with your actual database update logic
-  const updateSql = `UPDATE carbon.admincontact SET email = ? ,phone= ? WHERE admincontactid = 1`;
+  const updateSql = `UPDATE CRBN.admincontact SET email = ? ,phone= ? WHERE admincontactid = 1`;
 
   mysqlConnection.query(updateSql, [email, phone], (updateErr, updateResults) => {
     if (updateErr) {
