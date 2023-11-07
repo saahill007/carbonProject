@@ -205,7 +205,7 @@ const QuestionAdmin: React.FC = () => {
           defaultChecked={questionData.household}
         />
       </div>
-      <button onClick={() => console.log(questionData)}></button>
+      {/* <button onClick={() => console.log(questionData)}></button> */}
       <div className="container" style={{ paddingTop: "10px" }}>
         <SwitchContent
           label="Does this Question take the zip code into consideration?"
@@ -283,6 +283,7 @@ const QuestionAdmin: React.FC = () => {
 
           {questionData.questionType === 2 && (
             <AllTypesUnits
+              questionData={questionData}
               questionContent={questionData.questionContent}
               enabled={questionData.enabled}
               household={questionData.household}

@@ -197,7 +197,29 @@ app.post("/api/slider", cors(), (req, res) => {
     }
   });
 });
+app.get("/api/getFormula/:formulaName", async (req, res) => {
+  const { formulaName } = req.params;
 
+  try {
+    const connection = await pool.getConnection();
+    const [rows] = await connection.query(
+      "SELECT formulaName, var1, var2, var3, var4 FROM formulasTable WHERE formulaName = ?",
+      [formulaName]
+    );
+    connection.release();
+
+    if (rows.length === 0) {
+      res.status(404).json({ error: "Formula not found" });
+      return;
+    }
+
+    const formulaData = rows[0];
+    res.json(formulaData);
+  } catch (error) {
+    console.error("Error fetching formula:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
 app.post("/api/dropdown", cors(), (req, res) => {
   const { question, options } = req.body;
 
@@ -1500,6 +1522,28 @@ app.post("/api/calculateFormula", async (req, res) => {
     res.json({ result });
   } catch (error) {
     console.error("Error calculating formula:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+app.get("/formulas", async (req, res) => {
+  try {
+    // Use the global connection variable
+    connection = await pool.getConnection();
+    const [rows] = await connection.query(
+      "SELECT formulaName, var1, var2, var3, var4 FROM formulasTable"
+    );
+    connection.release();
+    const formulaNames = rows.map((row) => ({
+      formulaName: row.formulaName,
+      var1: row.var1,
+      var2: row.var2,
+      var3: row.var3,
+      var4: row.var4,
+    }));
+    res.json(formulaNames);
+  } catch (error) {
+    console.error("Error fetching formula names:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
