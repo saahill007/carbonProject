@@ -42,7 +42,7 @@ const App: React.FC = () => {
     } else {
       setAdmin(false);
     }
-  }, []);
+  }, [window.location.pathname]);
   return (
     <Router>
       <div className="app-container">
