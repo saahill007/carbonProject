@@ -1,0 +1,110 @@
+* {
+    padding: 0px;
+    margin: 0px;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Helvetica Neue", sans-serif;
+    background-color: #FFFFFF;
+    color: #000000;
+    /* margin-top: 40px; */
+    margin: 0;
+    padding: 0;
+}
+
+.admin_login_container {
+    margin: 0 auto;
+    padding: 20px;
+}
+
+
+.adminlogin_start {
+    background-color: rgb(217, 217, 217, 0.12);
+    padding: 20px 20px 90px;
+    border: 1px solid black;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    height: 100%;
+    max-width: 500px;
+    border-radius: 20px;
+    margin: 50px auto 50px;
+    height: 500px;
+}
+
+.adminlogin_start h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: black;
+}
+
+.enteremailid,
+.enterpass {
+    background-color: #007ea7;
+    padding: 15px;
+    border: 1px solid #000;
+    margin-bottom: 20px;
+    text-align: left;
+    border-radius: 20px;
+    width: 100%;
+}
+
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+input[type="email"],
+input[type="password"] {
+    width: 90%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 30px;
+    margin: 0 auto;
+    padding: 15px;
+    display: block;
+}
+
+.button-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+button[type="button"] {
+    background-color: black;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.submit_login {
+    background-color: black;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+
+}
+
+button[type="submit_login"]:hover,
+button[type="button"]:hover {
+    background-color: rgb(52, 49, 49);
+}
+
+.admin_error_message {
+    color: red;
+}
