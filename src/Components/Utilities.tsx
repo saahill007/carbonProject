@@ -231,7 +231,7 @@ const Utilities: React.FC = () => {
         Back
       </button>
 
-      <div className="bottom-border"></div>
+      {/* <div className="bottom-border"></div> */}
     </div>
   );
 };

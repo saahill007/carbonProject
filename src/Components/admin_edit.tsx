@@ -170,7 +170,7 @@ const AdminEdit: React.FC = () => {
       <button className="back" onClick={handleadmin}>
         Back
       </button>
-      <div className="bottom-border"></div>
+      {/* <div className="bottom-border"></div> */}
     </div>
   );
 };

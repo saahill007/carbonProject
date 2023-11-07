@@ -184,7 +184,7 @@ const Admin_main: React.FC = () => {
         Back
       </button>
 
-      <div className="bottom-border"></div>
+      {/* <div className="bottom-border"></div> */}
     </div>
   );
 };
