@@ -1,5 +1,5 @@
 // src/App.tsx
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -26,10 +26,23 @@ import Dashboard from "./Components/Dashboard";
 import AdminLogin from "./Components/admin_login";
 import ForgotPassword from "./Components/ForgetPassword";
 import logoImg from "./assets/offset.png";
+import { apiUrlBase } from "./config";
 
 const Home: React.FC = () => <div>Home Page</div>;
 
 const App: React.FC = () => {
+  const [isAdmin, setAdmin] = useState(true);
+  useEffect(() => {
+    const currentPath = window.location.pathname;
+    console.log(currentPath);
+    console.log(isAdmin);
+    if (currentPath == "/" || currentPath == "/login") {
+      console.log("admin");
+      setAdmin(true);
+    } else {
+      setAdmin(false);
+    }
+  }, []);
   return (
     <Router>
       <div className="app-container">
@@ -51,17 +64,19 @@ const App: React.FC = () => {
               ></img>
             </span>
           </div>
-          <div className="navbar-right">
-            <NavLink to="/" end>
+          {!isAdmin && (
+            <div className="navbar-right">
+              {/* <NavLink to="/" end>
               Login
-            </NavLink>
-            <NavLink to="/values">Values</NavLink>
-            <NavLink to="/questions">Questions</NavLink>
-            <NavLink to="/support">Support</NavLink>
-            <NavLink to="/contact">Contact</NavLink>
-            <NavLink to="/logout">Logout</NavLink>
-            {/* Add other navigation links */}
-          </div>
+            </NavLink> */}
+              <NavLink to="/values">Values</NavLink>
+              <NavLink to="/questions">Questions</NavLink>
+              <NavLink to="/support">Support</NavLink>
+              <NavLink to="/contact">Contact</NavLink>
+              <NavLink to="/logout">Logout</NavLink>
+              {/* Add other navigation links */}
+            </div>
+          )}
         </nav>
 
         <div className="main-window">
@@ -103,6 +118,7 @@ const App: React.FC = () => {
               element={<Customer_queries />}
             />
             <Route path="forgotpassword" element={<ForgotPassword />} />
+            <Route path="/logout" element={<Logout />} />
           </Routes>
         </div>
       </div>

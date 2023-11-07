@@ -1,7 +1,9 @@
 // import React from "react";
 
+import AdminLogin from "./admin_login";
+
 const Logout = () => {
-  return <div>Logout</div>;
+  return <AdminLogin />;
 };
 
 export default Logout;

@@ -56,7 +56,7 @@ function AdminLogin() {
         }
     };
     return (
-        <div className="admin_login_container">
+        <div className="admin_login_container" style={{paddingTop:"100px"}}>
             <div className="adminlogin_start">
                 <h2>Admin Login</h2>
                 <form onSubmit={handleSubmit}>
