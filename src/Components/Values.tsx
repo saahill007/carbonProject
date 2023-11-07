@@ -36,7 +36,16 @@ const ValuesPage: React.FC<ValuesProps> = ({ children }) => {
 
   return (
     <div className={`values-page ${isPanelExpanded ? "panel-expanded" : ""}`}>
-      <div className="side-panel">
+      <div
+        className="side-panel"
+        style={{
+          background: "#FF5701",
+          position: "fixed",
+          left: 0,
+
+          height: "100vh",
+        }}
+      >
         <div className="expand-button" onClick={togglePanel}>
           {isPanelExpanded ? (
             <i className="bi bi-list" style={{ fontSize: "2em" }}></i>
@@ -139,24 +148,28 @@ const ValuesPage: React.FC<ValuesProps> = ({ children }) => {
           style={{ position: "relative", zIndex: 1000 }}
         >
           <div className="side-panel-link">
-          <div className="icon-and-text">
-        <div className="icon">
-        <img
-          src={CategoryImg}
-          alt="Category"
-          style={{ height: "1.5em", width: "1.5em" }}
-        />
-        </div>
-        {isPanelExpanded ? (
-          <div className="text">Category</div>
-          ) : (
-          <div className="text" style={{ display: "none" }}>
-          Category
+            <div className="icon-and-text">
+              <div className="icon">
+                <img
+                  src={CategoryImg}
+                  alt="Category"
+                  style={{
+                    height: "1.5em",
+                    width: "1.5em",
+                    background: "black",
+                  }}
+                />
+              </div>
+              {isPanelExpanded ? (
+                <div className="text">Category</div>
+              ) : (
+                <div className="text" style={{ display: "none" }}>
+                  Category
+                </div>
+              )}
+            </div>
           </div>
-          )}
-        </div>
-      </div>
-      </Link>
+        </Link>
 
         {/* <div className="Category-image">
           <img src={CategoryImg} alt="Category" style={{ height: '100%', width: '100%' }} />
@@ -190,7 +203,10 @@ const Values: React.FC = () => {
       <Route path="/admin/admin_edit/:adminIds" element={<AdminEdit />} />
       <Route path="category" element={<Category />} />
       <Route path="/category/category_add" element={<Category_add />} />
-      <Route path="/category/category_edit/:categoryIds" element={<CategoryEdit />} />
+      <Route
+        path="/category/category_edit/:categoryIds"
+        element={<CategoryEdit />}
+      />
     </Routes>
   );
 };

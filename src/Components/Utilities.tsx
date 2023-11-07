@@ -83,7 +83,7 @@ const Utilities: React.FC = () => {
   }, []);
 
   return (
-    <div>
+    <div style={{ paddingLeft: "100px" }}>
       <div className="action">
         <div className="action-item">Action item:</div>
         <div className="modify">

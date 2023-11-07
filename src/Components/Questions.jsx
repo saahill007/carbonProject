@@ -60,7 +60,7 @@ export function Questions(props) {
     }
   };
   return (
-    <div style={{width:"90%", position: 'relative', background: 'white', paddingBottom:"20px", marginBottom:"20px"}}>
+    <div style={{width:"90%", position: 'relative', background: 'white',marginTop:"100px" ,paddingBottom:"20px", marginBottom:"20px"}}>
     <div style={{width:"100%", left: 751, top: 221, position: 'absolute', marginBottom:"20px"}} />
     <div style={{width:"100%",left: 106, top: 10, position: 'absolute', borderRadius: 30, marginBottom:"20px", background:"gold"}} />
     <div style={{width:"100%", left: 137, top: 100, position: 'absolute'}}>

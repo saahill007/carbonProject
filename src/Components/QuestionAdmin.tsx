@@ -193,135 +193,150 @@ const QuestionAdmin: React.FC = () => {
 
   return (
     <>
-      <Ques
-        onQuestionChange={handleQuestionChange}
-        defaultQuestion={questionData.questionContent}
-      />
+      <div style={{ paddingTop: "70px" }}>
+        <Ques
+          onQuestionChange={handleQuestionChange}
+          defaultQuestion={questionData.questionContent}
+        />
 
-      <div className="container">
-        <SwitchContent
-          label="Does this Question depend on number of people in the household?"
-          onChange={handleSwitchChange1}
-          defaultChecked={questionData.household}
-        />
-      </div>
-      {/* <button onClick={() => console.log(questionData)}></button> */}
-      <div className="container" style={{ paddingTop: "10px" }}>
-        <SwitchContent
-          label="Does this Question take the zip code into consideration?"
-          onChange={handleSwitchChange2}
-          defaultChecked={questionData.zipcode}
-        />
-      </div>
-      <div className="container" style={{ paddingTop: "10px" }}>
-        <div
-          className="row d-flex"
-          style={{ paddingLeft: "15%", paddingRight: "15%", marginTop: "0px" }}
-        >
-          <div className="col-md">
-            <p
-              style={{
-                fontSize: "large",
-                padding: "10px 0px 10px 10px",
-                marginRight: "20px",
-                width: "400px",
-              }}
-            >
-              Select the Category for this question
-            </p>
-          </div>
+        <div className="container">
+          <SwitchContent
+            label="Does this Question depend on number of people in the household?"
+            onChange={handleSwitchChange1}
+            defaultChecked={questionData.household}
+          />
+        </div>
+        {/* <button onClick={() => console.log(questionData)}></button> */}
+        <div className="container" style={{ paddingTop: "10px" }}>
+          <SwitchContent
+            label="Does this Question take the zip code into consideration?"
+            onChange={handleSwitchChange2}
+            defaultChecked={questionData.zipcode}
+          />
+        </div>
+        <div className="container" style={{ paddingTop: "10px" }}>
           <div
-            className="col-md"
-            style={{ alignItems: "end", paddingLeft: "270px" }}
+            className="row d-flex"
+            style={{
+              paddingLeft: "15%",
+              paddingRight: "15%",
+              marginTop: "0px",
+            }}
           >
-            <select
-              className="form-select"
-              value={questionData.label}
-              onChange={handleCategoryChange}
-              style={{ width: "200px" }}
+            <div className="col-md">
+              <p
+                style={{
+                  fontSize: "large",
+                  padding: "10px 0px 10px 10px",
+                  marginRight: "20px",
+                  width: "400px",
+                }}
+              >
+                Select the Category for this question
+              </p>
+            </div>
+            <div
+              className="col-md"
+              style={{ alignItems: "end", paddingLeft: "270px" }}
             >
-              <option value="" disabled>
-                Select Utility
-              </option>
-              {categories.map((category) => (
-                <option key={category.categoryId} value={category.categoryName}>
-                  {category.categoryName}
+              <select
+                className="form-select"
+                value={questionData.label}
+                onChange={handleCategoryChange}
+                style={{ width: "200px" }}
+              >
+                <option value="" disabled>
+                  Select Utility
                 </option>
-              ))}
-            </select>
-            {categoryError && (
-              <p style={{ color: "red", marginTop: "5px" }}>{categoryError}</p>
+                {categories.map((category) => (
+                  <option
+                    key={category.categoryId}
+                    value={category.categoryName}
+                  >
+                    {category.categoryName}
+                  </option>
+                ))}
+              </select>
+              {categoryError && (
+                <p style={{ color: "red", marginTop: "5px" }}>
+                  {categoryError}
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
+        <div className="container">
+          <Content inputText="Select the type of answer you want" />
+        </div>
+
+        <AnswerTypeSelector
+          onSelect={handleAnswerTypeSelect}
+          defaultSelectedType={questionData.questionType}
+        />
+        <div className="parentContainer">
+          <div className="answerContainer" style={{ background: "#ff5701" }}>
+            {questionData.questionType === 1 && (
+              <QuestionType1
+                onChange={handleChildComponentChange1}
+                enabled={questionData.enabled}
+                household={questionData.household}
+                label={questionData.label}
+                questionContent={questionData.questionContent}
+                questionType={questionData.questionType}
+                selectedFormulas={questionData.selectedFormulas}
+                selectedUnits={questionData.selectedUnits}
+                zipcode={questionData.zipcode}
+                questionData={questionData}
+                // id={id}
+              />
+            )}
+
+            {questionData.questionType === 2 && (
+              <AllTypesUnits
+                questionData={questionData}
+                questionContent={questionData.questionContent}
+                enabled={questionData.enabled}
+                household={questionData.household}
+                label={questionData.label}
+                questionType={questionData.questionType}
+                zipcode={questionData.zipcode}
+                onArraysChange={(option: string[][], value: number[][]) => {
+                  console.log(option);
+                  console.log(value);
+                }}
+              />
             )}
           </div>
         </div>
-      </div>
-      <div className="container">
-        <Content inputText="Select the type of answer you want" />
-      </div>
-
-      <AnswerTypeSelector
-        onSelect={handleAnswerTypeSelect}
-        defaultSelectedType={questionData.questionType}
-      />
-      <div className="parentContainer">
-        <div className="answerContainer" style={{ background: "#ff5701" }}>
-          {questionData.questionType === 1 && (
-            <QuestionType1
-              onChange={handleChildComponentChange1}
-              enabled={questionData.enabled}
-              household={questionData.household}
-              label={questionData.label}
-              questionContent={questionData.questionContent}
-              questionType={questionData.questionType}
-              selectedFormulas={questionData.selectedFormulas}
-              selectedUnits={questionData.selectedUnits}
-              zipcode={questionData.zipcode}
-              questionData={questionData}
-              // id={id}
-            />
-          )}
-
-          {questionData.questionType === 2 && (
-            <AllTypesUnits
-              questionData={questionData}
-              questionContent={questionData.questionContent}
-              enabled={questionData.enabled}
-              household={questionData.household}
-              label={questionData.label}
-              questionType={questionData.questionType}
-              zipcode={questionData.zipcode}
-              onArraysChange={(option: string[][], value: number[][]) => {
-                console.log(option);
-                console.log(value);
-              }}
-            />
-          )}
-        </div>
-      </div>
-      {/* Additional UI elements based on your logic */}
-      {/* For example, Save and Back buttons */}
-      <div
-        className="row"
-        style={{ marginLeft: "10%", marginRight: "10%", marginBottom: "30px" }}
-      >
-        <div className="col">
-          {/* Back button
+        {/* Additional UI elements based on your logic */}
+        {/* For example, Save and Back buttons */}
+        <div
+          className="row"
+          style={{
+            marginLeft: "10%",
+            marginRight: "10%",
+            marginBottom: "30px",
+          }}
+        >
+          <div className="col">
+            {/* Back button
           <button
             className="btn btn-primary"
             style={{ backgroundColor: "#A7C8A3", border: "0px" }}
           >
             Back
           </button> */}
-        </div>
-        <div className="col">
-          {/* Save button */}
-          {/* <button
+          </div>
+          <div className="col">
+            {/* Save button */}
+            {/* <button
             className="btn btn-primary"
             style={{ backgroundColor: "#A7C8A3", border: "0px" }}
             onClick={handleSaveClick}
           >
             Save
           </button> */}
+          </div>
         </div>
       </div>
     </>

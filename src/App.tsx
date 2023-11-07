@@ -24,7 +24,8 @@ import Email_notification from "./Components/email_notification";
 // import CategoryDropdown from "./Components/catedrop";
 import Dashboard from "./Components/Dashboard";
 import AdminLogin from "./Components/admin_login";
-import ForgotPassword from "./Components/ForgetPassword"
+import ForgotPassword from "./Components/ForgetPassword";
+import logoImg from "./assets/offset.png";
 
 const Home: React.FC = () => <div>Home Page</div>;
 
@@ -32,9 +33,23 @@ const App: React.FC = () => {
   return (
     <Router>
       <div className="app-container">
-        <nav className="navbar">
+        <nav
+          className="navbar"
+          style={{
+            position: "fixed",
+            top: 0,
+            width: "100%",
+            background: "#FFF",
+            zIndex: 1000,
+          }}
+        >
           <div className="navbar-left">
-            <span style={{ fontSize: 22 }}>Admin Portal</span>
+            <span>
+              <img
+                src={logoImg}
+                style={{ width: "140px", height: "50px", marginLeft: "60px" }}
+              ></img>
+            </span>
           </div>
           <div className="navbar-right">
             <NavLink to="/" end>
