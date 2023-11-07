@@ -23,6 +23,8 @@ import Customer_enquiry_main from "./Components/customer_enquiry_main";
 import Email_notification from "./Components/email_notification";
 // import CategoryDropdown from "./Components/catedrop";
 import Dashboard from "./Components/Dashboard";
+import AdminLogin from "./Components/admin_login";
+import ForgotPassword from "./Components/ForgetPassword"
 
 const Home: React.FC = () => <div>Home Page</div>;
 
@@ -36,7 +38,7 @@ const App: React.FC = () => {
           </div>
           <div className="navbar-right">
             <NavLink to="/" end>
-              Home
+              Login
             </NavLink>
             <NavLink to="/values">Values</NavLink>
             <NavLink to="/questions">Questions</NavLink>
@@ -49,7 +51,7 @@ const App: React.FC = () => {
 
         <div className="main-window">
           <Routes>
-            <Route path="/" element={<Home />} />
+            <Route path="/" element={<AdminLogin />} />
             <Route
               path="/values/*"
               element={
@@ -68,7 +70,7 @@ const App: React.FC = () => {
             <Route path="/support" element={<Support />} />
             <Route path="/contact/:id" element={<QuestionAdmin />} />
             <Route path="/contact" element={<Contact />} />
-            <Route path="/logout" element={<Logout />} />
+            <Route path="/" element={<Logout />} />
             <Route path="/questions/slider" element={<Slider />} />
             <Route path="/questions/dropdown" element={<Dropdown />} />
             <Route path="/dashboard" element={<Dashboard />} />
@@ -85,6 +87,7 @@ const App: React.FC = () => {
               path="/customer_enquiries/:enquiry_id"
               element={<Customer_queries />}
             />
+            <Route path="forgotpassword" element={<ForgotPassword />} />
           </Routes>
         </div>
       </div>
