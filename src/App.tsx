@@ -73,7 +73,7 @@ const App: React.FC = () => {
               <NavLink to="/questions">Questions</NavLink>
               <NavLink to="/support">Support</NavLink>
               <NavLink to="/contact">Contact</NavLink>
-              <NavLink to="/logout">Logout</NavLink>
+              <NavLink to="/">Logout</NavLink>
               {/* Add other navigation links */}
             </div>
           )}
