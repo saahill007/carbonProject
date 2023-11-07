@@ -170,6 +170,7 @@ const DisplayNewFormulas = () => {
                             type="button"
                             className="form-control"
                             onClick={handleSave}
+                            style={{ background: "#FF5701", height: "37px" }}
                           >
                             Save
                           </button>
@@ -222,6 +223,7 @@ const DisplayNewFormulas = () => {
                             type="button"
                             className="form-control"
                             onClick={handleSave}
+                            style={{ background: "#FF5701", height: "37px" }}
                           >
                             Save
                           </button>
@@ -235,7 +237,11 @@ const DisplayNewFormulas = () => {
                 <div className="col text-center">
                   <button
                     className="btn btn-danger"
-                    style={{ background: "white", color: "black" }}
+                    style={{
+                      background: "white",
+                      color: "black",
+                      border: "3px solid black",
+                    }}
                   >
                     {f.formulaName}
                   </button>
@@ -314,6 +320,7 @@ const DisplayNewFormulas = () => {
                             type="button"
                             className="form-control"
                             onClick={handleSave}
+                            style={{ background: "#FF5701", height: "37px" }}
                           >
                             Save
                           </button>
@@ -369,6 +376,7 @@ const DisplayNewFormulas = () => {
                             type="button"
                             className="form-control"
                             onClick={handleSave}
+                            style={{ background: "#FF5701", height: "37px" }}
                           >
                             Save
                           </button>
