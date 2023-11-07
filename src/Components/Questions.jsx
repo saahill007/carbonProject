@@ -60,23 +60,23 @@ export function Questions(props) {
     }
   };
   return (
-    <div style={{width: 1440, height: 1706, position: 'relative', background: 'white'}}>
-    <div style={{width: 585, height: 659, left: 751, top: 221, position: 'absolute'}} />
-    <div style={{width: 1185, height: 1415, left: 106, top: 10, position: 'absolute', background: 'rgba(217, 217, 217, 0.12)', borderRadius: 30}} />
-    <div style={{width: 1164, height: 1290, left: 137, top: 100, position: 'absolute'}}>
+    <div style={{width:"90%", position: 'relative', background: 'white', paddingBottom:"20px", marginBottom:"20px"}}>
+    <div style={{width:"100%", left: 751, top: 221, position: 'absolute', marginBottom:"20px"}} />
+    <div style={{width:"100%",left: 106, top: 10, position: 'absolute', borderRadius: 30, marginBottom:"20px", background:"gold"}} />
+    <div style={{width:"100%", left: 137, top: 100, position: 'absolute'}}>
     
-     <div style={{ left: 500, top: -50, position: 'absolute', color: 'black', fontSize: 20, fontFamily: 'Outfit', fontWeight: '600', wordWrap: 'break-word' }}>Questions</div>
+     <div style={{ left: 500, top: -50, position: 'absolute', color: 'black',  fontSize: 20, fontWeight: '800', wordWrap: 'break-word' }}>Questions</div>
         {questions.map((question, index) => (
-          <div key={question.ques_id} style={{ width: 1159, height: 111, left: -10, top: 10 + index * 131, position: 'absolute' }}>
-             <div style={{width: 1158.67, height: 111, left: 0, top: 0, position: 'absolute', background: '#84D2F3', borderRadius: 15}}></div>
-             <div style={{ width: 873, height: 51, left: 85.82, top: 31, position: 'absolute', background: 'white', borderRadius: 300 }}>
-      <div style={{ width: 1000, height: 31,left: 25, top: 10, color: 'black', fontSize: 20, fontFamily: 'Outfit', fontWeight: '400', wordWrap: 'break-word', position: 'relative'}}>
-        {question.questionContent}
-      </div>
-    </div>      <div style={{width: 173, height: 57, left: 975, top: 31, position: 'absolute', background: '#F6A55A', boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)', borderRadius: 300, border: '1px black solid'}}></div>
-      <div  onClick={()=>navigate("/contact/"+question.id)} style={{width: 37, left: 1040, top: 50, position: 'absolute', color: 'black', fontSize: 20, fontFamily: 'Outfit', fontWeight: '600', wordWrap: 'break-word',cursor: 'pointer',} }>Edit</div>
-     <div style={{ width: 64, height: 32, left: 3, top: 40, position: 'absolute', background: 'white', justifyContent: 'flex-start', alignItems: 'flex-start', gap: 10, display: 'inline-flex', cursor: 'pointer', }} onClick={() => handleToggleClick(index)}>
-      <div style={{ width: 64, height: 32, justifyContent: question.toggleState ? 'flex-end' : 'flex-start', alignItems: 'center', background: question.toggleState ? 'green' : 'white', borderRadius: '10%', transition: 'background-color 0.2s ease-in-out, transform 0.2s ease-in-out', display: 'flex', justifyContent: question.toggleState ? 'flex-end' : 'flex-start', alignItems: 'center', }}>
+          <div key={question.id} style={{ width:"100%", height: 111, left: -10, top: 10 + index * 131, position: 'absolute', marginBottom:"20px" }}>
+             <div style={{width:"90%", height: 111, left: 0, top: 0, position: 'absolute', background: 'black', borderRadius: 15}}></div>
+             <div style={{ width: "65%", height: 51, left: 85.82, top: 31, position: 'absolute', background: 'white', borderRadius: 300 }}>
+                  <div style={{ width:"80%", height: 31,left: 25, top: 10, color: 'black', fontSize: 20, fontFamily: 'Outfit', fontWeight: '400', wordWrap: 'break-word', position: 'relative', marginBottom:"20px"}}>
+                       {question.questionContent}
+                  </div>
+              </div>      <div style={{width: 173, height: 57, left: 975, top: 31, position: 'absolute', background: '#FF5701', boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)', borderRadius: 300, border: '1px black solid'}}></div>
+      <div  onClick={()=>navigate("/contact/"+question.id)} style={{width: 37, left: 1040, top: 50, background:"#FF5701", position: 'absolute', color: 'black', fontSize: 20, fontFamily: 'Outfit', fontWeight: '600', wordWrap: 'break-word',cursor: 'pointer',} }>Edit</div>
+     <div style={{ paddingLeft:"10px",width: 64, height: 32, left: 3, top: 40, position: 'absolute', background: 'black', justifyContent: 'flex-start', alignItems: 'flex-start', gap: 10, display: 'inline-flex', cursor: 'pointer', }} onClick={() => handleToggleClick(question.id)}>
+      <div style={{ width: 64, height: 32, justifyContent: question.toggleState ? 'flex-end' : 'flex-start', alignItems: 'center', background: question.enabled ? '#FF5701' : 'white', borderRadius: '20px', transition: 'background-color 0.2s ease-in-out, transform 0.2s ease-in-out', display: 'flex', justifyContent: question.enabled ? 'flex-end' : 'flex-start', alignItems: 'center', }}>
         <div style={{ width: 24, height: 24, background: 'white', borderRadius: '50%',border: '0.1px solid black', }}></div>
       </div>
     </div>
@@ -84,7 +84,7 @@ export function Questions(props) {
         ))}
    </div>
    <div style={{width: 150.66, height: 57.11, left: 1159, top: 0, position: 'absolute'}}>
-      <div style={{width: 150.66, height: 57.11, left: 0, top: 0, position: 'absolute', background: '#A3C7A0', boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)', borderRadius: 300, border: '1px black solid'}}></div>
+      <div style={{width: 150.66, height: 57.11, left: 0, top: 0, position: 'absolute', background: '#FF5701', boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)', borderRadius: 300, border: '1px black solid'}}></div>
       <div style={{width: 139.56, height: 25.50, left: 9, top: 14, position: 'absolute', color: 'black', fontSize: 20, fontFamily: 'Outfit', fontWeight: '600', wordWrap: 'break-word',cursor: 'pointer'}}onClick={handleaddquestion}>Add a question</div>
     </div>
     

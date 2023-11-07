@@ -366,7 +366,39 @@ app.get("/api/Category", cors(), (req, res) => {
     res.json(results);
   });
 });
+app.post("/api/toggleQuestion", async (req, res) => {
+  const { ques_id } = req.body;
 
+  try {
+    const connection = await pool.getConnection();
+    const [rows] = await connection.query(
+      "SELECT enabled FROM questionsTable WHERE id = ?",
+      [ques_id]
+    );
+
+    if (rows.length === 0) {
+      res.status(404).json({ error: "Question not found" });
+      return;
+    }
+
+    const currentEnabledState = rows[0].enabled;
+
+    // Toggle the value
+    const newEnabledState = currentEnabledState === 1 ? 0 : 1;
+
+    // Update the enabled state in the database
+    await connection.query(
+      "UPDATE questionsTable SET enabled = ? WHERE id = ?",
+      [newEnabledState, ques_id]
+    );
+
+    connection.release();
+    res.json({ enabled: newEnabledState });
+  } catch (error) {
+    console.error("Error toggling question:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
 app.get("/api/category_name", cors(), (req, res) => {
   const sql = "SELECT category_name FROM CRBN.Category";
 
