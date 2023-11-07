@@ -5,35 +5,57 @@ import axiosInstance from './axiosconfig';
 const Contact: React.FC = () => {
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
-  const [loginError, setLoginError] = useState('');
+  const [updateSuccess, setUpdateSuccess] = useState(false);
+  const [updateError, setUpdateError] = useState('');
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
   };
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPhone(e.target.value);
+    const newPhone = e.target.value;
+
+    // Regular expression to allow one or more digits
+    const phonePattern = /^\d+$/;
+
+    if (phonePattern.test(newPhone)) {
+      setPhone(newPhone);
+      setUpdateError('');
+    } else {
+      setUpdateError('Phone number must contain only digits');
+    }
   };
 
-  const handleSubmitcontact = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmitContact = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    if (phone.length !== 10) {
+      setUpdateError('Phone number must contain exactly 10 digits');
+      return;
+    }
+
     try {
-      const response = await axiosInstance.post('/api/contact/update', {
+      const response = await axiosInstance.post('/api/contact/insert', {
         email,
         phone,
       });
 
       if (response.status === 200) {
         // Data updated successfully
-        // You can display a success message here
-        console.log('Contact details updated successfully');
+        setUpdateSuccess(true);
+
+        // Clear success message after 10 seconds
+        setTimeout(() => {
+          setUpdateSuccess(false);
+        }, 10000); // 10 seconds in milliseconds
+        setEmail('');
+        setPhone('');
       } else {
-        setLoginError('Failed to update contact details');
+        setUpdateError('Failed to update contact details');
       }
     } catch (error) {
       console.error('Error updating contact details:', error);
-      setLoginError('Failed to update contact details');
+      setUpdateError('Failed to update contact details');
     }
   };
 
@@ -41,7 +63,7 @@ const Contact: React.FC = () => {
     <div className="contact_container">
       <div className="contact_start">
         <h2>Change Contact Details</h2>
-        <form onSubmit={handleSubmitcontact}>
+        <form onSubmit={handleSubmitContact}>
           <div className="enteremailidofcontact">
             <label htmlFor="email">Email</label>
             <input
@@ -70,7 +92,8 @@ const Contact: React.FC = () => {
           <button className='submit_login_contact'>Save</button>
 
         </form>
-        {loginError && <p className="admin_error_message">{loginError}</p>}
+        {updateError && <p className="update-error">{updateError}</p>}
+        {updateSuccess && (<p className="update-success">Contact details updated successfully</p>)}
       </div>
     </div>
   );
