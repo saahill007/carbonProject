@@ -178,7 +178,7 @@ const ValuesPage: React.FC<ValuesProps> = ({ children }) => {
         </div> */}
       </div>
       <div className="main-window">{children}</div>
-      <div className="bottom-border"></div>
+      {/* <div className="bottom-border"></div> */}
     </div>
   );
 };

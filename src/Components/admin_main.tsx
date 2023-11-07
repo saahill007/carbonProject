@@ -108,7 +108,7 @@ const Admin_main: React.FC = () => {
   }, []);
 
   return (
-    <div style={{ paddingLeft: "100px" }}>
+    <div style={{ paddingLeft: "100px", paddingTop: "70px" }}>
       <div className="action">
         <div className="action-item">Action item:</div>
         <div className="modify">

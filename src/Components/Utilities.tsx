@@ -54,52 +54,50 @@ const Utilities: React.FC = () => {
 
   const handleDeleteClick = async () => {
     if (selectedUtilities.length > 0) {
-        try {
-            await axios.delete(`${apiUrlBase}/api/utilities/delete`, {
-                data: { utilityIds: selectedUtilities },
-            });
-            setSuccessMessage("Select utilities deleted successfully");
-            setTimeout(() => {
-            setSuccessMessage("");
-            }, 1000);
-            setSelectedUtilities([]);
-            fetchData(); // Fetch updated data after deletion
-        } catch (error) {
-            console.error('Error deleting data:', error);
-        }
+      try {
+        await axios.delete(`${apiUrlBase}/api/utilities/delete`, {
+          data: { utilityIds: selectedUtilities },
+        });
+        setSuccessMessage("Select utilities deleted successfully");
+        setTimeout(() => {
+          setSuccessMessage("");
+        }, 1000);
+        setSelectedUtilities([]);
+        fetchData(); // Fetch updated data after deletion
+      } catch (error) {
+        console.error("Error deleting data:", error);
+      }
     } else {
       setErrorMessage("Select one or more utilities to delete.");
       setTimeout(() => {
-          setErrorMessage("");
+        setErrorMessage("");
       }, 1000);
-        console.error('Select one or more utilities to delete.');
+      console.error("Select one or more utilities to delete.");
     }
-};
+  };
 
-    const handleCheckboxChange = (Val_Id: number) => {
-      const index = selectedUtilities.indexOf(Val_Id);
-      if (index === -1) {
-          setSelectedUtilities([...selectedUtilities, Val_Id]);
-      } else {
-          setSelectedUtilities(selectedUtilities.filter((id) => id !== Val_Id));
-      }
-    };
+  const handleCheckboxChange = (Val_Id: number) => {
+    const index = selectedUtilities.indexOf(Val_Id);
+    if (index === -1) {
+      setSelectedUtilities([...selectedUtilities, Val_Id]);
+    } else {
+      setSelectedUtilities(selectedUtilities.filter((id) => id !== Val_Id));
+    }
+  };
 
-    const handleEditClick = () => {
-      if (selectedUtilities.length > 0) {
-          // Redirect to the edit page with selected admin IDs as query parameters
-          const utilityIdsQueryParam = selectedUtilities.join(",");
-          navigate(`/values/utilities/utilities_edit/${utilityIdsQueryParam}`);
-      } else {
-        setErrorMessage("Select one or more utilities to edit.");
-        setTimeout(() => {
-          setErrorMessage("");
+  const handleEditClick = () => {
+    if (selectedUtilities.length > 0) {
+      // Redirect to the edit page with selected admin IDs as query parameters
+      const utilityIdsQueryParam = selectedUtilities.join(",");
+      navigate(`/values/utilities/utilities_edit/${utilityIdsQueryParam}`);
+    } else {
+      setErrorMessage("Select one or more utilities to edit.");
+      setTimeout(() => {
+        setErrorMessage("");
       }, 1000);
-          console.error('Select one or more admins to edit.');
-      }
-    };
-
-
+      console.error("Select one or more admins to edit.");
+    }
+  };
 
   const handleSearch = () => {
     const searchInput = document.getElementById(
@@ -135,18 +133,35 @@ const Utilities: React.FC = () => {
   }, []);
 
   return (
-    <div style={{ paddingLeft: "100px" }}>
+    <div
+      style={{ paddingLeft: "120px", paddingTop: "70px", paddingRight: "30px" }}
+    >
       <div className="action">
         <div className="action-item">Action item:</div>
         <div className="modify">
           <a href="#">
-            <img className="UtilImg" src={addImg} alt="add" onClick={() => navigate("/values/Utilities/Utilities_add")}/>
+            <img
+              className="UtilImg"
+              src={addImg}
+              alt="add"
+              onClick={() => navigate("/values/Utilities/Utilities_add")}
+            />
           </a>
           <a href="#">
-            <img className="UtilImg" src={editImg} alt="edit"  onClick={() => handleEditClick()} />
+            <img
+              className="UtilImg"
+              src={editImg}
+              alt="edit"
+              onClick={() => handleEditClick()}
+            />
           </a>
           <a href="#">
-            <img className="UtilImg" src={delImg} alt="delete" onClick={() => handleDeleteClick()}  />
+            <img
+              className="UtilImg"
+              src={delImg}
+              alt="delete"
+              onClick={() => handleDeleteClick()}
+            />
           </a>
         </div>
       </div>
@@ -187,8 +202,11 @@ const Utilities: React.FC = () => {
             {data.map((item) => (
               <tr key={item.Val_Id}>
                 <td>
-                <input type="checkbox" checked={selectedUtilities.includes(item.Val_Id)}
-                      onChange={() => handleCheckboxChange(item.Val_Id)} />
+                  <input
+                    type="checkbox"
+                    checked={selectedUtilities.includes(item.Val_Id)}
+                    onChange={() => handleCheckboxChange(item.Val_Id)}
+                  />
                 </td>
                 <td>{item.Val_Id}</td>
                 <td>{item.Zipcode}</td>
@@ -206,7 +224,9 @@ const Utilities: React.FC = () => {
         </table>
       </div>
       {errorMessage && <div className="error_message">{errorMessage}</div>}
-      {SuccessMessage && <div className="success-message">{SuccessMessage}</div>}
+      {SuccessMessage && (
+        <div className="success-message">{SuccessMessage}</div>
+      )}
       <button className="back" onClick={handleadmin}>
         Back
       </button>
