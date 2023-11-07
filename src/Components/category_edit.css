@@ -26,7 +26,8 @@ a:link {
     font-family: Arial, sans-serif;
     font-size: larger;
     font-weight: 750;
-    margin: 0;
+    margin-top: 3vh;
+    margin-bottom: 2vh;
 }
 
 .admin-edit-container {
@@ -213,6 +214,6 @@ input[type="checkbox"] {
     width: 100%;
     position: fixed;
     bottom: 0;
-    margin-left: 4.6vw;
+    margin-left: 0vw !important;
 }
   

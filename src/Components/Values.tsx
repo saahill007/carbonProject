@@ -14,6 +14,8 @@ import Category from "./category_main";
 import Category_add from "./category_add";
 import CategoryEdit from "./category_edit";
 import CategoryImg from "../assets/Category.png";
+import Utilities_add from "./Utilities_add";
+import UtilitiesEdit from "./Utilities_edit";
 // import { Link, Routes, Route, Outlet, useNavigate } from "react-router-dom";
 
 interface ValuesProps {
@@ -90,7 +92,7 @@ const ValuesPage: React.FC<ValuesProps> = ({ children }) => {
             ></i>
           )}
         </Link>
-        <Link
+        {/* <Link
           to="payments"
           className={selectedOption === "payments" ? "selected" : ""}
           onClick={() => handleOptionClick("payments")}
@@ -126,7 +128,7 @@ const ValuesPage: React.FC<ValuesProps> = ({ children }) => {
           ) : (
             <i className="bi bi-globe-americas" style={{ fontSize: "2em" }}></i>
           )}
-        </Link>
+        </Link> */}
         <Link
           to="formulas"
           className={selectedOption === "formulas" ? "selected" : ""}
@@ -206,6 +208,11 @@ const Values: React.FC = () => {
       <Route
         path="/category/category_edit/:categoryIds"
         element={<CategoryEdit />}
+      />
+      <Route path="/utilities/utilities_add" element={<Utilities_add />} />
+      <Route
+        path="/utilities/utilities_edit/:utilityIds"
+        element={<UtilitiesEdit />}
       />
     </Routes>
   );

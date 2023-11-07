@@ -2,9 +2,9 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./category_add.css";
 // import axios from "axios";
-import addImg from "../assets/add.png";
-import delImg from "../assets/delete.png";
-import editImg from "../assets/edit.png";
+// import addImg from "../assets/add.png";
+// import delImg from "../assets/delete.png";
+// import editImg from "../assets/edit.png";
 import axiosInstance from './axiosconfig';
 
 
@@ -84,7 +84,7 @@ const Category_add: React.FC = () => {
 
     return (
         <div>
-            <div className="action">
+            {/* <div className="action">
                 <div className="action-item">Action item:</div>
                 <div className="modify">
                     <a href="#">
@@ -97,7 +97,7 @@ const Category_add: React.FC = () => {
                         <img className="CateImg" src={delImg} alt="delete" />
                     </a>
                 </div>
-            </div>
+            </div> */}
 
             <div className="Category">
                 <div className="Category_Details">Add new category below:</div>

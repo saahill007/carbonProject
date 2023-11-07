@@ -17,15 +17,18 @@ interface Utility {
   Utility: string;
   Utility_Value: string;
   Utility_Units: string;
-  Carbon_Intensity: string;
-  Carbon_Intensity_Unit: string;
-  Ref_Value: string;
+  // Carbon_Intensity: string;
+  // Carbon_Intensity_Unit: string;
+  // Ref_Value: string;
   Sources: string;
   Date_of_Source: string;
 }
 
 const Utilities: React.FC = () => {
   const [data, setData] = useState<Utility[]>([]);
+  const [selectedUtilities, setSelectedUtilities] = useState<number[]>([]);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [SuccessMessage, setSuccessMessage] = useState<string>("");
   // const [searchValue, setSearchValue] = useState<string>("");
   const navigate = useNavigate();
 
@@ -48,6 +51,55 @@ const Utilities: React.FC = () => {
       console.error("Error fetching data:", error);
     }
   };
+
+  const handleDeleteClick = async () => {
+    if (selectedUtilities.length > 0) {
+        try {
+            await axios.delete(`${apiUrlBase}/api/utilities/delete`, {
+                data: { utilityIds: selectedUtilities },
+            });
+            setSuccessMessage("Select utilities deleted successfully");
+            setTimeout(() => {
+            setSuccessMessage("");
+            }, 1000);
+            setSelectedUtilities([]);
+            fetchData(); // Fetch updated data after deletion
+        } catch (error) {
+            console.error('Error deleting data:', error);
+        }
+    } else {
+      setErrorMessage("Select one or more utilities to delete.");
+      setTimeout(() => {
+          setErrorMessage("");
+      }, 1000);
+        console.error('Select one or more utilities to delete.');
+    }
+};
+
+    const handleCheckboxChange = (Val_Id: number) => {
+      const index = selectedUtilities.indexOf(Val_Id);
+      if (index === -1) {
+          setSelectedUtilities([...selectedUtilities, Val_Id]);
+      } else {
+          setSelectedUtilities(selectedUtilities.filter((id) => id !== Val_Id));
+      }
+    };
+
+    const handleEditClick = () => {
+      if (selectedUtilities.length > 0) {
+          // Redirect to the edit page with selected admin IDs as query parameters
+          const utilityIdsQueryParam = selectedUtilities.join(",");
+          navigate(`/values/utilities/utilities_edit/${utilityIdsQueryParam}`);
+      } else {
+        setErrorMessage("Select one or more utilities to edit.");
+        setTimeout(() => {
+          setErrorMessage("");
+      }, 1000);
+          console.error('Select one or more admins to edit.');
+      }
+    };
+
+
 
   const handleSearch = () => {
     const searchInput = document.getElementById(
@@ -88,13 +140,13 @@ const Utilities: React.FC = () => {
         <div className="action-item">Action item:</div>
         <div className="modify">
           <a href="#">
-            <img className="UtilImg" src={addImg} alt="add" />
+            <img className="UtilImg" src={addImg} alt="add" onClick={() => navigate("/values/Utilities/Utilities_add")}/>
           </a>
           <a href="#">
-            <img className="UtilImg" src={editImg} alt="edit" />
+            <img className="UtilImg" src={editImg} alt="edit"  onClick={() => handleEditClick()} />
           </a>
           <a href="#">
-            <img className="UtilImg" src={delImg} alt="delete" />
+            <img className="UtilImg" src={delImg} alt="delete" onClick={() => handleDeleteClick()}  />
           </a>
         </div>
       </div>
@@ -116,7 +168,7 @@ const Utilities: React.FC = () => {
           <thead>
             <tr className="bg-info sticky-header">
               <th>Select</th>
-              <th>Val_Id</th>
+              <th>Utility ID</th>
               <th>Zipcode</th>
               <th>Country</th>
               <th>City</th>
@@ -135,7 +187,8 @@ const Utilities: React.FC = () => {
             {data.map((item) => (
               <tr key={item.Val_Id}>
                 <td>
-                  <input type="checkbox" />
+                <input type="checkbox" checked={selectedUtilities.includes(item.Val_Id)}
+                      onChange={() => handleCheckboxChange(item.Val_Id)} />
                 </td>
                 <td>{item.Val_Id}</td>
                 <td>{item.Zipcode}</td>
@@ -152,7 +205,8 @@ const Utilities: React.FC = () => {
           </tbody>
         </table>
       </div>
-
+      {errorMessage && <div className="error_message">{errorMessage}</div>}
+      {SuccessMessage && <div className="success-message">{SuccessMessage}</div>}
       <button className="back" onClick={handleadmin}>
         Back
       </button>

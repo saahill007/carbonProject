@@ -26,7 +26,7 @@ type CustomerData = {
   first_name: string;
   last_name: string;
   age: number;
-  Email: string;
+  email: string;
   total_carbon_footprint: number;
   number_of_trees: number;
   answers: string;
@@ -433,7 +433,7 @@ const Dashboard: React.FC = () => {
                 <tr key={item.cust_id}>
                   <td>{item.cust_id}</td>
                   <td>{item.first_name + " " + item.last_name}</td>
-                  <td>{item.Email}</td>
+                  <td>{item.email}</td>
                   <td>{item.age}</td>
                   <td>{item.total_carbon_footprint}</td>
                   <td>{item.number_of_trees}</td>
