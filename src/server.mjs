@@ -12,7 +12,7 @@ app.use(bodyParser.json());
 const port = 3000;
 
 const dbConfig = {
-  host: '18.216.140.96',
+  host: '18.220.46.102',
   user: 'carbonuser',
   password: 'Carbon@123', // Fix the case of 'PASSWORD' to 'password'
   database: 'CRBN' // Fix the case of 'DB' to 'database'
@@ -481,6 +481,111 @@ app.get("/api/admin_main", cors(), (req, res) => {
     }
     // Send the retrieved questions as a JSON response
     res.json(results);
+  });
+});
+
+app.get("/api/utility_add", cors(), (req, res) => {
+  const sql = "SELECT * FROM CRBN.utilities";
+
+  // Execute the SQL query using the MySQL connection
+  mysqlConnection.query(sql, (error, results) => {
+    if (error) {
+      console.error("Error executing SQL query:", error.message);
+      res.status(500).json({ error: "Error retrieving utility data from the database" });
+      return;
+    }
+    // Send the retrieved utility data as a JSON response
+    res.json(results);
+  });
+});
+
+// Define a route to save new utility data
+app.post("/api/new_utility_add", (req, res) => {
+  const { 
+    Zipcode,
+    Country,
+    City,
+    Utility,
+    Utility_Value,
+    Utility_Units,
+    // Carbon_Intensity,
+    // Carbon_Intensity_Unit,
+    // Ref_Value,
+    Sources,
+    Date_of_Source
+  } = req.body;
+  const sql = "INSERT INTO CRBN.utilities (Zipcode, Country, City, Utility, Utility_Value, Utility_Units, Sources, Date_of_Source) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+  const values = [
+    Zipcode,
+    Country,
+    City,
+    Utility,
+    Utility_Value,
+    Utility_Units,
+    // Carbon_Intensity,
+    // Carbon_Intensity_Unit,
+    // Ref_Value,
+    Sources,
+    Date_of_Source
+  ];
+
+  mysqlConnection.query(sql, values, (error, result) => {
+    if (error) {
+      console.error("Error saving utility data:", error);
+      res.status(500).json({ error: "Error saving utility data" });
+    } else {
+      console.log("Utility data saved successfully.");
+      res.json({ message: "Utility data saved successfully" });
+    }
+  });
+});
+
+app.get("/api/utility/:utilityId", (req, res) => {
+  const { utilityId } = req.params;
+  // Perform a query to retrieve the data based on the utility_id
+  const query = "SELECT Val_Id, Zipcode, Country, City, Utility, Utility_Value, Utility_Units, Sources, Date_of_Source FROM CRBN.utilities WHERE Val_Id = ?";
+  mysqlConnection.query(query, [utilityId], (error, rows) => {
+    if (error) {
+      console.error(`Error fetching utility data for utility ID ${utilityId}:`, error);
+      res.status(500).json({ error: "Internal server error" });
+    } else {
+      if (rows.length === 0) {
+        res.status(404).json({ error: "Utility not found" });
+      } else {
+        res.json(rows[0]);
+      }
+    }
+  });
+});
+
+app.post("/api/update_utility/:utilityId", (req, res) => {
+  const utilityId = req.params.utilityId;
+  const { Zipcode, Country, City, Utility, Utility_Value, Utility_Units, Sources, Date_of_Source } = req.body;
+
+  const query = "UPDATE CRBN.utilities SET Zipcode = ?, Country = ?, City = ?, Utility = ?, Utility_Value = ?, Utility_Units = ?, Sources = ?, Date_of_Source = ? WHERE Val_Id = ?";
+  const values = [Zipcode, Country, City, Utility, Utility_Value, Utility_Units, Sources, Date_of_Source, utilityId];
+
+  mysqlConnection.query(query, values, (error, results) => {
+    if (error) {
+      console.error("Error updating utility data: " + error);
+      res.status(500).json({ message: "Internal Server Error" });
+    } else {
+      res.status(200).json({ message: "Utility data updated successfully" });
+    }
+  });
+});
+
+app.delete('/api/utilities/delete', (req, res) => {
+  const { utilityIds } = req.body;
+
+  const query = 'DELETE FROM  CRBN.utilities WHERE Val_Id IN (?)';
+  mysqlConnection.query(query, [utilityIds], (error, results) => {
+      if (error) {
+          console.error('Error deleting utilities:', error);
+          res.status(500).json({ message: 'Internal Server Error' });
+      } else {
+          res.status(200).json({ message: 'Utilities deleted successfully' });
+      }
   });
 });
 

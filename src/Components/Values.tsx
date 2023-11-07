@@ -14,6 +14,8 @@ import Category from "./category_main";
 import Category_add from "./category_add";
 import CategoryEdit from "./category_edit";
 import CategoryImg from "../assets/Category.png";
+import Utilities_add from "./Utilities_add";
+import UtilitiesEdit from "./Utilities_edit";
 // import { Link, Routes, Route, Outlet, useNavigate } from "react-router-dom";
 
 interface ValuesProps {
@@ -81,7 +83,7 @@ const ValuesPage: React.FC<ValuesProps> = ({ children }) => {
             ></i>
           )}
         </Link>
-        <Link
+        {/* <Link
           to="payments"
           className={selectedOption === "payments" ? "selected" : ""}
           onClick={() => handleOptionClick("payments")}
@@ -117,7 +119,7 @@ const ValuesPage: React.FC<ValuesProps> = ({ children }) => {
           ) : (
             <i className="bi bi-globe-americas" style={{ fontSize: "2em" }}></i>
           )}
-        </Link>
+        </Link> */}
         <Link
           to="formulas"
           className={selectedOption === "formulas" ? "selected" : ""}
@@ -172,8 +174,8 @@ const ValuesPage: React.FC<ValuesProps> = ({ children }) => {
 
 //const Admin: React.FC = () => <div>Admin Page</div>;
 // const Utilities: React.FC = () => <div>Utilities Page</div>;
-const Payments: React.FC = () => <div>Payments Page</div>;
-const ZipCodes: React.FC = () => <div>Zip Codes Page</div>;
+// const Payments: React.FC = () => <div>Payments Page</div>;
+// const ZipCodes: React.FC = () => <div>Zip Codes Page</div>;
 // const Formulas: React.FC = () => <div>Formulas Page</div>;
 
 const Values: React.FC = () => {
@@ -182,8 +184,8 @@ const Values: React.FC = () => {
       <Route index element={<ValuesLandingPage></ValuesLandingPage>} />
       <Route path="admin" element={<Admin_main />} />
       <Route path="utilities" element={<Utilities />} />
-      <Route path="payments" element={<Payments />} />
-      <Route path="zipcodes" element={<ZipCodes />} />
+      {/* <Route path="payments" element={<Payments />} />
+      <Route path="zipcodes" element={<ZipCodes />} /> */}
       <Route path="formulas" element={<Formulas />} />
       <Route path="/admin/admin_add" element={<Admin_add />} />
       {/* <Route path="/admin/admin_edit" element={<AdminEdit />} /> */}
@@ -191,8 +193,10 @@ const Values: React.FC = () => {
       <Route path="category" element={<Category />} />
       <Route path="/category/category_add" element={<Category_add />} />
       <Route path="/category/category_edit/:categoryIds" element={<CategoryEdit />} />
+      <Route path="/utilities/utilities_add" element={<Utilities_add />} />
+      <Route path="/utilities/utilities_edit/:utilityIds" element={<UtilitiesEdit />} />
     </Routes>
-  );
+  )
 };
 
 export { ValuesPage, Values };
