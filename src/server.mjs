@@ -4,6 +4,7 @@ import mysql from "mysql2";
 import mysql1 from "mysql2/promise";
 import bodyParser from "body-parser";
 import nodemailer from "nodemailer";
+import { randomBytes } from 'crypto';
 
 const app = express();
 app.use(cors());
@@ -75,11 +76,9 @@ app.get("/api/filterCustomer", cors(), (req, res) => {
   ) {
     const formattedFromDate = fromDate.split("/").reverse().join("-");
     const formattedToDate = toDate.split("/").reverse().join("-");
-    query += ` WHERE date_answered BETWEEN STR_TO_DATE('${formattedFromDate}', '%Y-%m-%d') AND STR_TO_DATE('${formattedToDate}', '%Y-%m-%d') AND zipcode = '${zipcode}' AND total_carbon_footprint ${
-      carbonComparison === "=" ? "=" : carbonComparison === ">" ? ">" : "<"
-    } ${carbonFootprintFilter} AND number_of_trees ${
-      treesComparison === "=" ? "=" : treesComparison === ">" ? ">" : "<"
-    } ${treesFilter}`;
+    query += ` WHERE date_answered BETWEEN STR_TO_DATE('${formattedFromDate}', '%Y-%m-%d') AND STR_TO_DATE('${formattedToDate}', '%Y-%m-%d') AND zipcode = '${zipcode}' AND total_carbon_footprint ${carbonComparison === "=" ? "=" : carbonComparison === ">" ? ">" : "<"
+      } ${carbonFootprintFilter} AND number_of_trees ${treesComparison === "=" ? "=" : treesComparison === ">" ? ">" : "<"
+      } ${treesFilter}`;
   } else if (
     fromDate &&
     toDate &&
@@ -90,11 +89,9 @@ app.get("/api/filterCustomer", cors(), (req, res) => {
   ) {
     const formattedFromDate = fromDate.split("/").reverse().join("-");
     const formattedToDate = toDate.split("/").reverse().join("-");
-    query += ` WHERE date_answered BETWEEN STR_TO_DATE('${formattedFromDate}', '%Y-%m-%d') AND STR_TO_DATE('${formattedToDate}', '%Y-%m-%d') AND total_carbon_footprint ${
-      carbonComparison === "=" ? "=" : carbonComparison === ">" ? ">" : "<"
-    } ${carbonFootprintFilter} AND number_of_trees ${
-      treesComparison === "=" ? "=" : treesComparison === ">" ? ">" : "<"
-    } ${treesFilter}`;
+    query += ` WHERE date_answered BETWEEN STR_TO_DATE('${formattedFromDate}', '%Y-%m-%d') AND STR_TO_DATE('${formattedToDate}', '%Y-%m-%d') AND total_carbon_footprint ${carbonComparison === "=" ? "=" : carbonComparison === ">" ? ">" : "<"
+      } ${carbonFootprintFilter} AND number_of_trees ${treesComparison === "=" ? "=" : treesComparison === ">" ? ">" : "<"
+      } ${treesFilter}`;
   } else if (fromDate && toDate && zipcode) {
     const formattedFromDate = fromDate.split("/").reverse().join("-");
     const formattedToDate = toDate.split("/").reverse().join("-");
@@ -102,15 +99,13 @@ app.get("/api/filterCustomer", cors(), (req, res) => {
   } else if (fromDate && toDate && carbonComparison && carbonFootprintFilter) {
     const formattedFromDate = fromDate.split("/").reverse().join("-");
     const formattedToDate = toDate.split("/").reverse().join("-");
-    query += ` WHERE date_answered BETWEEN STR_TO_DATE('${formattedFromDate}', '%Y-%m-%d') AND STR_TO_DATE('${formattedToDate}', '%Y-%m-%d') AND total_carbon_footprint ${
-      carbonComparison === "=" ? "=" : carbonComparison === ">" ? ">" : "<"
-    } ${carbonFootprintFilter}`;
+    query += ` WHERE date_answered BETWEEN STR_TO_DATE('${formattedFromDate}', '%Y-%m-%d') AND STR_TO_DATE('${formattedToDate}', '%Y-%m-%d') AND total_carbon_footprint ${carbonComparison === "=" ? "=" : carbonComparison === ">" ? ">" : "<"
+      } ${carbonFootprintFilter}`;
   } else if (fromDate && toDate && treesComparison && treesFilter) {
     const formattedFromDate = fromDate.split("/").reverse().join("-");
     const formattedToDate = toDate.split("/").reverse().join("-");
-    query += ` WHERE date_answered BETWEEN STR_TO_DATE('${formattedFromDate}', '%Y-%m-%d') AND STR_TO_DATE('${formattedToDate}', '%Y-%m-%d') AND number_of_trees ${
-      treesComparison === "=" ? "=" : treesComparison === ">" ? ">" : "<"
-    } ${treesFilter}`;
+    query += ` WHERE date_answered BETWEEN STR_TO_DATE('${formattedFromDate}', '%Y-%m-%d') AND STR_TO_DATE('${formattedToDate}', '%Y-%m-%d') AND number_of_trees ${treesComparison === "=" ? "=" : treesComparison === ">" ? ">" : "<"
+      } ${treesFilter}`;
   } else if (fromDate && toDate) {
     const formattedFromDate = fromDate.split("/").reverse().join("-");
     const formattedToDate = toDate.split("/").reverse().join("-");
@@ -123,27 +118,21 @@ app.get("/api/filterCustomer", cors(), (req, res) => {
     treesComparison &&
     treesFilter
   ) {
-    query += ` WHERE total_carbon_footprint ${
-      carbonComparison === "=" ? "=" : carbonComparison === ">" ? ">" : "<"
-    } ${carbonFootprintFilter} AND number_of_trees ${
-      treesComparison === "=" ? "=" : treesComparison === ">" ? ">" : "<"
-    } ${treesFilter}`;
+    query += ` WHERE total_carbon_footprint ${carbonComparison === "=" ? "=" : carbonComparison === ">" ? ">" : "<"
+      } ${carbonFootprintFilter} AND number_of_trees ${treesComparison === "=" ? "=" : treesComparison === ">" ? ">" : "<"
+      } ${treesFilter}`;
   } else if (carbonComparison && carbonFootprintFilter) {
-    query += ` WHERE total_carbon_footprint ${
-      carbonComparison === "=" ? "=" : carbonComparison === ">" ? ">" : "<"
-    } ${carbonFootprintFilter}`;
+    query += ` WHERE total_carbon_footprint ${carbonComparison === "=" ? "=" : carbonComparison === ">" ? ">" : "<"
+      } ${carbonFootprintFilter}`;
   } else if (treesComparison && treesFilter) {
-    query += ` WHERE number_of_trees ${
-      treesComparison === "=" ? "=" : treesComparison === ">" ? ">" : "<"
-    } ${treesFilter}`;
+    query += ` WHERE number_of_trees ${treesComparison === "=" ? "=" : treesComparison === ">" ? ">" : "<"
+      } ${treesFilter}`;
   } else if (zipcode && carbonComparison && carbonFootprintFilter) {
-    query += ` WHERE zipcode = '${zipcode}' AND total_carbon_footprint ${
-      carbonComparison === "=" ? "=" : carbonComparison === ">" ? ">" : "<"
-    } ${carbonFootprintFilter}`;
+    query += ` WHERE zipcode = '${zipcode}' AND total_carbon_footprint ${carbonComparison === "=" ? "=" : carbonComparison === ">" ? ">" : "<"
+      } ${carbonFootprintFilter}`;
   } else if (zipcode && treesComparison && treesFilter) {
-    query += ` WHERE zipcode = '${zipcode}' AND number_of_trees ${
-      treesComparison === "=" ? "=" : treesComparison === ">" ? ">" : "<"
-    } ${treesFilter}`;
+    query += ` WHERE zipcode = '${zipcode}' AND number_of_trees ${treesComparison === "=" ? "=" : treesComparison === ">" ? ">" : "<"
+      } ${treesFilter}`;
   }
 
   mysqlConnection.query(query, (error, results) => {
@@ -958,8 +947,8 @@ app.post("/api/sendCustomerEnquiryEmail", (req, res) => {
 
 // Define a route to retrieve questions with a specific flag from the database
 app.get("/api/questionsuser", cors(), (req, res) => {
-  const sql =
-    "SELECT * FROM CRBN.questionsTable WHERE enabled = 1 ORDER BY label, id";
+  const sql = "SELECT * FROM CRBN.questionsTable WHERE enabled = 1 ORDER BY label, id";
+
 
   // Execute the SQL query using the MySQL connection
   mysqlConnection.query(sql, (error, results) => {
@@ -976,12 +965,14 @@ app.get("/api/questionsuser", cors(), (req, res) => {
   });
 });
 
+
 app.get("/api/questions/:id", cors(), async (req, res) => {
   try {
     const questionId = req.params.id; // Get the ID from the route parameter
     const [results] = await mysqlConnection
       .promise()
       .query("SELECT * FROM CRBN.questionsTable WHERE id = ?", [questionId]);
+    console.log("results are:", results);
     if (results.length > 0) {
       res.json(results[0]); // Send back the specific question
     } else {
@@ -993,47 +984,39 @@ app.get("/api/questions/:id", cors(), async (req, res) => {
   }
 });
 
-app.post("/api/ContactUs", cors(), (req, res) => {
+app.post('/api/ContactUs', cors(), (req, res) => {
   const { email, query, firstName, lastName } = req.body;
 
   // 1) Adding query to the Enquiry table
-  const insertEnquirySql =
-    "INSERT INTO CRBN.enquiry (enquiry_question, enquiry_flag) VALUES (?, ?)";
+  const insertEnquirySql = 'INSERT INTO CRBN.Enquiry (enquiry_question, enquiry_flag) VALUES (?, ?)';
   mysqlConnection.query(insertEnquirySql, [query, 1], (err, result) => {
     if (err) {
-      console.error("Error inserting into Enquiry table:", err);
-      return res.status(500).json({ error: "Internal Server Error" });
+      console.error('Error inserting into Enquiry table:', err);
+      return res.status(500).json({ error: 'Internal Server Error' });
     }
 
     const enquiryId = result.insertId;
 
     // 2) Inserting a new entry into the Customer table
-    const insertCustomerSql = `INSERT INTO CRBN.Customer (date_answered, session_id, first_name, last_name, age, email, total_carbon_footprint, answers, number_of_trees, enquiry_id) 
-        VALUES (CURDATE(), "N/A", ?, ?, ?, ?, 0, "N/A", 0, ?)`;
-    mysqlConnection.query(
-      insertCustomerSql,
-      [firstName, lastName, email, enquiryId],
-      (err, insertResult) => {
-        if (err) {
-          console.error("Error inserting into Customer table:", err);
-          return res.status(500).json({ error: "Internal Server Error" });
-        }
-
-        return res
-          .status(200)
-          .json({ message: "Enquiry and Customer added successfully" });
+    const insertCustomerSql = `INSERT INTO CRBN.Customer (date_answered, session_id, first_name, last_name,age, email, total_carbon_footprint, answers, number_of_trees, enquiry_id) 
+      VALUES (CURDATE(), "N/A", ?, ?, ?, ?, 0, "N/A", 0, ?)`;
+    mysqlConnection.query(insertCustomerSql, [firstName, lastName, email, enquiryId], (err, insertResult) => {
+      if (err) {
+        console.error('Error inserting into Customer table:', err);
+        return res.status(500).json({ error: 'Internal Server Error' });
       }
-    );
+
+      return res.status(200).json({ message: 'Enquiry and Customer added successfully' });
+    });
   });
 });
+
 
 // API for random fact fetching
 app.get("/api/randomfact/:index", async (req, res) => {
   try {
     const questionIndex = req.params.index;
-    const [rows] = await mysqlConnection
-      .promise()
-      .query("SELECT fact FROM CRBN.facts ORDER BY RAND() LIMIT 1;");
+    const [rows] = await mysqlConnection.promise().query("SELECT fact FROM CRBN.facts ORDER BY RAND() LIMIT 1;");
     // console.log(rows);  // log the entire result
 
     if (rows && rows.length > 0) {
@@ -1084,33 +1067,33 @@ app.get("/api/totalquestions", cors(), async (req, res) => {
   }
 });
 
-// Define a route to retrieve utility data based on the zipcode
-app.get("/api/utility/:zipcode", cors(), (req, res) => {
-  const zipcode = req.params.zipcode; // Extract zipcode from the request parameters
+// // Define a route to retrieve utility data based on the zipcode
+// app.get("/api/utility/:zipcode", cors(), (req, res) => {
+//   const zipcode = req.params.zipcode; // Extract zipcode from the request parameters
 
-  // SQL query to fetch utility data for the given zipcode
-  const sql = "SELECT * FROM CRBN.Utility WHERE Zipcode = ?";
+//   // SQL query to fetch utility data for the given zipcode
+//   const sql = "SELECT * FROM CRBN.Utility WHERE Zipcode = ?";
 
-  // Execute the SQL query using the MySQL connection
-  mysqlConnection.query(sql, [zipcode], (error, results) => {
-    if (error) {
-      console.error("Error executing SQL query:", error.message);
-      res
-        .status(500)
-        .json({ error: "Error retrieving utility data from the database" });
-      return;
-    }
+//   // Execute the SQL query using the MySQL connection
+//   mysqlConnection.query(sql, [zipcode], (error, results) => {
+//     if (error) {
+//       console.error("Error executing SQL query:", error.message);
+//       res
+//         .status(500)
+//         .json({ error: "Error retrieving utility data from the database" });
+//       return;
+//     }
 
-    // If results are found, return them, otherwise, return a 404 with an error message
-    if (results.length > 0) {
-      res.json(results[0]);
-    } else {
-      res
-        .status(404)
-        .json({ error: "Utility not found for the given zipcode" });
-    }
-  });
-});
+//     // If results are found, return them, otherwise, return a 404 with an error message
+//     if (results.length > 0) {
+//       res.json(results[0]);
+//     } else {
+//       res
+//         .status(404)
+//         .json({ error: "Utility not found for the given zipcode" });
+//     }
+//   });
+// });
 
 app.get("/api/getvardata", async (req, res) => {
   try {
@@ -1521,6 +1504,7 @@ app.get("/api/getCategories", async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
 app.post("/api/calculateFormula", async (req, res) => {
   try {
     const { formulaName, zipcode, utility } = req.body;
@@ -1581,49 +1565,82 @@ app.post("/api/calculateFormula", async (req, res) => {
 //   }
 // });
 
-app.post("/api/calculateFootprint", cors(), async (req, res) => {
-  const answers = req.body; // Array or object containing question IDs and user answers
-  console.log("Received answers:", answers);
+app.post('/api/calculateFootprint', cors(), async (req, res) => {
+  const answers = req.body; // Array containing question IDs, user answers, and household values
 
   let totalCarbonFootprint = 0;
 
   try {
     for (let answer of answers) {
+      console.log("answer is", answer);
+      //console.log("answers is :",answers);
       const id = answer.id;
+      console.log("question id", id);
       const userValue = answer.value;
-      console.log("Querying for id:", id);
+      //console.log("user value",userValue);
+      // Fetch refs (constants or formulas) for the question based on questionType and choiceAns
+      const [results] = await mysqlConnection.promise().query("SELECT refs, questionType, household, choiceAns FROM CRBN.questionsTable WHERE id = ?", [id]);
 
-      // Fetch ref (constant or formula) for the question
-      const [results] = await mysqlConnection
-        .promise()
-        .query("SELECT refs FROM CRBN.questionsTable WHERE id = ?", [id]);
+
+
       if (results.length === 0) {
         console.error(`No data found for id: ${id}`);
-        continue; // Skip the rest of this iteration and proceed to next id in the loop
+        continue; // Skip the rest of this iteration and proceed to the next id in the loop
       }
-      console.log("Results from database:", results);
-      const refValue = parseFloat(results[0].refs);
+      console.log("array :", results);
+      const refs = results[0].refs;
+      let household = results[0].household;
+      console.log("Househole value", household);
+      const questionType = results[0].questionType;
+      const choiceAns = results[0].choiceAns;
 
-      // Calculate carbon footprint for this answer
-      const carbonValue = refValue * userValue; // Modify this line if refs stores complex data
+      // Calculate carbon footprint based on questionType and choiceAns using the dynamically set familyMembers
+      let carbonValue = 0;
+
+      if (questionType === 1) {
+        if (choiceAns === "1") {
+          carbonValue = household ? (refs * userValue) / familyMembers : (refs * userValue); // Use the user-selected choice's refValue
+        } else if (choiceAns === "2") {
+          if (userValue >= 0 && userValue < refs[0].length) {
+            carbonValue = household ? (refs[0][userValue]) / familyMembers : refs[0][userValue];
+          } else {
+            console.error("Invalid user-selected choice index:", userValue);
+          }
+        } else if (choiceAns === "3") {
+          // User can select multiple choices
+          if (Array.isArray(userValue)) {
+            const selectedChoices = userValue;
+            // Calculate footprint based on selected choices
+            for (const choiceIndex of selectedChoices) {
+              if (choiceIndex >= 0 && choiceIndex < refs[0].length) {
+                carbonValue += household ? (refs[0][choiceIndex]) / familyMembers : (refs[0][choiceIndex]);
+              } else {
+                console.error("Invalid user-selected choice index:", choiceIndex);
+              }
+            }
+          } else {
+            console.error("Invalid user-selected choices:", userValue);
+          }
+        }
+      }
 
       totalCarbonFootprint += Math.ceil(carbonValue);
     }
 
     const CO2_PER_TREE_PER_YEAR = 48;
-    const totalTreesRequired = Math.ceil(
-      totalCarbonFootprint / CO2_PER_TREE_PER_YEAR
-    );
+    const totalTreesRequired = Math.ceil(totalCarbonFootprint / CO2_PER_TREE_PER_YEAR);
 
     res.json({
       carbonFootprint: totalCarbonFootprint,
-      numberOfTrees: totalTreesRequired,
+      numberOfTrees: totalTreesRequired
     });
   } catch (error) {
     console.error("Error calculating values:", error);
     res.status(500).json({ message: "Internal Server Error" });
   }
 });
+
+
 const getVariableValue = async (variableName) => {
   const connection = await pool.getConnection();
   const [rows] = await connection.query(
@@ -1636,8 +1653,8 @@ const getVariableValue = async (variableName) => {
   return rows.length > 0 ? rows[0].value : parseFloat(variableName);
 };
 
-// Route to handle "Forgot Password" request
-app.post("/api/forgotpassword", cors(), async (req, res) => {
+
+app.post('/api/forgotpassword', cors(), async (req, res) => {
   const { email } = req.body;
   // Check if the email exists in the 'admin' table
   const sql = `SELECT * FROM CRBN.admin WHERE email = ?`;
@@ -1646,7 +1663,7 @@ app.post("/api/forgotpassword", cors(), async (req, res) => {
 
     if (!user || user.length === 0) {
       // Email not found in the 'admin' table
-      return res.status(404).json({ error: "Email not found" });
+      return res.status(404).json({ error: 'Email not found' });
     }
 
     // Generate a password reset token
@@ -1657,40 +1674,37 @@ app.post("/api/forgotpassword", cors(), async (req, res) => {
     await mysqlConnection.promise().query(updateTokenSql, [resetToken, email]);
 
     // Send a password reset email with a link to a reset page
-    const resetLink = `http://example.com/reset-password?token=${resetToken}`;
+    const resetLink = `http://localhost:5173/resetpassword?token=${resetToken}`;
     await sendPasswordResetEmail(email, resetLink);
 
-    return res
-      .status(200)
-      .json({ message: "Password reset email sent. Check your inbox." });
-  } catch (error) {
-    console.error("Error processing password reset:", error);
-    return res
-      .status(500)
-      .json({ error: "Error resetting password. Please try again later." });
+    return res.status(200).json({ message: 'Password reset email sent. Check your inbox.' });
+  }
+  catch (error) {
+    console.error('Error processing password reset:', error);
+    return res.status(500).json({ error: 'Error resetting password. Please try again later.' });
   }
 });
 
 // Helper function to generate a random reset token
 function generateResetToken() {
   // Generate a random 32-character token
-  return crypto.randomBytes(16).toString("hex");
+  return randomBytes(32).toString('hex');
 }
 
 // Helper function to send a password reset email
 async function sendPasswordResetEmail(email, resetLink) {
   const transporter = nodemailer.createTransport({
-    service: "Gmail", // Replace with your email service provider
+    service: 'Gmail', // Replace with your email service provider
     auth: {
-      user: "carbonoffset08@gmail.com", // Replace with your email address
-      pass: "vjbv uaeq cpro lsub", // Replace with your email password
+      user: 'carbonoffset08@gmail.com', // Replace with your email address
+      pass: 'vjbv uaeq cpro lsub', // Replace with your email password
     },
   });
   const mailOptions = {
-    from: "carbonoffset08@gmail.com",
+    from: 'carbonoffset08@gmail.com',
     to: email,
-    subject: "Password Reset",
-    text: `Click on the following link to reset your password: ${resetLink}`,
+    subject: 'Password Reset',
+    text: `Click on the following link to reset your password:\n ${resetLink}`,
   };
 
   return transporter.sendMail(mailOptions);
@@ -1700,21 +1714,28 @@ async function sendPasswordResetEmail(email, resetLink) {
 app.get("/api/randomimage/:index", async (req, res) => {
   try {
     const questionIndex = req.params.index;
-    const [rows] = await mysqlConnection
-      .promise()
-      .query("SELECT img_name FROM CRBN.facts_img ORDER BY RAND() LIMIT 1;");
+    const [rows] = await mysqlConnection.promise().query("SELECT img_name FROM CRBN.facts_img ORDER BY RAND() LIMIT 1;");
     // console.log(rows);  // log the entire result
 
     if (rows && rows.length > 0) {
       return res.json(rows[0]);
     } else {
-      return res.status(404).json({ message: "No image found" });
+      return res.status(404).json({ message: "No fact found" });
     }
   } catch (error) {
-    console.error("Error fetching random image:", error);
+    console.error("Error fetching random fact:", error);
     return res.status(500).json({ message: "Internal Server Error" });
   }
 });
+
+let familyMembers; // Declare a module-scoped variable
+
+app.post('/api/setFamilyMembers', cors(), (req, res) => {
+  familyMembers = req.body.familyMembers; // Assign the value to the module-scoped variable
+  console.log('Received familyMembers:', familyMembers);
+  res.status(200).json({ message: 'Family members set successfully' });
+});
+
 
 // Start the server
 app.listen(port, () => {
