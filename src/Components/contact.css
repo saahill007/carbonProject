@@ -43,7 +43,7 @@ body {
 
 .enteremailidofcontact,
 .enterphonenumber {
-    background-color: #007ea7;
+    background-color: rgb(255, 87, 1);
     padding: 15px;
     border: 1px solid #000;
     margin-bottom: 20px;
@@ -97,4 +97,12 @@ button[type="button"] {
 
 .submit_login_contact:hover {
     background-color: rgb(52, 49, 49);
+}
+
+.update-success {
+    color: green;
+}
+
+.update-error {
+    color: red;
 }
