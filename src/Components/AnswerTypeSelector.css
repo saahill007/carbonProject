@@ -11,7 +11,7 @@
   }
   
   .custom-btn {
-    background-color: #d6d6d6; /* Specify your own color */
+    background-color: black; /* Specify your own color */
     color: #fff; /* Text color */
     border: none;
     padding: 10px 20px;
@@ -21,6 +21,6 @@
   }
   
   .custom-btn.active {
-    background-color: #9FC1A2; /* Specify your own color for the active state */
+    background-color: #FF5701; /* Specify your own color for the active state */
   }
   

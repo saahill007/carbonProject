@@ -213,6 +213,7 @@ interface MultipleSelectionsProps {
   label: string;
   selectedUnits: String[];
   choiceAns: string;
+  ansMap: { [key: string]: string };
 
   //   onDataUpdate: (unitData: { [key: number]: DataItem[] }) => void;
 }
@@ -234,6 +235,7 @@ const MultipleSelections: React.FC<MultipleSelectionsProps> = ({
   label,
   choiceAns,
   selectedUnits,
+  ansMap,
   //   onDataUpdate,
 }) => {
   const [unitData, setUnitData] = useState<{ [key: number]: DataItem[] }>({});
@@ -292,6 +294,11 @@ const MultipleSelections: React.FC<MultipleSelectionsProps> = ({
   const navigate = useNavigate();
   const saveOptionsToDatabase = async () => {
     const { choices, refs } = getChoicesAndRefs();
+    const selectedValues = Object.values(
+      Object.fromEntries(
+        Object.entries(ansMap).filter(([key]) => selectedUnits.includes(key))
+      )
+    );
     try {
       const response = await fetch(`${apiUrlBase}/api/addQuestion`, {
         method: "POST",
@@ -308,7 +315,7 @@ const MultipleSelections: React.FC<MultipleSelectionsProps> = ({
           choices: choices, // Assuming twoArrayOption represents choices
           refs: refs, // Assuming twoArrayValue represents refs
           selectedUnits,
-          selectedFormulas: [],
+          selectedFormulas: selectedValues,
           label,
         }),
       });
@@ -368,7 +375,11 @@ const MultipleSelections: React.FC<MultipleSelectionsProps> = ({
                         <div className="col" style={{}}>
                           <button
                             className="btn btn-info"
-                            style={{ width: "180px" }}
+                            style={{
+                              width: "180px",
+                              background: "white",
+                              border: "3px solid black",
+                            }}
                           >
                             {item.name}
                           </button>
@@ -376,7 +387,11 @@ const MultipleSelections: React.FC<MultipleSelectionsProps> = ({
                         <div className="col">
                           <button
                             className="btn btn-info"
-                            style={{ width: "180px" }}
+                            style={{
+                              width: "180px",
+                              background: "white",
+                              border: "3px solid black",
+                            }}
                           >
                             {item.value}
                           </button>
@@ -387,8 +402,13 @@ const MultipleSelections: React.FC<MultipleSelectionsProps> = ({
                             onClick={() =>
                               handleDeleteValue(selectedIndex, index)
                             }
-                            style={{ width: "150px" }}
+                            style={{
+                              width: "178px",
+                              background: "black",
+                              border: "None",
+                            }}
                           >
+                            <i className="bi bi-trash">{"    "}</i>
                             Delete
                           </button>
                         </div>
@@ -427,8 +447,8 @@ const MultipleSelections: React.FC<MultipleSelectionsProps> = ({
                       style={{
                         width: "180px",
                         marginBottom: "25px",
-                        background: "#84D2F2",
-                        borderColor: "#84D2F2",
+                        background: "#FF5701",
+                        border: "None",
                       }}
                     >
                       Add Option
@@ -444,8 +464,9 @@ const MultipleSelections: React.FC<MultipleSelectionsProps> = ({
           className="btn btn-success"
           style={{
             width: "100%",
-            background: "#A7C8A3",
-            borderColor: "#A7C8A3",
+            background: "black",
+            borderColor: "2px white",
+            marginTop: "20px",
           }}
           onClick={() => {
             const { choices, refs } = getChoicesAndRefs();

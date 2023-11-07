@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import NewFormula from "./NewFormula";
 import UnitsSelector from "./UnitsSelector";
 // import OptionValue from "./OptionValue";
@@ -6,6 +6,29 @@ import SwitchContent from "./SwitchContent";
 import { useNavigate } from "react-router-dom";
 import MultipleSelections from "./MultipleSelections";
 import { apiUrlBase } from "../config";
+import axios from "axios";
+
+interface QuestionData {
+  questionContent: string;
+  household: boolean;
+  zipcode: boolean;
+  questionType: number;
+  enabled: boolean;
+  choiceAns: string;
+  choices: string[][];
+  refs: number[][];
+  selectedUnits: string[]; // Update the type based on your actual data structure
+  selectedFormulas: string[];
+  label: string;
+}
+
+interface FormulaData {
+  formulaName: string;
+  var1: string;
+  var2: string;
+  var3: string;
+  var4: string;
+}
 // import FormulaSelector2 from "../FormulaSelector2";
 
 // interface Formula {
@@ -17,6 +40,7 @@ interface DataItem {
   value: number;
 }
 interface AllTypesUnitsProps {
+  questionData?: QuestionData;
   onArraysChange: (option: string[][], value: number[][]) => void;
   questionContent: string;
   household: boolean;
@@ -79,10 +103,40 @@ const AllTypesUnits: React.FC<AllTypesUnitsProps> = ({
   questionType,
   enabled,
   label,
+  questionData,
 }) => {
-  const [twoArrayOption, setTwoArrayOption] = useState<string[][]>([]);
-  const [twoArrayValue, setTwoArrayValue] = useState<number[][]>([]);
   const [isFib, updateFib] = useState(true);
+  const [formulaName, setFormulaName] = useState(""); // Set the formulaName you want to fetch
+  const [formulaData, setFormulaData] = useState<FormulaData | null>(null);
+
+  useEffect(() => {
+    const fetchFormula = async () => {
+      try {
+        const response = await axios.get<FormulaData>(
+          `${apiUrlBase}/api/getFormula/${formulaName}`
+        );
+        setFormulaData(response.data);
+      } catch (error) {
+        console.error("Error fetching formula:", error);
+        // Handle error, e.g., show a message to the user
+      }
+    };
+
+    if (formulaName) {
+      fetchFormula();
+    }
+  }, [formulaName]);
+
+  const determineQuestionType = () => {
+    if (isFib) {
+      updateChoiceAns("1");
+    } else if (!isFib && hasMultiple) {
+      updateChoiceAns("3");
+    } else {
+      updateChoiceAns("2");
+    }
+  };
+  const [ansMap, setAnsMap] = useState<{ [key: string]: string }>({});
   const [hasMultiple, updateHasMultiple] = useState(false);
 
   const [selectedUnitsData, setSelectedUnitsData] = useState<{
@@ -117,46 +171,6 @@ const AllTypesUnits: React.FC<AllTypesUnitsProps> = ({
     console.log("updated choice");
   };
 
-  // const [allformulas,updateFormulas] = useState<String>([]);
-  // Function to initialize arrays
-  const initializeArrays = () => {
-    const numRows: number = 7;
-    const numCols: number = 8;
-
-    // Initialize the 2D array with empty strings
-    const optionArray: string[][] = [];
-    for (let i = 0; i < numRows; i++) {
-      let row: string[] = [];
-      for (let j = 0; j < numCols; j++) {
-        row.push("");
-      }
-      optionArray.push(row);
-    }
-
-    // Initialize the 2D array with number 1
-    const valueArray: number[][] = [];
-    for (let i = 0; i < numRows; i++) {
-      let row: number[] = [];
-      for (let j = 0; j < numCols; j++) {
-        row.push(1);
-      }
-      valueArray.push(row);
-    }
-
-    // Set state variables
-    setTwoArrayOption(optionArray);
-    setTwoArrayValue(valueArray);
-    onArraysChange(optionArray, valueArray);
-  };
-
-  // Call the initializeArrays function when the component mounts
-  React.useEffect(() => {
-    initializeArrays();
-  }, []);
-
-  useEffect(() => {
-    onArraysChange(twoArrayOption, twoArrayValue);
-  }, [twoArrayOption, twoArrayValue]);
   const [selectedUnits, setSelectedUnits] = useState<number[]>([]);
   const [selectedUnitsString, setSelectedUnitsString] = useState<String[]>([]);
   const [unitRefs, updateUnitRefs] = useState<string[]>([
@@ -169,8 +183,6 @@ const AllTypesUnits: React.FC<AllTypesUnitsProps> = ({
     "1",
   ]);
 
-  const [optionCount, updateOptionCount] = useState<number>(4);
-
   const [formulas, setFormulas] = useState<String[]>([]);
   const [isAddNewActive, updateAddNew] = useState(false);
 
@@ -180,8 +192,7 @@ const AllTypesUnits: React.FC<AllTypesUnitsProps> = ({
   >([]);
   const toggleAddNew = () => {
     updateAddNew(!isAddNewActive);
-    console.log(unitLabels);
-    console.log(selectedUnits);
+    console.log(selectedLabels);
   };
 
   // const handleFormulaChange = (unitIndex: number, formula: string) => {
@@ -204,11 +215,34 @@ const AllTypesUnits: React.FC<AllTypesUnitsProps> = ({
   const handleRadioChange = (value: boolean) => {
     updateFib(value);
     console.log(hasMultiple);
-    handleRadioChange;
+    if (value) {
+      updateChoiceAns("1");
+    } else {
+      if (hasMultiple) {
+        updateChoiceAns("3");
+      } else {
+        updateChoiceAns("2");
+      }
+    }
+    // determineQuestionType();
+    // onChange(twoArrayOption, twoArrayValue, questionType);
+  };
+  const handleSwitchChange = (value: boolean) => {
+    updateHasMultiple(value);
+    // You can perform additional actions if needed
+    determineQuestionType();
+    console.log(questionType);
+
+    if (value && !isFib) {
+      updateChoiceAns("3");
+    } else if (!isFib) {
+      updateChoiceAns("2");
+    }
+
+    // onChange(twoArrayOption, twoArrayValue, questionType);
   };
   // const [selectedUnits, setSelectedUnits] = useState<number[]>([]);
   const [unitLabels, updateUnitLabels] = useState<String[]>([]);
-  const [selectedUnitLabels, updateSelectedUnitLabels] = useState<String[]>([]);
   const fetchUnits = async () => {
     try {
       const response = await fetch(`${apiUrlBase}/api/getUnits`);
@@ -222,11 +256,12 @@ const AllTypesUnits: React.FC<AllTypesUnitsProps> = ({
   useEffect(() => {
     // Fetch variables from the server when the component mounts
     fetchUnits();
+    fetchVariables;
   }, []);
-  useEffect(() => {
-    // Fetch variables from the server when the component mounts
-    fetchVariables();
-  }, [selectedUnits, unitsSelectorKey]);
+  // useEffect(() => {
+  //   // Fetch variables from the server when the component mounts
+  //   fetchVariables();
+  // }, [selectedUnits]);
   const fetchVariables = async () => {
     try {
       const response = await fetch(`${apiUrlBase}/api/getUnits`);
@@ -258,8 +293,10 @@ const AllTypesUnits: React.FC<AllTypesUnitsProps> = ({
         console.log("Variable saved successfully!");
         // Reset state variables
         fetchVariables();
+
         fetchUnits();
         console.log(variables);
+
         updateVar("");
         setUnitsSelectorKey((prevKey) => (parseInt(prevKey) + 1).toString()); // Change the key to force remount
       } else {
@@ -270,11 +307,11 @@ const AllTypesUnits: React.FC<AllTypesUnitsProps> = ({
     }
   };
 
-  const handleSwitchChange = (value: boolean) => {
-    updateHasMultiple(value);
-    updateChoiceAns;
-    // You can perform additional actions if needed
-  };
+  // const handleSwitchChange = (value: boolean) => {
+  //   updateHasMultiple(value);
+  //   updateChoiceAns;
+  //   // You can perform additional actions if needed
+  // };
 
   // Function to fetch formulas
   // Function to fetch formulas
@@ -294,7 +331,6 @@ const AllTypesUnits: React.FC<AllTypesUnitsProps> = ({
     setSelectedUnits(selectedButtonIds);
   };
 
-  // Use useEffect to fetch formulas when component mounts or when selected units change
   useEffect(() => {
     fetchFormulas();
   }, [
@@ -337,6 +373,7 @@ const AllTypesUnits: React.FC<AllTypesUnitsProps> = ({
     cursor: "pointer",
   };
   const navigate = useNavigate();
+  const [ans, setAns] = useState<string>("");
   const saveOptionsToDatabase = async () => {
     try {
       const response = await fetch(`${apiUrlBase}/api/addQuestion`, {
@@ -351,8 +388,8 @@ const AllTypesUnits: React.FC<AllTypesUnitsProps> = ({
           questionType,
           enabled,
           choiceAns,
-          choices: twoArrayOption, // Assuming twoArrayOption represents choices
-          refs: twoArrayValue, // Assuming twoArrayValue represents refs
+          choices: [], // Assuming twoArrayOption represents choices
+          refs: [], // Assuming twoArrayValue represents refs
           selectedUnits,
           selectedFormulas,
           label,
@@ -380,8 +417,53 @@ const AllTypesUnits: React.FC<AllTypesUnitsProps> = ({
     setSelectedLabels(updatedSelectedLabels);
   }, [selectedUnits, unitLabels]);
 
+  const [labelMap, setLabelMap] = useState<{ [key: string]: string }>({});
+
+  useEffect(() => {
+    // Create the map when selectedLabels change
+    const newLabelMap = selectedLabels.reduce((map, label) => {
+      // You can set any default string value here
+      const primitiveLabel: string = label as string;
+      map[primitiveLabel] = "Default Strig Value";
+      return map;
+    }, {} as { [key: string]: string });
+
+    setLabelMap(newLabelMap);
+  }, [selectedLabels]);
+
+  const handleSelectChange = (label: string, formula: string) => {
+    setAnsMap((prevAnsMap) => ({
+      ...prevAnsMap,
+      [label]: formula,
+    }));
+  };
+
+  useEffect(() => {
+    if (questionData) {
+      if (questionData.choiceAns == "1") {
+        updateFib(true);
+        updateHasMultiple(false);
+      } else if (questionData.choiceAns == "2") {
+        updateFib(false);
+        updateHasMultiple(false);
+      } else {
+        updateFib(false);
+        updateHasMultiple(true);
+      }
+      updateChoiceAns(questionData.choiceAns);
+
+      const getSelected = questionData.selectedUnits.map((element) =>
+        unitLabels.indexOf(element)
+      );
+      // const indexesOfXyzInAbc = xyz.map((element) => abc.indexOf(element));
+      setSelectedUnits(getSelected);
+      console.log(getSelected);
+    }
+  }, []);
+
   return (
     <>
+      {/* <button onClick={() => console.log(selectedUnits)}>shhshshshshs</button> */}
       <div className="container" style={{ fontSize: "16px" }}>
         <div
           className="row"
@@ -389,23 +471,27 @@ const AllTypesUnits: React.FC<AllTypesUnitsProps> = ({
             fontFamily: "Outfit-SemiBold, Helvetica",
             fontSize: "18px",
             fontWeight: "bold",
-            // width: "60%",
-            justifyContent: "center",
-            display: "flex",
-            paddingLeft: "20%",
-            paddingRight: "20%",
+            width: "60%",
+            margin: "0 auto",
           }}
         >
-          <div className="col-sm-2">
+          <div className="col-sm-2" style={{ color: "white" }}>
             <input
               type="radio"
               name="radioGrp"
-              style={{ width: "30px", height: "30px" }}
+              style={{
+                width: "30px",
+                height: "30px",
+                color: "black",
+                background: "black",
+              }}
               onChange={() => handleRadioChange(true)}
               defaultChecked
             />
           </div>
-          <div className="col-lg">Fill In the Blank</div>
+          <div className="col-lg" style={{ color: "white" }}>
+            Fill In the Blank
+          </div>
           <div className="col-sm-2">
             <input
               type="radio"
@@ -414,7 +500,9 @@ const AllTypesUnits: React.FC<AllTypesUnitsProps> = ({
               onChange={() => handleRadioChange(false)}
             />
           </div>
-          <div className="col-lg">Single / Multiple Selection</div>
+          <div className="col-lg" style={{ color: "white" }}>
+            Single / Multiple Selection
+          </div>
         </div>
         {!isFib && (
           <div
@@ -424,6 +512,7 @@ const AllTypesUnits: React.FC<AllTypesUnitsProps> = ({
               paddingBottom: "10px",
               textAlign: "center",
               width: "35%",
+              color: "white",
             }}
           >
             <SwitchContent
@@ -505,7 +594,7 @@ const AllTypesUnits: React.FC<AllTypesUnitsProps> = ({
                     className="btn btn-success"
                     style={{
                       width: "200px",
-                      backgroundColor: "#A7C8A3",
+                      backgroundColor: "#FF5701",
                       border: "black",
                     }}
                     onClick={handleAddVariable}
@@ -526,139 +615,225 @@ const AllTypesUnits: React.FC<AllTypesUnitsProps> = ({
             background: "#F5F5F5",
             paddingTop: "10px",
             paddingBottom: "30px",
-            width: "60%",
+            width: "80%",
             marginTop: "40px",
             margin: "0 auto",
             borderRadius: "10px",
           }}
         >
-          <p
+          <div
             style={{
-              fontSize: "18px",
-              fontWeight: "bold",
-              paddingLeft: "20px",
+              display: "flex",
               alignItems: "center",
+              justifyContent: "space-between",
+              paddingRight: "20px",
             }}
           >
-            Select formula for the Unit selected
-          </p>
-          {/* {selectedLabels.map((unit) => (
-            <div
-              className="formula"
-              style={{ marginLeft: "20%", marginRight: "20%" }}
+            <p
+              style={{
+                fontSize: "18px",
+                fontWeight: "bold",
+                paddingLeft: "40px",
+              }}
             >
-              <div className="row d-flex align-items-center">
-                <div className="col text-center">{unit}</div>
-                <div className="col text-center">
+              Select formula for the Unit selected
+            </p>
+            <div>
+              <button
+                className="btn btn-info"
+                onClick={() => {
+                  fetchFormulas();
+                  setFormulaName("");
+                  setFormulaData(null);
+                }}
+                style={{
+                  height: "35px",
+                  background: "#FF5701",
+                  color: "white",
+                  border: "None",
+                }}
+              >
+                <i
+                  className="bi bi-bootstrap-reboot"
+                  style={{ fontStyle: "normal" }}
+                ></i>
+              </button>
+              <button
+                className="btn btn-primary"
+                style={{
+                  // width: "200px",
+                  width: "40px",
+                  marginTop: "30px",
+                  marginBottom: "30px",
+                  backgroundColor: "#FF5701",
+                  border: "#84D2F3",
+                  marginLeft: "20px",
+                }}
+                onClick={toggleAddNew}
+              >
+                +
+              </button>
+            </div>
+          </div>
+          <div>
+            {formulaData ? (
+              <>
+                <div
+                  style={{
+                    background: "#D3D3D3",
+                    paddingLeft: "10px",
+                    paddingRight: "10px",
+                    marginRight: "10px",
+                    marginLeft: "10px",
+                    marginTop: "20px",
+                    borderRadius: "10px",
+                  }}
+                >
+                  <div className="row">
+                    <div className="col" style={{}}>
+                      <button
+                        className="btn btn-info"
+                        style={{ background: "white", border: "white" }}
+                      >
+                        {formulaData.formulaName}
+                      </button>
+                    </div>
+                    <div className="col" style={{ fontSize: "30px" }}>
+                      =
+                    </div>
+
+                    <div className="col">
+                      <button
+                        className="btn btn-info"
+                        style={{ background: "white", border: "white" }}
+                      >
+                        Input
+                      </button>{" "}
+                    </div>
+                    <div className="col">
+                      <i className="bi bi-x" style={{ fontSize: "50px" }}></i>
+                    </div>
+                    <div className="col ">
+                      <button
+                        className="btn btn-info"
+                        style={{ background: "white", border: "white" }}
+                      >
+                        {formulaData.var1}
+                      </button>{" "}
+                    </div>
+                    <div className="col">
+                      <i className="bi bi-x" style={{ fontSize: "50px" }}></i>
+                    </div>
+                    <div className="col">
+                      <button
+                        className="btn btn-info"
+                        style={{ background: "white", border: "white" }}
+                      >
+                        {formulaData.var2}
+                      </button>{" "}
+                    </div>
+                  </div>
+                  <div className="row">
+                    <div className="col"></div>
+                    <div className="col"></div>
+                    <div className="col"></div>
+                    <div className="col"></div>
+                    <div className="col horizontal-line">
+                      <button
+                        className="btn btn-info"
+                        style={{ background: "white", border: "white" }}
+                      >
+                        {formulaData.var3}
+                      </button>{" "}
+                    </div>
+                    <div className="col"></div>
+                    <div className="col horizontal-line">
+                      <button
+                        className="btn btn-info"
+                        style={{ background: "white", border: "white" }}
+                      >
+                        {formulaData.var4}
+                      </button>{" "}
+                    </div>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <p></p>
+            )}
+          </div>
+
+          {selectedLabels.map((label, index) => (
+            <div
+              key={index}
+              style={{
+                width: "50%",
+                margin: "0 auto",
+                paddingBottom: "10px",
+                marginTop: "20px",
+              }}
+            >
+              <div className="row">
+                <div className="col" style={{ paddingTop: "10px" }}>
+                  {label}
+                </div>
+                <div className="col">
                   <select
                     className="form-select"
-                    value={"" || ""}
-                    onChange={(e) => {
-                      // onFormulaChange(unitIndex, e.target.value);
-                      // updateSelectedForm(e.target.value);
-                    }}
+                    value={ansMap[label as string] || ""}
+                    onChange={(e) =>
+                      handleSelectChange(label as string, e.target.value)
+                    }
                     style={{ width: "200px" }}
-                    onClick={() => {
-                      // fetchFormulas(); // You may want to fetch formulas here
-                    }}
                   >
                     <option value="" disabled>
                       Select Formula
                     </option>
-                    {formulas.map((f, index) => (
-                      <option key={index}>{f}</option>
+                    {formulas.map((formula, formulaIndex) => (
+                      <option key={formulaIndex} value={formula as string}>
+                        {formula}
+                      </option>
                     ))}
                   </select>
                 </div>
+                <button
+                  className="btn btn-primary"
+                  style={{
+                    paddingLeft: "2px",
+                    width: "40px",
+                    margin: "0 auto",
+                    background: "#FF5701",
+                    border: "None",
+                  }}
+                  onClick={() => {
+                    if (
+                      (label as string) in ansMap
+                      // (label as string) in selectedLabels
+                    ) {
+                      setFormulaName(ansMap[label as string]);
+                      console.log("entererd");
+                    }
+                  }}
+                >
+                  <i className="bi bi-question-circle"></i>{" "}
+                </button>
+                {/* <div className="col" style={{ width: "30px" }}></div> */}
               </div>
             </div>
-          ))} */}
-          {/* <FormulaSelector2 labels={selectedLabels} /> */}
-          {selectedUnits.map((unitIndex, index) => (
-            <FormulaSelector
-              key={index}
-              unitIndex={index}
-              unitLabel={unitLabels[unitIndex]}
-              selectedFormula={unitFormulas[index] || ""}
-              onFormulaChange={handleFormulaChange}
-              formulas={formulas}
-            />
           ))}
         </div>
-        {/* <div>
-          {selectedLabels.map((unit) => {
-            let ans = "";
-            return (
-              <div>
-                <div className="row">
-                  <div className="col">{unit}</div>
-                  <div className="col">
-                    <select
-                      className="form-select"
-                      value={ans || ""}
-                      onChange={(e) => {
-                        // onFormulaChange(unitIndex, e.target.value);
-                        ans = e.target.value;
-                      }}
-                      style={{ width: "200px" }}
-                      onClick={() => {
-                        // fetchFormulas(); // You may want to fetch formulas here
-                      }}
-                    >
-                      <option value="" disabled>
-                        Select Formula
-                      </option>
-                      {formulas.map((f, index) => (
-                        <option key={index}>{f}</option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-        </div> */}
 
-        {/* <div>
-          {selectedLabels.map((unit) => {
-            return (
-              <div>
-                <div className="row">
-                  <div className="col">{unit}</div>
-                  <div className="col"></div>
-                </div>
-              </div>
-            );
-          })}
-        </div> */}
-
-        <div className="row d-flex align-items-center">
-          <div className="col-md text-center">
-            <button
-              className="btn btn-primary"
-              style={{
-                width: "400px",
-                marginTop: "30px",
-                marginBottom: "30px",
-                backgroundColor: "#84D2F3",
-                border: "#84D2F3",
-              }}
-              onClick={toggleAddNew}
-            >
-              Add New Formula
-            </button>
-          </div>
-        </div>
         {isAddNewActive && <NewFormula isZipDependent={zipcode} />}
         {
           <>
             <div
               style={{
-                width: "60%",
+                width: "80%",
                 margin: "0 auto",
               }}
             >
               <MultipleSelections
+                ansMap={ansMap}
                 isFib={isFib}
                 choiceAns={choiceAns}
                 enabled={enabled}
@@ -675,38 +850,6 @@ const AllTypesUnits: React.FC<AllTypesUnitsProps> = ({
             </div>
           </>
         }
-
-        {/* <div
-          className="row"
-          style={{
-            marginLeft: "10%",
-            marginRight: "10%",
-            marginBottom: "30px",
-          }}
-        >
-          <div className="col">
-            <button
-              className="btn btn-primary"
-              style={{ backgroundColor: "#A7C8A3", border: "0px" }}
-            >
-              Back
-            </button>
-          </div>
-          <div className="col">
-            <button
-              className="btn btn-primary"
-              style={{ backgroundColor: "#A7C8A3", border: "0px" }}
-              // onClick={saveOptionsToDatabase}
-              onClick={() => {
-                console.log(unitLabels);
-                console.log(selectedUnits);
-              }}
-            >
-              Save
-            </button>
-          </div>
-          
-        </div> */}
       </div>
     </>
   );

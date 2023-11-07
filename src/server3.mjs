@@ -6,7 +6,7 @@ const app = express();
 const port = 3001;
 
 const dbConfig = {
-  host: "18.217.86.185",
+  host: "18.220.46.102",
   user: "carbonuser",
   password: "Carbon@123",
   database: "CRBN",
@@ -123,6 +123,39 @@ app.post("/api/addConversion", async (req, res) => {
   }
 });
 
+app.post("/api/toggleQuestion", async (req, res) => {
+  const { ques_id } = req.body;
+
+  try {
+    const connection = await pool.getConnection();
+    const [rows] = await connection.query(
+      "SELECT enabled FROM questionsTable WHERE id = ?",
+      [ques_id]
+    );
+
+    if (rows.length === 0) {
+      res.status(404).json({ error: "Question not found" });
+      return;
+    }
+
+    const currentEnabledState = rows[0].enabled;
+
+    // Toggle the value
+    const newEnabledState = currentEnabledState === 1 ? 0 : 1;
+
+    // Update the enabled state in the database
+    await connection.query(
+      "UPDATE questionsTable SET enabled = ? WHERE id = ?",
+      [newEnabledState, ques_id]
+    );
+
+    connection.release();
+    res.json({ enabled: newEnabledState });
+  } catch (error) {
+    console.error("Error toggling question:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
 app.post("/api/addUnit", async (req, res) => {
   const { name, value } = req.body;
 
@@ -177,7 +210,29 @@ app.post("/api/addQuestion", async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
+app.get("/api/getFormula/:formulaName", async (req, res) => {
+  const { formulaName } = req.params;
 
+  try {
+    const connection = await pool.getConnection();
+    const [rows] = await connection.query(
+      "SELECT formulaName, var1, var2, var3, var4 FROM formulasTable WHERE formulaName = ?",
+      [formulaName]
+    );
+    connection.release();
+
+    if (rows.length === 0) {
+      res.status(404).json({ error: "Formula not found" });
+      return;
+    }
+
+    const formulaData = rows[0];
+    res.json(formulaData);
+  } catch (error) {
+    console.error("Error fetching formula:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
 app.post("/api/addFormula", async (req, res) => {
   const { formulaName, var1, var2, var3, var4 } = req.body;
 

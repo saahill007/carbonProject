@@ -66,7 +66,11 @@ const Ques: React.FC<QuesProps> = ({
         {/* <p>{defaultQuestion}</p> */}
         <div
           className="question-input-container"
-          style={{ width: "80%", height: "100px" }}
+          style={{
+            width: "80%",
+            height: "100px",
+            background: "#FF5701",
+          }}
         >
           <input
             type="text"
@@ -75,13 +79,17 @@ const Ques: React.FC<QuesProps> = ({
               height: "60px",
               fontSize: "20px",
               alignContent: "center",
+              outline: "none",
+              borderBottom: "2px solid #FF5701",
             }}
             placeholder="Type your question here"
             value={defaultQuestion}
             onChange={handleQuestionChange}
           />
         </div>
-        {error && <p style={{ color: "red", fontWeight: "bold" }}>{error}</p>}
+        {error && (
+          <p style={{ color: "#FF5701", fontWeight: "bold" }}>{error}</p>
+        )}
       </div>
     </div>
   );

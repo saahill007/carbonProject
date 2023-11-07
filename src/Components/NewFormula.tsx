@@ -384,7 +384,7 @@ const NewFormula: React.FC<NewFormulaProps> = ({ isZipDependent }) => {
                 className="btn btn-success"
                 style={{
                   width: "200px",
-                  backgroundColor: "#A7C8A3",
+                  backgroundColor: "#FF5701",
                   border: "black",
                 }}
                 onClick={handleAddVariable}
@@ -406,7 +406,7 @@ const NewFormula: React.FC<NewFormulaProps> = ({ isZipDependent }) => {
               style={{
                 width: "400px",
                 marginTop: "30px",
-                backgroundColor: "#84D2F3",
+                backgroundColor: "black",
                 borderBlockColor: "#84D2F3",
               }}
             >

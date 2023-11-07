@@ -22,7 +22,7 @@ interface QuestionData {
   choiceAns: string;
   choices: string[][];
   refs: number[][];
-  selectedUnits: any[]; // Update the type based on your actual data structure
+  selectedUnits: string[]; // Update the type based on your actual data structure
   selectedFormulas: string[];
   label: string;
 }
@@ -205,6 +205,7 @@ const QuestionAdmin: React.FC = () => {
           defaultChecked={questionData.household}
         />
       </div>
+      <button onClick={() => console.log(questionData)}></button>
       <div className="container" style={{ paddingTop: "10px" }}>
         <SwitchContent
           label="Does this Question take the zip code into consideration?"
@@ -263,7 +264,7 @@ const QuestionAdmin: React.FC = () => {
         defaultSelectedType={questionData.questionType}
       />
       <div className="parentContainer">
-        <div className="answerContainer">
+        <div className="answerContainer" style={{ background: "#ff5701" }}>
           {questionData.questionType === 1 && (
             <QuestionType1
               onChange={handleChildComponentChange1}

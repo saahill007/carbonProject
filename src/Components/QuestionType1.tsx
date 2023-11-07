@@ -58,11 +58,7 @@ const QuestionType1: React.FC<QuestionType1Props> = ({
   const [type1Ans, updateType1Ans] = useState<number>(1);
   // const [inputs, updateInputs] = useState<InputOptions[]>([]);
   const navigate = useNavigate();
-  const [data, setData] = useState<DataItem[]>([
-    { name: "Name1", value: 1 },
-    { name: "Name2", value: 2 },
-    // ... add more initial data as needed
-  ]);
+  const [data, setData] = useState<DataItem[]>([]);
   const [newName, setNewName] = useState<string>("");
   const [newValue, setNewValue] = useState<number | string>("");
   // Function to initialize arrays
@@ -218,14 +214,15 @@ const QuestionType1: React.FC<QuestionType1Props> = ({
 
   const saveOptionsToDatabase = async () => {
     try {
-      console.log(id);
-      const url =
-        id == ""
-          ? `${apiUrlBase}/api/addQuestion`
-          : `${apiUrlBase}/api/updateQuestion/${id}`;
+      console.log("This is id:" + id);
+      const url = `${apiUrlBase}/api/addQuestion`;
+      // id === ""
+      //   ? `${apiUrlBase}/api/addQuestion`
+      //   : `${apiUrlBase}/api/updateQuestion/${id}`;
 
       const response = await fetch(url, {
-        method: id == "" ? "POST" : "PATCH",
+        method: "POST",
+        // id == "" ? "POST" : "PATCH",
 
         headers: {
           "Content-Type": "application/json",
@@ -261,13 +258,14 @@ const QuestionType1: React.FC<QuestionType1Props> = ({
     const { choicess, refss } = generateChoiceAndRefsArrays(data);
     try {
       console.log(id);
-      const url =
-        id == ""
-          ? `${apiUrlBase}/api/addQuestion`
-          : `${apiUrlBase}/api/updateQuestion/${id}`;
+      const url = `${apiUrlBase}/api/addQuestion`;
+      // id == ""
+      //   ? `${apiUrlBase}/api/addQuestion`
+      //   : `${apiUrlBase}/api/updateQuestion/${id}`;
 
       const response = await fetch(url, {
-        method: id == "" ? "POST" : "PATCH",
+        method: "POST",
+        // id == "" ? "POST" : "PATCH",
 
         headers: {
           "Content-Type": "application/json",
@@ -318,6 +316,7 @@ const QuestionType1: React.FC<QuestionType1Props> = ({
             fontFamily: "Outfit-SemiBold, Helvetica",
             fontSize: "18px",
             fontWeight: "bold",
+            color: "white",
           }}
         >
           <div className="col-sm-2">
@@ -343,7 +342,12 @@ const QuestionType1: React.FC<QuestionType1Props> = ({
         {isFib && (
           <div
             className="container"
-            style={{ paddingTop: "10px", marginTop: "10px", width: "70%" }}
+            style={{
+              paddingTop: "10px",
+              marginTop: "10px",
+              width: "70%",
+              color: "white",
+            }}
           >
             <p style={{ fontSize: "18px", textAlign: "center" }}>
               Carbon Footprint Reference Value
@@ -362,10 +366,11 @@ const QuestionType1: React.FC<QuestionType1Props> = ({
               type="number"
               // onChange={handleReferenceValueChange}
               onChange={(e) => updateType1Ans(parseFloat(e.target.value))}
+              style={{ paddingLeft: "15px" }}
             ></input>
             <button
               className="btn btn-primary"
-              style={{ backgroundColor: "#A7C8A3", border: "0px" }}
+              style={{ backgroundColor: "black", border: "0px" }}
               // onClick={saveOptionsToDatabase}
               onClick={() => {
                 saveOptionsToDatabase();
@@ -379,7 +384,12 @@ const QuestionType1: React.FC<QuestionType1Props> = ({
           <div>
             <div
               className="container"
-              style={{ paddingTop: "10px", paddingBottom: "10px" }}
+              style={{
+                paddingTop: "10px",
+                paddingBottom: "10px",
+                width: "60%",
+                color: "white",
+              }}
             >
               <SwitchContent
                 label="Allow Multiple"
@@ -390,7 +400,7 @@ const QuestionType1: React.FC<QuestionType1Props> = ({
               <div
                 className="Updatedtable"
                 style={{
-                  background: "#fffafa",
+                  background: "white",
                   paddingLeft: "20px",
                   paddingTop: "30px",
                   borderRadius: "10px",
@@ -413,7 +423,11 @@ const QuestionType1: React.FC<QuestionType1Props> = ({
                     <div className="col" style={{}}>
                       <button
                         className="btn btn-info"
-                        style={{ width: "180px" }}
+                        style={{
+                          width: "180px",
+                          background: "white",
+                          border: "3px solid black",
+                        }}
                       >
                         {item.name}
                       </button>
@@ -421,7 +435,11 @@ const QuestionType1: React.FC<QuestionType1Props> = ({
                     <div className="col">
                       <button
                         className="btn btn-info"
-                        style={{ width: "180px" }}
+                        style={{
+                          width: "180px",
+                          background: "white",
+                          border: "3px solid black",
+                        }}
                       >
                         {item.value}
                       </button>
@@ -430,60 +448,70 @@ const QuestionType1: React.FC<QuestionType1Props> = ({
                       <button
                         className="btn btn-danger btn-sm"
                         onClick={() => handleDeleteValue(index)}
-                        style={{ width: "150px" }}
+                        style={{
+                          width: "150px",
+                          background: "black",
+                          border: "None",
+                        }}
                       >
+                        <i className="bi bi-trash"></i>
                         Delete
                       </button>
                     </div>
                   </div>
                 ))}
-              </div>
 
-              <div>
-                <div className="row">
-                  <div className="col">
-                    <input
-                      type="text"
-                      className="form-control rounded"
-                      id="newName"
-                      placeholder="Option..."
-                      value={newName}
-                      onChange={(e) => setNewName(e.target.value)}
-                    />
+                <div>
+                  <div className="row">
+                    <div className="col">
+                      <input
+                        type="text"
+                        className="form-control rounded"
+                        id="newName"
+                        placeholder="Option..."
+                        value={newName}
+                        onChange={(e) => setNewName(e.target.value)}
+                      />
+                    </div>
+                    <div className="col">
+                      <input
+                        type="number"
+                        className="form-control rounded"
+                        id="newValue"
+                        placeholder="value..."
+                        value={newValue}
+                        onChange={(e) => setNewValue(e.target.value)}
+                      />
+                    </div>
+                    <div className="col">
+                      <button
+                        className="btn btn-primary"
+                        onClick={handleAddValue}
+                        style={{
+                          width: "180px",
+                          marginBottom: "25px",
+                          background: "#FF5701",
+                          border: "None",
+                        }}
+                      >
+                        Add Option
+                      </button>
+                    </div>
                   </div>
-                  <div className="col">
-                    <input
-                      type="number"
-                      className="form-control rounded"
-                      id="newValue"
-                      placeholder="value..."
-                      value={newValue}
-                      onChange={(e) => setNewValue(e.target.value)}
-                    />
-                  </div>
-                  <div className="col">
-                    <button
-                      className="btn btn-primary"
-                      onClick={handleAddValue}
-                      style={{ width: "180px", marginBottom: "25px" }}
-                    >
-                      Add Option
-                    </button>
-                  </div>
+                  <button
+                    className="btn btn-primary"
+                    style={{ backgroundColor: "black", border: "0px" }}
+                    // onClick={saveOptionsToDatabase}
+                    onClick={() => {
+                      console.log(questionData);
+                      console.log(type1Ans);
+                      console.log(data);
+                      saveOptionsToDatabase2();
+                    }}
+                  >
+                    Save
+                  </button>
                 </div>
-                <button
-                  className="btn btn-primary"
-                  style={{ backgroundColor: "#A7C8A3", border: "0px" }}
-                  // onClick={saveOptionsToDatabase}
-                  onClick={() => {
-                    console.log(questionData);
-                    console.log(type1Ans);
-                    console.log(data);
-                    saveOptionsToDatabase2();
-                  }}
-                >
-                  Save
-                </button>
               </div>
             </div>
             {/* <div

@@ -202,8 +202,8 @@ const UnitsSelector: React.FC<UnitsSelectorProps> = ({
                   backgroundColor: selectedUnits.includes(
                     rowIndex * buttonsPerRow + colIndex
                   )
-                    ? "#9FC1A2"
-                    : "#f27979",
+                    ? "#ff5701"
+                    : "black",
                   color: "white",
                   padding: "15px 15px 15px 15px",
                   minWidth: "150px",

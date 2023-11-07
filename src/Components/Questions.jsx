@@ -37,24 +37,28 @@ export function Questions(props) {
     fetchQuestions();
   }, []);
 
-  const handleToggleClick = async (index) => {
-    const newQuestions = [...questions];
-    newQuestions[index].toggleState = !newQuestions[index].toggleState;
-    setQuestions(newQuestions);
-
-    // Make an HTTP request to update the database
+  const handleToggleClick = async (ques_id) => {
     try {
-      const updatedState = newQuestions[index].toggleState ? 1 : 0;
-      await axios.post(`${apiUrlBase}/api/updateToggleState`, {
-        questionId: newQuestions[index].ques_id,
-        newState: updatedState,
+      // Make a POST request to toggle the question state on the server
+      const response = await axios.post(`${apiUrlBase}/api/toggleQuestion`, {
+        ques_id,
       });
-      console.log("Toggle state updated in the database.");
+
+      const { enabled } = response.data;
+
+      // Update the local state to reflect the new toggle state
+      setQuestions((prevQuestions) =>
+        prevQuestions.map((question) =>
+          question.id === ques_id
+            ? { ...question, enabled: enabled }
+            : question
+        )
+      );
     } catch (error) {
-      console.error("Error updating toggle state in the database:", error);
+      console.error("Error toggling question:", error);
+      // Handle error, e.g., show a message to the user
     }
   };
-
   return (
     <div style={{width: 1440, height: 1706, position: 'relative', background: 'white'}}>
     <div style={{width: 585, height: 659, left: 751, top: 221, position: 'absolute'}} />
