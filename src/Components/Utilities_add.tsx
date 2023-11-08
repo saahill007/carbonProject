@@ -177,10 +177,11 @@ const Utilities_add: React.FC = () => {
                   placeholder="Country"
                   value={newUtility.Country}
                   onChange={(e) => {
-                    if (/^[a-zA-Z]*$/.test(e.target.value)) {
+                    if (/^[a-zA-Z\s]*$/.test(e.target.value)) {
                       setNewUtility({ ...newUtility, Country: e.target.value });
                     }
                   }}
+                  
                 />
               </td>
               <td>
@@ -189,8 +190,8 @@ const Utilities_add: React.FC = () => {
                   placeholder="City"
                   value={newUtility.City}
                   onChange={(e) => {
-                    if (/^[a-zA-Z]*$/.test(e.target.value)) {
-                      setNewUtility({ ...newUtility, City: e.target.value });
+                    if (/^[a-zA-Z\s]*$/.test(e.target.value)) {
+                      setNewUtility({ ...newUtility, Country: e.target.value });
                     }
                   }}
                 />

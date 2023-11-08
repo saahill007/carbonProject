@@ -192,17 +192,17 @@ input[type="checkbox"] {
     color: red;
     margin: 0 auto;
     padding: 10px;
-    background-color: #f2dede;
+    background-color: #ffffff;
     /* Optional: Add a light background color for error messages */
     border: 1px solid #ebccd1;
     /* Optional: Add a border for error messages */
 }
 
 .success_message {
-    color: #A7C8A3;
+    color: #f6f6f6;
     margin: 0 auto;
     padding: 10px;
-    background-color: #d1eece;
+    background-color: #f37507;
     /* Optional: Add a light background color for error messages */
     border: 1px solid #ebccd1;
     /* Optional: Add a border for error messages */

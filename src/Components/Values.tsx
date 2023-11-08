@@ -7,7 +7,7 @@ import { useState } from "react";
 import ValuesLandingPage from "./ValuesLandingPage";
 import Admin_add from "./admin_add";
 import AdminEdit from "./admin_edit";
-import Utilities from "./Utilities";
+import Utilities from "./UtilitiesP";
 import Admin_main from "./admin_main";
 import Formulas from "./Formulas";
 import Category from "./category_main";

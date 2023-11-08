@@ -16,6 +16,7 @@ interface Admin {
 
 const Admin_add: React.FC = () => {
   const [data, setData] = useState<Admin[]>([]);
+  const [SuccessMessage, setSuccessMessage] = useState<string>("");
   const [newAdmin, setNewAdmin] = useState<Admin>({
     Name: "",
     Email: "",
@@ -80,11 +81,13 @@ const Admin_add: React.FC = () => {
           "/api/new_admin_add",
           newAdmin
         );
+        
+
         console.log("Data saved:", response.data);
 
         // If the data is successfully saved, reset the newAdmin state to an empty template
         setNewAdmin({ Name: "", Email: "", password: "", flag: 1 });
-
+        setSuccessMessage("Admin added successfully");
         // Reset the error message
         setError("");
 
@@ -189,6 +192,9 @@ const Admin_add: React.FC = () => {
       </div>
 
       {error && <div className="error-message">{error}</div>}
+      {SuccessMessage && (
+        <div className="success_message">{SuccessMessage}</div>
+      )}
 
       <button className="back_option" onClick={handleadmin}>
         Back

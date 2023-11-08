@@ -277,6 +277,48 @@ app.delete("/api/utilities/delete", (req, res) => {
   });
 });
 
+app.post("/api/ContactUs", cors(), (req, res) => {
+  const { email, query, firstName, lastName } = req.body;
+
+  if (!email) {
+    return res.status(400).json({ error: "Email is required" });
+  }
+
+  // 1) Adding query to the Enquiry table
+  const insertEnquirySql =
+    "INSERT INTO enquiry (firstname, lastname, email, enquiry_question, enquiry_flag) VALUES (?, ?, ?, ?, ?)";
+  mysqlConnection.query(
+    insertEnquirySql,
+    [firstName, lastName, email, query, 1],
+    (err, result) => {
+      if (err) {
+        console.error("Error inserting into Enquiry table:", err);
+        return res.status(500).json({ error: "Internal Server Error" });
+      }
+
+      // const enquiryId = result.insertId;
+
+      // 2) Inserting a new entry into the Customer table
+      const insertCustomerSql = `INSERT INTO Customer (date_answered, session_id, first_name, last_name, email, total_carbon_footprint, answers, number_of_trees, zipcode) 
+      VALUES (CURDATE(), "N/A", ?, ?, ?, 0, "N/A", 0, "N/A")`;
+      mysqlConnection.query(
+        insertCustomerSql,
+        [firstName, lastName, email],
+        (err, insertResult) => {
+          if (err) {
+            console.error("Error inserting into Customer table:", err);
+            return res.status(500).json({ error: "Internal Server Error" });
+          }
+
+          return res
+            .status(200)
+            .json({ message: "Enquiry and Customer added successfully" });
+        }
+      );
+    }
+  );
+});
+
 // Define a route to handle updating the question
 app.post("/api/slider", cors(), (req, res) => {
   const { question, options } = req.body;
@@ -491,6 +533,21 @@ app.get("/api/Category", cors(), (req, res) => {
     res.json(results);
   });
 });
+
+app.delete("/api/Category/delete", (req, res) => {
+  const { categoryIds } = req.body;
+
+  const query = "DELETE FROM  CRBN.Category WHERE category_id IN (?)";
+  mysqlConnection.query(query, [categoryIds], (error, results) => {
+    if (error) {
+      console.error("Error deleting utilities:", error);
+      res.status(500).json({ message: "Internal Server Error" });
+    } else {
+      res.status(200).json({ message: "Utilities deleted successfully" });
+    }
+  });
+});
+
 app.post("/api/toggleQuestion", async (req, res) => {
   const { ques_id } = req.body;
 
@@ -1801,16 +1858,13 @@ app.post("/api/calculateFootprint", cors(), async (req, res) => {
 
       // Calculate carbon footprint based on questionType and choiceAns using the dynamically set familyMembers
       let carbonValue = 0;
-
       if (questionType === 1) {
         if (choiceAns === "1") {
-          carbonValue = household
-            ? (refs * userValue) / familyMembers
-            : refs * userValue; // Use the user-selected choice's refValue
+          carbonValue = household ? (refs * userValue) / 1 : refs * userValue; // Use the user-selected choice's refValue
         } else if (choiceAns === "2") {
           if (userValue >= 0 && userValue < refs[0].length) {
             carbonValue = household
-              ? refs[0][userValue] / familyMembers
+              ? refs[0][userValue] / 1
               : refs[0][userValue];
           } else {
             console.error("Invalid user-selected choice index:", userValue);
@@ -1823,7 +1877,7 @@ app.post("/api/calculateFootprint", cors(), async (req, res) => {
             for (const choiceIndex of selectedChoices) {
               if (choiceIndex >= 0 && choiceIndex < refs[0].length) {
                 carbonValue += household
-                  ? refs[0][choiceIndex] / familyMembers
+                  ? refs[0][choiceIndex] / 1
                   : refs[0][choiceIndex];
               } else {
                 console.error(
@@ -1855,19 +1909,6 @@ app.post("/api/calculateFootprint", cors(), async (req, res) => {
     res.status(500).json({ message: "Internal Server Error" });
   }
 });
-
-const getVariableValue = async (variableName) => {
-  const connection = await pool.getConnection();
-  const [rows] = await connection.query(
-    "SELECT value FROM conversion_table WHERE name = ?",
-    [variableName]
-  );
-  connection.release();
-
-  // If the variable is present in the conversion_table, return its value, otherwise parse as float
-  return rows.length > 0 ? rows[0].value : parseFloat(variableName);
-};
-
 app.post("/api/forgotpassword", cors(), async (req, res) => {
   const { email } = req.body;
   // Check if the email exists in the 'admin' table

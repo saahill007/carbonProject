@@ -19,6 +19,7 @@ const Admin_main: React.FC = () => {
   const [data, setData] = useState<Admin[]>([]);
   //const [searchValue, setSearchValue] = useState<string>("");
   const [selectedAdmins, setSelectedAdmins] = useState<number[]>([]);
+  const [SuccessMessage, setSuccessMessage] = useState<string>("");
   const navigate = useNavigate();
 
   // const handlequestions = () => {
@@ -78,7 +79,7 @@ const Admin_main: React.FC = () => {
         await axiosInstance.delete("/api/admins/delete", {
           data: { adminIds: selectedAdmins },
         });
-
+        setSuccessMessage("Admin deleted successfully");
         setSelectedAdmins([]);
         fetchData();
       } catch (error) {
@@ -180,6 +181,9 @@ const Admin_main: React.FC = () => {
         </table>
       </div>
 
+      {SuccessMessage && (
+        <div className="success_message">{SuccessMessage}</div>
+      )}
       <button className="back" onClick={handleadmin}>
         Back
       </button>
