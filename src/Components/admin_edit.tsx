@@ -4,6 +4,7 @@ import "./admin_edit.css"; // Import your CSS file
 // import axios from "axios";
 import axiosInstance from "./axiosconfig";
 
+
 interface Admin {
   admin_id: number;
   Name: string;
@@ -16,6 +17,7 @@ const AdminEdit: React.FC = () => {
   const [adminData, setAdminData] = useState<Admin[]>([]);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const navigate = useNavigate();
+  const [SuccessMessage, setSuccessMessage] = useState<string>("");
   const [editAdmin, setEditAdmin] = useState<Admin>({
     admin_id: 0, // Provide a default value or the appropriate data type for admin_id
     Name: "",
@@ -81,7 +83,7 @@ const AdminEdit: React.FC = () => {
             admin.admin_id === editAdmin.admin_id ? editAdmin : admin
           )
         );
-
+        setSuccessMessage("Admin data saved successfully!");
         console.log("Admin data saved successfully!");
       } catch (error) {
         console.error("Error saving admin data:", error);
@@ -166,6 +168,9 @@ const AdminEdit: React.FC = () => {
       </div>
 
       {errorMessage && <div className="error_message">{errorMessage}</div>}
+      {SuccessMessage && (
+        <div className="success_message">{SuccessMessage}</div>
+      )}
 
       <button className="back" onClick={handleadmin}>
         Back
