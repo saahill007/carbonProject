@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import "./category_main.css";
 // import axios from "axios";
 import addImg from "../assets/add.png";
@@ -14,9 +14,12 @@ interface Category {
 
 const Category_main: React.FC = () => {
   const [data, setData] = useState<Category[]>([]);
+  const { categoryIds } = useParams<{ categoryIds?: string }>();
   //const [searchValue, setSearchValue] = useState<string>("");
   const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState<number[]>([]);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [SuccessMessage, setSuccessMessage] = useState<string>("");
 
   const handleCategory = () => {
     navigate("/values");
@@ -61,6 +64,30 @@ const Category_main: React.FC = () => {
     }
   };
 
+  const handleDeleteClick = async () => {
+    if (selectedCategory.length > 0) {
+      try {
+        await axiosInstance.delete('/api/Category/delete', {
+          data: { categoryIds: selectedCategory },
+        });
+        setSuccessMessage("Select utilities deleted successfully");
+        setTimeout(() => {
+          setSuccessMessage("");
+        }, 1000);
+        setSelectedCategory([]);
+        fetchData(); // Fetch updated data after deletion
+      } catch (error) {
+        console.error("Error deleting data:", error);
+      }
+    } else {
+      setErrorMessage("Select one or more utilities to delete.");
+      setTimeout(() => {
+        setErrorMessage("");
+      }, 1000);
+      console.error("Select one or more utilities to delete.");
+    }
+  };
+
   const searchTable = (value: string, data: Category[]) => {
     const filteredData: Category[] = [];
     for (let i = 0; i < data.length; i++) {
@@ -102,9 +129,9 @@ const Category_main: React.FC = () => {
               onClick={() => handleEditClick()}
             />
           </a>
-          {/* <a href="#">
-                        <img className="CateImg" src={delImg} alt="delete" onClick={() => handleDeleteClick()} />
-                    </a> */}
+          <a href="#">
+              <img className="CateImg" src={delImg} alt="delete" onClick={() => handleDeleteClick()} />
+          </a>
         </div>
       </div>
 
@@ -124,6 +151,7 @@ const Category_main: React.FC = () => {
         <table className="tabl-sapce">
           <thead>
             <tr className="bg-info sticky-header">
+              <th>Select</th>
               <th>Category_id</th>
               <th>Category_Name</th>
             </tr>
@@ -131,6 +159,13 @@ const Category_main: React.FC = () => {
           <tbody id="myTable">
             {data.map((item) => (
               <tr key={item.category_id}>
+                <td>
+                  <input
+                    type="checkbox"
+                    checked={selectedCategory.includes(item.category_id)}
+                    onChange={() => handleCheckboxChange(item.category_id)}
+                  />
+                </td>
                 <td>{item.category_id}</td>
                 <td>{item.category_name}</td>
               </tr>
@@ -138,7 +173,8 @@ const Category_main: React.FC = () => {
           </tbody>
         </table>
       </div>
-
+      {errorMessage && <div className="error_message">{errorMessage}</div>}
+      {SuccessMessage && <div className="success-message">{SuccessMessage}</div>}
       <button className="back" onClick={handleCategory}>
         Back
       </button>

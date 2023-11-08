@@ -13,8 +13,8 @@ app.use(bodyParser.json());
 const port = 3000;
 
 const dbConfig = {
-  host: "18.220.46.102",
-  user: "carbonuser",
+  host: "127.0.0.1",
+  user: "root",
   password: "Carbon@123", // Fix the case of 'PASSWORD' to 'password'
   database: "CRBN", // Fix the case of 'DB' to 'database'
 };
@@ -484,6 +484,21 @@ app.get("/api/Category", cors(), (req, res) => {
     res.json(results);
   });
 });
+
+app.delete('/api/Category/delete', (req, res) => {
+  const { categoryIds } = req.body;
+
+  const query = 'DELETE FROM  CRBN.Category WHERE category_id IN (?)';
+  mysqlConnection.query(query, [categoryIds], (error, results) => {
+    if (error) {
+      console.error('Error deleting utilities:', error);
+      res.status(500).json({ message: 'Internal Server Error' });
+    } else {
+      res.status(200).json({ message: 'Utilities deleted successfully' });
+    }
+  });
+});
+
 app.post("/api/toggleQuestion", async (req, res) => {
   const { ques_id } = req.body;
 

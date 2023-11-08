@@ -21,7 +21,7 @@
     vertical-align: middle;
     text-align: left;
     display: inline;
-    margin-left: 1000px;
+    margin-left: 25vw !important;
     margin-right: 5px;
 }
 
@@ -125,8 +125,8 @@ input[type="checkbox"] {
 
 .table-wrapper{
     display: flex;
-    max-height: 290px;
-    overflow-y:scroll;
+    max-height: 50vh !important;
+    overflow-y: auto !important;
 }
 
 .tabl-sapce {
