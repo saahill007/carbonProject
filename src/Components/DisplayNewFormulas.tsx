@@ -116,6 +116,11 @@ const DisplayNewFormulas = () => {
             key={index}
             style={{ paddingRight: "80px", paddingLeft: "80px" }}
           >
+            {/* <button
+              onClick={() => console.log(calculateFormula(f.formulaName + " "))}
+            >
+              click
+            </button> */}
             <div
               className="formula"
               style={{

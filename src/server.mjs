@@ -13,14 +13,13 @@ app.use(bodyParser.json());
 const port = 3000;
 
 const dbConfig = {
-  host: "18.220.46.102",
+  host: "18.222.228.43",
   user: "carbonuser",
   password: "Carbon@123", // Fix the case of 'PASSWORD' to 'password'
   database: "CRBN", // Fix the case of 'DB' to 'database'
 };
 
 // const port = 3001;
-
 
 // Create a MySQL connection
 const mysqlConnection = mysql.createConnection(dbConfig);
@@ -69,9 +68,11 @@ app.get("/api/filterCustomer", cors(), (req, res) => {
   ) {
     const formattedFromDate = fromDate.split("/").reverse().join("-");
     const formattedToDate = toDate.split("/").reverse().join("-");
-    query += ` WHERE date_answered BETWEEN STR_TO_DATE('${formattedFromDate}', '%Y-%m-%d') AND STR_TO_DATE('${formattedToDate}', '%Y-%m-%d') AND zipcode = '${zipcode}' AND total_carbon_footprint ${carbonComparison === "=" ? "=" : carbonComparison === ">" ? ">" : "<"
-      } ${carbonFootprintFilter} AND number_of_trees ${treesComparison === "=" ? "=" : treesComparison === ">" ? ">" : "<"
-      } ${treesFilter}`;
+    query += ` WHERE date_answered BETWEEN STR_TO_DATE('${formattedFromDate}', '%Y-%m-%d') AND STR_TO_DATE('${formattedToDate}', '%Y-%m-%d') AND zipcode = '${zipcode}' AND total_carbon_footprint ${
+      carbonComparison === "=" ? "=" : carbonComparison === ">" ? ">" : "<"
+    } ${carbonFootprintFilter} AND number_of_trees ${
+      treesComparison === "=" ? "=" : treesComparison === ">" ? ">" : "<"
+    } ${treesFilter}`;
   } else if (
     fromDate &&
     toDate &&
@@ -82,9 +83,11 @@ app.get("/api/filterCustomer", cors(), (req, res) => {
   ) {
     const formattedFromDate = fromDate.split("/").reverse().join("-");
     const formattedToDate = toDate.split("/").reverse().join("-");
-    query += ` WHERE date_answered BETWEEN STR_TO_DATE('${formattedFromDate}', '%Y-%m-%d') AND STR_TO_DATE('${formattedToDate}', '%Y-%m-%d') AND total_carbon_footprint ${carbonComparison === "=" ? "=" : carbonComparison === ">" ? ">" : "<"
-      } ${carbonFootprintFilter} AND number_of_trees ${treesComparison === "=" ? "=" : treesComparison === ">" ? ">" : "<"
-      } ${treesFilter}`;
+    query += ` WHERE date_answered BETWEEN STR_TO_DATE('${formattedFromDate}', '%Y-%m-%d') AND STR_TO_DATE('${formattedToDate}', '%Y-%m-%d') AND total_carbon_footprint ${
+      carbonComparison === "=" ? "=" : carbonComparison === ">" ? ">" : "<"
+    } ${carbonFootprintFilter} AND number_of_trees ${
+      treesComparison === "=" ? "=" : treesComparison === ">" ? ">" : "<"
+    } ${treesFilter}`;
   } else if (fromDate && toDate && zipcode) {
     const formattedFromDate = fromDate.split("/").reverse().join("-");
     const formattedToDate = toDate.split("/").reverse().join("-");
@@ -92,13 +95,15 @@ app.get("/api/filterCustomer", cors(), (req, res) => {
   } else if (fromDate && toDate && carbonComparison && carbonFootprintFilter) {
     const formattedFromDate = fromDate.split("/").reverse().join("-");
     const formattedToDate = toDate.split("/").reverse().join("-");
-    query += ` WHERE date_answered BETWEEN STR_TO_DATE('${formattedFromDate}', '%Y-%m-%d') AND STR_TO_DATE('${formattedToDate}', '%Y-%m-%d') AND total_carbon_footprint ${carbonComparison === "=" ? "=" : carbonComparison === ">" ? ">" : "<"
-      } ${carbonFootprintFilter}`;
+    query += ` WHERE date_answered BETWEEN STR_TO_DATE('${formattedFromDate}', '%Y-%m-%d') AND STR_TO_DATE('${formattedToDate}', '%Y-%m-%d') AND total_carbon_footprint ${
+      carbonComparison === "=" ? "=" : carbonComparison === ">" ? ">" : "<"
+    } ${carbonFootprintFilter}`;
   } else if (fromDate && toDate && treesComparison && treesFilter) {
     const formattedFromDate = fromDate.split("/").reverse().join("-");
     const formattedToDate = toDate.split("/").reverse().join("-");
-    query += ` WHERE date_answered BETWEEN STR_TO_DATE('${formattedFromDate}', '%Y-%m-%d') AND STR_TO_DATE('${formattedToDate}', '%Y-%m-%d') AND number_of_trees ${treesComparison === "=" ? "=" : treesComparison === ">" ? ">" : "<"
-      } ${treesFilter}`;
+    query += ` WHERE date_answered BETWEEN STR_TO_DATE('${formattedFromDate}', '%Y-%m-%d') AND STR_TO_DATE('${formattedToDate}', '%Y-%m-%d') AND number_of_trees ${
+      treesComparison === "=" ? "=" : treesComparison === ">" ? ">" : "<"
+    } ${treesFilter}`;
   } else if (fromDate && toDate) {
     const formattedFromDate = fromDate.split("/").reverse().join("-");
     const formattedToDate = toDate.split("/").reverse().join("-");
@@ -111,21 +116,27 @@ app.get("/api/filterCustomer", cors(), (req, res) => {
     treesComparison &&
     treesFilter
   ) {
-    query += ` WHERE total_carbon_footprint ${carbonComparison === "=" ? "=" : carbonComparison === ">" ? ">" : "<"
-      } ${carbonFootprintFilter} AND number_of_trees ${treesComparison === "=" ? "=" : treesComparison === ">" ? ">" : "<"
-      } ${treesFilter}`;
+    query += ` WHERE total_carbon_footprint ${
+      carbonComparison === "=" ? "=" : carbonComparison === ">" ? ">" : "<"
+    } ${carbonFootprintFilter} AND number_of_trees ${
+      treesComparison === "=" ? "=" : treesComparison === ">" ? ">" : "<"
+    } ${treesFilter}`;
   } else if (carbonComparison && carbonFootprintFilter) {
-    query += ` WHERE total_carbon_footprint ${carbonComparison === "=" ? "=" : carbonComparison === ">" ? ">" : "<"
-      } ${carbonFootprintFilter}`;
+    query += ` WHERE total_carbon_footprint ${
+      carbonComparison === "=" ? "=" : carbonComparison === ">" ? ">" : "<"
+    } ${carbonFootprintFilter}`;
   } else if (treesComparison && treesFilter) {
-    query += ` WHERE number_of_trees ${treesComparison === "=" ? "=" : treesComparison === ">" ? ">" : "<"
-      } ${treesFilter}`;
+    query += ` WHERE number_of_trees ${
+      treesComparison === "=" ? "=" : treesComparison === ">" ? ">" : "<"
+    } ${treesFilter}`;
   } else if (zipcode && carbonComparison && carbonFootprintFilter) {
-    query += ` WHERE zipcode = '${zipcode}' AND total_carbon_footprint ${carbonComparison === "=" ? "=" : carbonComparison === ">" ? ">" : "<"
-      } ${carbonFootprintFilter}`;
+    query += ` WHERE zipcode = '${zipcode}' AND total_carbon_footprint ${
+      carbonComparison === "=" ? "=" : carbonComparison === ">" ? ">" : "<"
+    } ${carbonFootprintFilter}`;
   } else if (zipcode && treesComparison && treesFilter) {
-    query += ` WHERE zipcode = '${zipcode}' AND number_of_trees ${treesComparison === "=" ? "=" : treesComparison === ">" ? ">" : "<"
-      } ${treesFilter}`;
+    query += ` WHERE zipcode = '${zipcode}' AND number_of_trees ${
+      treesComparison === "=" ? "=" : treesComparison === ">" ? ">" : "<"
+    } ${treesFilter}`;
   }
 
   mysqlConnection.query(query, (error, results) => {
@@ -141,7 +152,9 @@ app.get("/api/utility_add", cors(), (req, res) => {
   mysqlConnection.query(sql, (error, results) => {
     if (error) {
       console.error("Error executing SQL query:", error.message);
-      res.status(500).json({ error: "Error retrieving utility data from the database" });
+      res
+        .status(500)
+        .json({ error: "Error retrieving utility data from the database" });
       return;
     }
     // Send the retrieved utility data as a JSON response
@@ -162,9 +175,10 @@ app.post("/api/new_utility_add", (req, res) => {
     // Carbon_Intensity_Unit,
     // Ref_Value,
     Sources,
-    Date_of_Source
+    Date_of_Source,
   } = req.body;
-  const sql = "INSERT INTO CRBN.utilities (Zipcode, Country, City, Utility, Utility_Value, Utility_Units, Sources, Date_of_Source) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+  const sql =
+    "INSERT INTO CRBN.utilities (Zipcode, Country, City, Utility, Utility_Value, Utility_Units, Sources, Date_of_Source) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
   const values = [
     Zipcode,
     Country,
@@ -176,7 +190,7 @@ app.post("/api/new_utility_add", (req, res) => {
     // Carbon_Intensity_Unit,
     // Ref_Value,
     Sources,
-    Date_of_Source
+    Date_of_Source,
   ];
 
   mysqlConnection.query(sql, values, (error, result) => {
@@ -193,10 +207,14 @@ app.post("/api/new_utility_add", (req, res) => {
 app.get("/api/utility/:utilityId", (req, res) => {
   const { utilityId } = req.params;
   // Perform a query to retrieve the data based on the utility_id
-  const query = "SELECT Val_Id, Zipcode, Country, City, Utility, Utility_Value, Utility_Units, Sources, Date_of_Source FROM CRBN.utilities WHERE Val_Id = ?";
+  const query =
+    "SELECT Val_Id, Zipcode, Country, City, Utility, Utility_Value, Utility_Units, Sources, Date_of_Source FROM CRBN.utilities WHERE Val_Id = ?";
   mysqlConnection.query(query, [utilityId], (error, rows) => {
     if (error) {
-      console.error(`Error fetching utility data for utility ID ${utilityId}:`, error);
+      console.error(
+        `Error fetching utility data for utility ID ${utilityId}:`,
+        error
+      );
       res.status(500).json({ error: "Internal server error" });
     } else {
       if (rows.length === 0) {
@@ -210,10 +228,30 @@ app.get("/api/utility/:utilityId", (req, res) => {
 
 app.post("/api/update_utility/:utilityId", (req, res) => {
   const utilityId = req.params.utilityId;
-  const { Zipcode, Country, City, Utility, Utility_Value, Utility_Units, Sources, Date_of_Source } = req.body;
+  const {
+    Zipcode,
+    Country,
+    City,
+    Utility,
+    Utility_Value,
+    Utility_Units,
+    Sources,
+    Date_of_Source,
+  } = req.body;
 
-  const query = "UPDATE CRBN.utilities SET Zipcode = ?, Country = ?, City = ?, Utility = ?, Utility_Value = ?, Utility_Units = ?, Sources = ?, Date_of_Source = ? WHERE Val_Id = ?";
-  const values = [Zipcode, Country, City, Utility, Utility_Value, Utility_Units, Sources, Date_of_Source, utilityId];
+  const query =
+    "UPDATE CRBN.utilities SET Zipcode = ?, Country = ?, City = ?, Utility = ?, Utility_Value = ?, Utility_Units = ?, Sources = ?, Date_of_Source = ? WHERE Val_Id = ?";
+  const values = [
+    Zipcode,
+    Country,
+    City,
+    Utility,
+    Utility_Value,
+    Utility_Units,
+    Sources,
+    Date_of_Source,
+    utilityId,
+  ];
 
   mysqlConnection.query(query, values, (error, results) => {
     if (error) {
@@ -225,16 +263,16 @@ app.post("/api/update_utility/:utilityId", (req, res) => {
   });
 });
 
-app.delete('/api/utilities/delete', (req, res) => {
+app.delete("/api/utilities/delete", (req, res) => {
   const { utilityIds } = req.body;
 
-  const query = 'DELETE FROM  CRBN.utilities WHERE Val_Id IN (?)';
+  const query = "DELETE FROM  CRBN.utilities WHERE Val_Id IN (?)";
   mysqlConnection.query(query, [utilityIds], (error, results) => {
     if (error) {
-      console.error('Error deleting utilities:', error);
-      res.status(500).json({ message: 'Internal Server Error' });
+      console.error("Error deleting utilities:", error);
+      res.status(500).json({ message: "Internal Server Error" });
     } else {
-      res.status(200).json({ message: 'Utilities deleted successfully' });
+      res.status(200).json({ message: "Utilities deleted successfully" });
     }
   });
 });
@@ -1631,6 +1669,44 @@ app.get("/api/getCategories", async (req, res) => {
   }
 });
 
+// app.post("/api/calculateFormula", async (req, res) => {
+//   try {
+//     const { formulaName, zipcode, utility } = req.body;
+
+//     // Fetch the formula from the database based on the formulaName
+//     const connection = await pool.getConnection();
+//     const [rows] = await connection.query(
+//       "SELECT var1, var2, var3, var4 FROM formulasTable WHERE formulaName = ?",
+//       [formulaName]
+//     );
+//     connection.release();
+
+//     if (rows.length === 0) {
+//       // Formula not found
+//       res.status(404).json({ error: "Formula not found" });
+//       return;
+//     }
+
+//     // Extract variables from the database response
+//     const { var1, var2, var3, var4 } = rows[0];
+
+//     // Check if var1 is present in the conversion_table, if not, parse as float
+//     const parsedVar1 = await getVariableValue(var1);
+//     // Repeat for var2, var3, and var4
+//     const parsedVar2 = await getVariableValue(var2);
+//     const parsedVar3 = await getVariableValue(var3);
+//     const parsedVar4 = await getVariableValue(var4);
+
+//     // Perform the calculation based on the parsed variables
+//     const result = (parsedVar1 * parsedVar2) / (parsedVar3 * parsedVar4);
+
+//     res.json({ result });
+//   } catch (error) {
+//     console.error("Error calculating formula:", error);
+//     res.status(500).json({ error: "Internal Server Error" });
+//   }
+// });
+
 app.post("/api/calculateFormula", async (req, res) => {
   try {
     const { formulaName, zipcode, utility } = req.body;
@@ -1644,8 +1720,8 @@ app.post("/api/calculateFormula", async (req, res) => {
     connection.release();
 
     if (rows.length === 0) {
-      // Formula not found
-      res.status(404).json({ error: "Formula not found" });
+      // Formula not found, return 0 as the result
+      res.json({ result: 0 });
       return;
     }
 
@@ -1885,21 +1961,28 @@ app.post("/api/contact/insert", cors(), (req, res) => {
   // Replace this with your actual database update logic
   const updateSql = `UPDATE CRBN.admincontact SET email = ? ,phone= ? WHERE admincontactid = 1`;
 
-  mysqlConnection.query(updateSql, [email, phone], (updateErr, updateResults) => {
-    if (updateErr) {
-      console.error("Database update query error:", updateErr);
-      return res.status(500).json({ error: "Internal Server Error" });
-    }
+  mysqlConnection.query(
+    updateSql,
+    [email, phone],
+    (updateErr, updateResults) => {
+      if (updateErr) {
+        console.error("Database update query error:", updateErr);
+        return res.status(500).json({ error: "Internal Server Error" });
+      }
 
-    // Check if the update was successful
-    if (updateResults.affectedRows > 0) {
-      return res.status(200).json({ message: "Contact details updated successfully" });
-    } else {
-      return res.status(500).json({ error: "Failed to update contact details" });
+      // Check if the update was successful
+      if (updateResults.affectedRows > 0) {
+        return res
+          .status(200)
+          .json({ message: "Contact details updated successfully" });
+      } else {
+        return res
+          .status(500)
+          .json({ error: "Failed to update contact details" });
+      }
     }
-  });
+  );
 });
-
 
 // Start the server
 app.listen(port, () => {
