@@ -14,8 +14,6 @@ interface Category {
 
 const Category_main: React.FC = () => {
   const [data, setData] = useState<Category[]>([]);
-  const { categoryIds } = useParams<{ categoryIds?: string }>();
-  //const [searchValue, setSearchValue] = useState<string>("");
   const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState<number[]>([]);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -40,16 +38,14 @@ const Category_main: React.FC = () => {
   }, []);
 
   const handleEditClick = () => {
-    if (data.length > 0) {
-      const categoryIdsQueryParam = data
-        .map((item) => item.category_id)
-        .join(",");
+    if (selectedCategory.length > 0) {
+      const categoryIdsQueryParam = selectedCategory.join(",");
       navigate(`/values/category/category_edit/${categoryIdsQueryParam}`);
     } else {
-      console.error("No data available to edit.");
+      console.error("No categories selected to edit.");
     }
   };
-
+  
   const handleSearch = () => {
     const searchInput = document.getElementById(
       "search-input"
