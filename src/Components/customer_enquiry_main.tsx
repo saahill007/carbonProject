@@ -112,7 +112,6 @@ const Customer_enquiry_main: React.FC = () => {
                 </table>
             </div>
 
-            <div className="enquiry_bottom_border"></div>
         </div>
     );
 };
