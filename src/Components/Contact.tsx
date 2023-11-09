@@ -48,27 +48,51 @@ const Contact: React.FC = () => {
     setAddress(e.target.value);
   };
 
+  // const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const newPhone = e.target.value;
+  
+  //   // Regular expression to allow an optional country code followed by '-' and exactly 10 digits
+  //   const phonePattern = /^(\+\d{1,4}-)?(\d{10})?$/;
+  
+  //   if (phonePattern.test(newPhone)) {
+  //     setPhone(newPhone);
+  //     setUpdateError('');
+  //   } else {
+  //     setUpdateError('Invalid phone number');
+  //   }
+  // };
+  
+  
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newPhone = e.target.value;
+    let newPhone = e.target.value.replace(/[^\d]/g, ''); // Remove non-numeric characters
 
-    // Regular expression to allow one or more digits
-    const phonePattern = /^\d+$/;
-
-    if (phonePattern.test(newPhone)) {
-      setPhone(newPhone);
-      setUpdateError('');
-    } else {
-      setUpdateError('Phone number must contain only digits');
+    if (newPhone.length > 10) {
+      newPhone = newPhone.slice(0, 10); // Restrict to 10 digits
     }
+  
+    if (newPhone.length > 3) {
+      newPhone = `${newPhone.slice(0, 3)}-${newPhone.slice(3)}`;
+    }
+    if (newPhone.length > 7) {
+      newPhone = `${newPhone.slice(0, 7)}-${newPhone.slice(7)}`;
+    }
+  
+    setPhone(newPhone);
+    setUpdateError('');
   };
+
+  
+  
+  
+  
 
   const handleSubmitContact = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (phone.length !== 10) {
-      setUpdateError('Phone number must contain exactly 10 digits');
-      return;
-    }
+    // if (phone.length !== 10) {
+    //   setUpdateError('Phone number must contain exactly 10 digits');
+    //   return;
+    // }
 
     try {
       const response = await axiosInstance.post('/api/contact/insert', {
