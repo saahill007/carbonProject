@@ -19,6 +19,7 @@ const dbConfig = {
   database: "CRBN", // Fix the case of 'DB' to 'database'
 };
 
+
 // const port = 3001;
 
 // Create a MySQL connection
@@ -161,6 +162,8 @@ app.get("/api/utility_add", cors(), (req, res) => {
     res.json(results);
   });
 });
+
+
 
 // Define a route to save new utility data
 app.post("/api/new_utility_add", (req, res) => {
@@ -1997,14 +2000,14 @@ app.post("/api/setFamilyMembers", cors(), (req, res) => {
 });
 
 app.post("/api/contact/insert", cors(), (req, res) => {
-  const { email, phone } = req.body;
+  const { email, phone, address } = req.body;
 
   // Replace this with your actual database update logic
-  const updateSql = `UPDATE CRBN.admincontact SET email = ? ,phone= ? WHERE admincontactid = 1`;
+  const updateSql = `UPDATE CRBN.admincontact SET email = ? ,phone= ?, address = ? WHERE admincontactid = 1`;
 
   mysqlConnection.query(
     updateSql,
-    [email, phone],
+    [email, phone, address],
     (updateErr, updateResults) => {
       if (updateErr) {
         console.error("Database update query error:", updateErr);
@@ -2023,6 +2026,23 @@ app.post("/api/contact/insert", cors(), (req, res) => {
       }
     }
   );
+});
+
+app.get("/api/contact", cors(), (req, res) => {
+  const sql = "SELECT * FROM CRBN.admincontact";
+
+  // Execute the SQL query using the MySQL connection
+  mysqlConnection.query(sql, (error, results) => {
+    if (error) {
+      console.error("Error executing SQL query:", error.message);
+      res
+        .status(500)
+        .json({ error: "Error retrieving utility data from the database" });
+      return;
+    }
+    // Send the retrieved utility data as a JSON response
+    res.json(results);
+  });
 });
 
 // Start the server
