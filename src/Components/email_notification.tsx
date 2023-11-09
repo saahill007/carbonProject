@@ -66,7 +66,6 @@ const Email_notification: React.FC = () => {
                 {successMessage && <div className="success">{successMessage}</div>}
                 <button className='send_notification' onClick={sendEmail}>Send</button>
             </div>
-            <div className="bottom"></div>
         </div>
     );
 }

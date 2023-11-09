@@ -296,7 +296,7 @@ const Utilities_add: React.FC = () => {
         Save
       </button>
 
-      <div className="bottom-border"></div>
+      {/* <div className="bottom-border"></div> */}
     </div>
   );
 };

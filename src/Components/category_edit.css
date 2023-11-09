@@ -172,8 +172,8 @@ input[type="checkbox"] {
     margin-top: 10px;
     margin-left: 15px;
     margin-bottom: 500px;
-    background-color: hsl(114, 25%, 71%);
-    color: black;
+    background-color: hsl(0, 0%, 0%);
+    color: rgb(255, 255, 255);
     height: 50px;
     width: 100px;
     border-radius: 15px;
@@ -184,7 +184,7 @@ input[type="checkbox"] {
 
 .back:hover {
     cursor: pointer;
-    background-color: rgb(19, 190, 19);
+    background-color: rgb(53, 57, 53);
     color: white;
 }
 

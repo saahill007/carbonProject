@@ -173,7 +173,6 @@ const CategoryEdit: React.FC = () => {
       <button className="back" onClick={handlecategory}>
         Back
       </button>
-      <div className="bottom-border"></div>
     </div>
   );
 };
