@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { AxiosResponse, AxiosError } from 'axios';
-import axiosInstance from './axiosconfig';
+import axiosInstance from '../axiosconfig';
 import { useParams, useNavigate } from 'react-router-dom'; // Import the useParams hook
 import "./customer_queries.css";
 

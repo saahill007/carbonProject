@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import "./category_edit.css";
 // import axios from "axios";
-import axiosInstance from "./axiosconfig";
+import axiosInstance from "../axiosconfig";
 
 interface category {
   category_id: number;

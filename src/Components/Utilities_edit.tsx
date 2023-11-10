@@ -316,7 +316,6 @@ const UtilitiesEdit: React.FC = () => {
       <button className="back" onClick={handleUtility}>
         Back
       </button>
-      <div className="bottom-border"></div>
     </div>
   );
 };

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./contact.css";
-import axiosInstance from './axiosconfig';
+import axiosInstance from '../axiosconfig';
 
 const Contact: React.FC = () => {
   const [email, setEmail] = useState('');

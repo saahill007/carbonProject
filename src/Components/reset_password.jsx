@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 // import axios from 'axios';
 import './reset_password.css';
-import axiosInstance from './axiosconfig';
+import axiosInstance from '../axiosconfig';
 
 function ResetPassword() {
     return (

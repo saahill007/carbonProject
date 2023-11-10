@@ -7,7 +7,7 @@ import "./admin_edit.tsx";
 import addImg from "../assets/add.png";
 import delImg from "../assets/delete.png";
 import editImg from "../assets/edit.png";
-import axiosInstance from "./axiosconfig";
+import axiosInstance from "../axiosconfig.js";
 
 interface Admin {
   admin_id: number;
