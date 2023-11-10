@@ -2081,6 +2081,19 @@ app.get("/api/contact", cors(), (req, res) => {
   });
 });
 
+// Helper function to get the variable value from the conversion_table
+const getVariableValue = async (variableName) => {
+  const connection = await pool.getConnection();
+  const [rows] = await connection.query(
+    "SELECT value FROM conversion_table WHERE name = ?",
+    [variableName]
+  );
+  connection.release();
+
+  // If the variable is present in the conversion_table, return its value, otherwise parse as float
+  return rows.length > 0 ? rows[0].value : parseFloat(variableName);
+};
+
 // Start the server
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
