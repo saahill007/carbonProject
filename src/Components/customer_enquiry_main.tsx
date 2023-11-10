@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axiosInstance from './axiosconfig';
+import axiosInstance from '../axiosconfig';
 import { useNavigate } from 'react-router-dom';
 import './customer_enquiry_main.css';
 

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import "./email_notification.css";
-import axiosInstance from './axiosconfig';
+import axiosInstance from '../axiosconfig';
 
 const Email_notification: React.FC = () => {
     const [emailSubject, setEmailSubject] = useState('');

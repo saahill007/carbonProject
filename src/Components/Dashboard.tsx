@@ -15,7 +15,7 @@ import {
 import { BarChart, Bar, PieChart, Pie, Cell } from "recharts";
 import moment from "moment";
 import "leaflet/dist/leaflet.css";
-import axiosInstance from "./axiosconfig";
+import axiosInstance from "../axiosconfig";
 
 // import axiosInstance from './axiosconfig';
 

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import "./admin_edit.css"; // Import your CSS file
 // import axios from "axios";
-import axiosInstance from "./axiosconfig";
+import axiosInstance from "../axiosconfig";
 
 
 interface Admin {

@@ -5,7 +5,7 @@ import "./category_main.css";
 import addImg from "../assets/add.png";
 import delImg from "../assets/delete.png";
 import editImg from "../assets/edit.png";
-import axiosInstance from "./axiosconfig";
+import axiosInstance from "../axiosconfig";
 
 interface Category {
   category_id: number;

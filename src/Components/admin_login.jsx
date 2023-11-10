@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './admin_login.css';
 // import axios from 'axios'; // Import Axios library
-import axiosInstance from './axiosconfig';
+import axiosInstance from '../axiosconfig';
 
 
 function AdminLogin() {
