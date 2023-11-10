@@ -1852,12 +1852,19 @@ app.post('/api/calculateFootprint', cors(), async (req, res) => {
           console.log("answer",answer);
           const id = answer.id;
           const userValue = answer.value;
-          let unitIndex;
+          let unit_Index;
           let formulaValue;
 
           for(let arr of unitIndexes){
             if(arr.id == id){
-              unitIndex=arr.unitIndex;
+
+              if(arr.index === undefined){
+                unit_Index=arr.unitIndex;
+              }
+              else{
+                unit_Index=arr.index;
+              }
+              
             }
           }
 
@@ -1883,10 +1890,10 @@ app.post('/api/calculateFootprint', cors(), async (req, res) => {
           let carbonValue = 0;
           if (questionType === 1) {
               if (choiceAns === "1") {
-                  carbonValue = household ? (refs * userValue)/1 : (refs * userValue); // Use the user-selected choice's refValue
+                  carbonValue = household ? (refs * userValue)/familyMembers : (refs * userValue); // Use the user-selected choice's refValue
               } else if (choiceAns === "2") {
                   if (userValue >= 0 && userValue < refs[0].length) {
-                      carbonValue = household ? (refs[0][userValue])/1 : refs[0][userValue] ; 
+                      carbonValue = household ? (refs[0][userValue])/familyMembers : refs[0][userValue] ; 
                   } else {
                       console.error("Invalid user-selected choice index:", userValue);
                   }
@@ -1897,7 +1904,7 @@ app.post('/api/calculateFootprint', cors(), async (req, res) => {
                       // Calculate footprint based on selected choices
                       for (const choiceIndex of selectedChoices) {
                           if (choiceIndex >= 0 && choiceIndex < refs[0].length) {
-                              carbonValue += household ? (refs[0][choiceIndex])/1 : (refs[0][choiceIndex]);
+                              carbonValue += household ? (refs[0][choiceIndex])/familyMembers : (refs[0][choiceIndex]);
                           } else {
                               console.error("Invalid user-selected choice index:", choiceIndex);
                           }
@@ -1909,11 +1916,13 @@ app.post('/api/calculateFootprint', cors(), async (req, res) => {
           }
           else{
             if(choiceAns === "1"){
-              carbonValue = userValue * formulaValue;
+              console.log("family members",familyMembers);
+              carbonValue = (userValue * formulaValue)/familyMembers;
             }
             else if(choiceAns === "2"){
-              carbonValue = refs[unitIndex][userValue] * formulaValue;
-              
+              if(unit_Index >= 0 && userValue >=0){
+              carbonValue = (refs[unit_Index][userValue] * formulaValue)/familyMembers;
+              }
             }
             else if (choiceAns === "3") {
               // User can select multiple choices
@@ -1921,8 +1930,8 @@ app.post('/api/calculateFootprint', cors(), async (req, res) => {
                   const selectedChoices = userValue;
                   // Calculate footprint based on selected choices
                   for (const choiceIndex of selectedChoices) {
-                      if (choiceIndex >= 0 && choiceIndex < refs[unitIndex].length) {
-                          carbonValue += household ? ((refs[unitIndex][choiceIndex]) * formulaValue)/1 : ((refs[unitIndex][choiceIndex]) * formulaValue);
+                      if (choiceIndex >= 0 && choiceIndex < refs[0].length) {
+                          carbonValue += household ? ((refs[unit_Index][choiceIndex]) * formulaValue)/familyMembers : ((refs[unit_Index][choiceIndex]) * formulaValue);
                       } else {
                           console.error("Invalid user-selected choice index:", choiceIndex);
                       }
@@ -1948,6 +1957,8 @@ app.post('/api/calculateFootprint', cors(), async (req, res) => {
       res.status(500).json({ message: "Internal Server Error" });
   }
 });
+
+
 app.post("/api/forgotpassword", cors(), async (req, res) => {
   const { email } = req.body;
   // Check if the email exists in the 'admin' table
