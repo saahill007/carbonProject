@@ -25,6 +25,7 @@ import Email_notification from "./Components/email_notification";
 import Dashboard from "./Components/Dashboard";
 import AdminLogin from "./Components/admin_login";
 import ForgotPassword from "./Components/ForgetPassword";
+import ResetPassword from "./Components/reset_password";
 import logoImg from "./assets/offset.png";
 import { apiUrlBase } from "./config";
 
@@ -103,7 +104,8 @@ const App: React.FC = () => {
             <Route path="/" element={<Logout />} />
             <Route path="/questions/slider" element={<Slider />} />
             <Route path="/questions/dropdown" element={<Dropdown />} />
-            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/dashboard" element={<Dashboard />} /> 
+            <Route path="/resetpassword" element={<ResetPassword />} />
             <Route
               path="/customer_enquiry_main"
               element={<Customer_enquiry_main />}

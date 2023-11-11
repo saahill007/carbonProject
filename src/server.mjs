@@ -2063,6 +2063,7 @@ app.post("/api/contact/insert", cors(), (req, res) => {
   );
 });
 
+
 app.get("/api/contact", cors(), (req, res) => {
   const sql = "SELECT * FROM CRBN.admincontact";
 
@@ -2092,6 +2093,35 @@ const getVariableValue = async (variableName) => {
   // If the variable is present in the conversion_table, return its value, otherwise parse as float
   return rows.length > 0 ? rows[0].value : parseFloat(variableName);
 };
+
+app.post("/api/resetpassword", cors(), (req, res) => {
+  const { password, reset_token } = req.body;
+
+  // Replace this with your actual database update logic
+  const updateSql = `UPDATE CRBN.admin SET password = ? WHERE reset_token = ?`;
+
+  mysqlConnection.query(
+    updateSql,
+    [password, reset_token],
+    (updateErr, updateResults) => {
+      if (updateErr) {
+        console.error("Database update query error:", updateErr);
+        return res.status(500).json({ error: "Internal Server Error" });
+      }
+
+      // Check if the update was successful
+      if (updateResults.affectedRows > 0) {
+        return res
+          .status(200)
+          .json({ message: "Successfully reset password" });
+      } else {
+        return res
+          .status(500)
+          .json({ error: "Failed to update password" });
+      }
+    }
+  );
+});
 
 // Start the server
 app.listen(port, () => {
