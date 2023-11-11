@@ -1,3 +1,3 @@
 // config.ts
-const apiUrlBase = "http://52.14.4.189:3000";
+const apiUrlBase = "http://3.136.83.126:3000";
 export { apiUrlBase };

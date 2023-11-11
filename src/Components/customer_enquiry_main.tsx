@@ -51,16 +51,16 @@ const Customer_enquiry_main: React.FC = () => {
     return (
         <div className="enquiry_container">
             <div className="enquiry_container_header">
-                <h2 className="enquiry_header_text">LIST OF ENQUIRIES WAITING FOR RESPONSE:</h2>
+                <h2 className="enquiry_header_text">LIST OF INQUIRIES WAITING FOR RESPONSE:</h2>
             </div>
             <div className="enquiry_table_wrapper">
                 <table className="enquiry_table_space">
                     <thead>
                         <tr className="enquiry_sticky_header">
                             <th>Name</th>
-                            <th>Enquiry Date</th>
+                            <th>Inquiry Date</th>
                             <th>Email ID</th>
-                            <th>Enquiry_Question</th>
+                            <th>Inquiry_Question</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -85,7 +85,7 @@ const Customer_enquiry_main: React.FC = () => {
                 </table>
             </div>
             <div className="enquiry_container_header">
-                <h2 className="enquiry_header_text"> ANSWERED ENQUIRES:</h2>
+                <h2 className="enquiry_header_text"> ANSWERED INQUIRES:</h2>
             </div>
             <div className="enquiry_table_wrapper">
                 <table className="enquiry_table_space">
@@ -94,8 +94,8 @@ const Customer_enquiry_main: React.FC = () => {
                             <th>Name</th>
                             <th>Enquiry Date</th>
                             <th>Email ID</th>
-                            <th>Enquiry Question</th>
-                            <th>Enquiry Response</th>
+                            <th>Inquiry Question</th>
+                            <th>Inquiry Response</th>
                         </tr>
                     </thead>
                     <tbody id="myTable">
