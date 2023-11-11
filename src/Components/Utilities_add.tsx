@@ -191,7 +191,7 @@ const Utilities_add: React.FC = () => {
                   value={newUtility.City}
                   onChange={(e) => {
                     if (/^[a-zA-Z\s]*$/.test(e.target.value)) {
-                      setNewUtility({ ...newUtility, Country: e.target.value });
+                      setNewUtility({ ...newUtility, City: e.target.value });
                     }
                   }}
                 />
