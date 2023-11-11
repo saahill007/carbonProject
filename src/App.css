@@ -36,13 +36,24 @@ body {
   text-decoration: none;
   color: black;
   margin-left: 10px;
-  padding: 5px 15px 15px 15px;
-  border-radius: 0px;
+  padding: 10px 15px 15px 15px;
+  border-radius: 10px;
 }
 
-.navbar-right a:hover {
+/* .navbar-right a:hover {
+  background-color: rgb(245, 242, 241);
+} */
+
+/* .navbar-right a.selected {
   background-color: rgb(255, 87, 1);
+} */
+
+.active {
+  background-color: rgb(255, 87, 1);
+  padding:50px;
+  /* Add any other styles you want for the active link */
 }
+
 
 .navbar-right a.selected {
   background-color: #4caf50;
