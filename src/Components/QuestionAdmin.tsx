@@ -5,9 +5,11 @@ import SwitchContent from "./SwitchContent";
 import Content from "./Content";
 import AnswerTypeSelector from "./AnswerTypeSelector";
 import QuestionType1 from "./QuestionType1";
+// import { useHistory } from "react-router-dom";
+
 // import NewFormula from "./NewFormula";
 import AllTypesUnits from "./AllTypesUnits";
-import { useParams } from "react-router-dom";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 // import axiosInstance from "./axiosconfig";
 type Category = {
   categoryId: number;
@@ -45,6 +47,7 @@ const QuestionAdmin: React.FC = () => {
     selectedFormulas: [],
     label: "",
   });
+  const navigate = useNavigate();
   const [categories, updateCategories] = useState<Category[]>([]);
   const [questionEmptyError, updateQuestionEmptyError] = useState(true);
   useEffect(() => {
@@ -100,6 +103,7 @@ const QuestionAdmin: React.FC = () => {
       console.error("Error fetching categories:", error);
     }
   };
+
   // const fetchCategories = async () => {
   //   try {
   //     const response = await axiosInstance.get("/api/getCategories");
@@ -198,6 +202,27 @@ const QuestionAdmin: React.FC = () => {
           onQuestionChange={handleQuestionChange}
           defaultQuestion={questionData.questionContent}
         />
+        <div
+          style={{ textAlign: "right", paddingRight: "10%", marginTop: "20px" }}
+        >
+          <button
+            className="btn btn-primary"
+            style={{
+              width: "200px",
+              background: "#FF5701",
+              border: "1px solid #FF5701",
+            }}
+            onClick={() => {
+              navigate("/questions/");
+            }}
+          >
+            <i
+              className="bi bi-backspace-fill"
+              style={{ paddingRight: "10px" }}
+            ></i>
+            Go Back
+          </button>
+        </div>
 
         <div className="container">
           <SwitchContent

@@ -13,7 +13,7 @@ app.use(bodyParser.json());
 const port = 3000;
 
 const dbConfig = {
-  host: "18.222.228.43",
+  host: "18.119.9.92",
   user: "carbonuser",
   password: "Carbon@123", // Fix the case of 'PASSWORD' to 'password'
   database: "CRBN", // Fix the case of 'DB' to 'database'
@@ -2024,6 +2024,17 @@ app.post("/api/contact/insert", cors(), (req, res) => {
     }
   );
 });
+const getVariableValue = async (variableName) => {
+  const connection = await pool.getConnection();
+  const [rows] = await connection.query(
+    "SELECT value FROM conversion_table WHERE name = ?",
+    [variableName]
+  );
+  connection.release();
+
+  // If the variable is present in the conversion_table, return its value, otherwise parse as float
+  return rows.length > 0 ? rows[0].value : parseFloat(variableName);
+};
 
 // Start the server
 app.listen(port, () => {
