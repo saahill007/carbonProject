@@ -31,7 +31,7 @@ a:link {
 }
 
 .subject_heading {
-    background: #84D2F3;
+    background: #ea5707;
     border-radius: 15px;
     width: 25%;
     height: 6%;
@@ -50,7 +50,7 @@ a:link {
 }
 
 .message {
-    background: #84D2F3;
+    background: #ea5707;
     border-radius: 15px;
     width: 25%;
     height: 6%;
@@ -73,8 +73,8 @@ a:link {
     margin-top: 10px;
     margin-right: 25px;
     margin-bottom: 500px;
-    background-color: hsl(114, 25%, 71%);
-    color: black;
+    background-color: hsl(0, 0%, 4%);
+    color: rgb(249, 249, 249);
     height: 50px;
     width: 100px;
     border-radius: 15px;

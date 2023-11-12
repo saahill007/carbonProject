@@ -36,13 +36,24 @@ body {
   text-decoration: none;
   color: black;
   margin-left: 10px;
-  padding: 5px 15px 15px 15px;
-  border-radius: 0px;
+  padding: 10px 15px 15px 15px;
+  border-radius: 10px;
 }
 
-.navbar-right a:hover {
+/* .navbar-right a:hover {
+  background-color: rgb(245, 242, 241);
+} */
+
+/* .navbar-right a.selected {
   background-color: rgb(255, 87, 1);
+} */
+
+.active {
+  background-color: rgb(255, 87, 1);
+  padding:50px;
+  /* Add any other styles you want for the active link */
 }
+
 
 .navbar-right a.selected {
   background-color: #4caf50;
@@ -163,7 +174,7 @@ body {
 
 .main-window {
   flex: 1;
-  padding: 0;
+  padding-left: 0;
 }
 
 /* ... (rest of your styles) */
@@ -188,4 +199,14 @@ body {
 .traffic-comp{
   padding-left: 10%;
   padding-right:20px;
+}
+/* This assumes "content-beside-navbar" is the class of the adjacent content */
+
+.content-beside-navbar {
+  transition: margin-left 0.1s ease;
+  margin-left: 0; /* Initial position, no offset */
+}
+
+.values-page.panel-expanded .content-beside-navbar {
+  margin-left: 150px; /* Adjust the value to match your expanded panel width */
 }

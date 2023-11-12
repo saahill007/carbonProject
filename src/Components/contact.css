@@ -22,7 +22,6 @@ body {
 .contact_start {
     background-color: rgb(217, 217, 217, 0.12);
     padding: 20px 20px 90px;
-    border: 1px solid black;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -33,6 +32,7 @@ body {
     border-radius: 20px;
     margin: 50px auto 50px;
     height: 500px;
+    margin-top: 150px;
 }
 
 .contact_start h2 {
@@ -42,7 +42,7 @@ body {
 }
 
 .enteremailidofcontact,
-.enterphonenumber {
+.enterphonenumber,.enterAddress {
     background-color: rgb(255, 87, 1);
     padding: 15px;
     border: 1px solid #000;
@@ -50,6 +50,7 @@ body {
     text-align: left;
     border-radius: 20px;
     width: 100%;
+    width: 500px;
 }
 
 
@@ -68,6 +69,18 @@ input[type="tel"] {
     margin: 0 auto;
     padding: 15px;
     display: block;
+}
+
+textarea[name="Address"] {
+    width: 90%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 30px;
+    margin: 0 auto;
+    display: block;
+    height: 75px;
+    width: 450px;
+    resize: none; /* Prevent resizing of the textarea */
 }
 
 

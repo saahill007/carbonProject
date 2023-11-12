@@ -133,6 +133,7 @@ const Utilities_add: React.FC = () => {
   }, []);
 
   return (
+    <div className="content-beside-navbar">
     <div
       className="Utilities"
       style={{ paddingLeft: "100px", paddingTop: "70px" }}
@@ -191,7 +192,7 @@ const Utilities_add: React.FC = () => {
                   value={newUtility.City}
                   onChange={(e) => {
                     if (/^[a-zA-Z\s]*$/.test(e.target.value)) {
-                      setNewUtility({ ...newUtility, Country: e.target.value });
+                      setNewUtility({ ...newUtility, City: e.target.value });
                     }
                   }}
                 />
@@ -296,7 +297,8 @@ const Utilities_add: React.FC = () => {
         Save
       </button>
 
-      <div className="bottom-border"></div>
+      {/* <div className="bottom-border"></div> */}
+    </div>
     </div>
   );
 };

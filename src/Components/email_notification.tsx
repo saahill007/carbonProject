@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import "./email_notification.css";
-import axiosInstance from './axiosconfig';
+import axiosInstance from '../axiosconfig';
 
 const Email_notification: React.FC = () => {
     const [emailSubject, setEmailSubject] = useState('');
@@ -25,13 +25,34 @@ const Email_notification: React.FC = () => {
                 setEmailBody('');
                 setError('');
                 setSuccessMessage('Emails sent successfully!');
-                setTimeout(() => setSuccessMessage(''), 3000);
+                setTimeout(() => {
+                    setSuccessMessage('');
+                }, 3000);
+                updateNotification();
             } else {
                 alert('Failed to send emails.');
             }
         } catch (error) {
             console.error('Error sending email:', error);
             alert('Failed to send emails.');
+        }
+    };
+    const updateNotification = async () => {
+        try {
+            const response = await axiosInstance.post('/api/update-notification', {
+                subject: emailSubject,
+                body: emailBody,
+            });
+
+            if (response.status === 200) {
+                console.log('Notification updated successfully');
+            } else {
+                console.error('Failed to update notification:', response.data);
+                // Handle failure to update notification as needed
+            }
+        } catch (error) {
+            console.error('Error updating notification:', error);
+            // Handle error updating notification as needed
         }
     };
 
@@ -66,7 +87,6 @@ const Email_notification: React.FC = () => {
                 {successMessage && <div className="success">{successMessage}</div>}
                 <button className='send_notification' onClick={sendEmail}>Send</button>
             </div>
-            <div className="bottom"></div>
         </div>
     );
 }

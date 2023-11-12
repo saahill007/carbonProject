@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import "./category_edit.css";
 // import axios from "axios";
-import axiosInstance from "./axiosconfig";
+import axiosInstance from "../axiosconfig";
 
 interface category {
   category_id: number;
@@ -108,6 +108,7 @@ const CategoryEdit: React.FC = () => {
   };
 
   return (
+    <div className="content-beside-navbar">
     <div
       className="category-edit-container"
       style={{ paddingLeft: "100px", paddingTop: "70px" }}
@@ -173,7 +174,7 @@ const CategoryEdit: React.FC = () => {
       <button className="back" onClick={handlecategory}>
         Back
       </button>
-      <div className="bottom-border"></div>
+    </div>
     </div>
   );
 };

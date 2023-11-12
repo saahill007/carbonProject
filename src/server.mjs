@@ -19,13 +19,20 @@ const dbConfig = {
   database: "CRBN", // Fix the case of 'DB' to 'database'
 };
 
+// const dbConfig = {
+//   host: "127.0.0.1",
+//   user: "root",
+//   password: "", // Fix the case of 'PASSWORD' to 'password'
+//   database: "", // Fix the case of 'DB' to 'database'
+// };
+
 // const port = 3001;
 
 // Create a MySQL connection
 const mysqlConnection = mysql.createConnection(dbConfig);
 
 const pool = mysql1.createPool(dbConfig);
-
+let multiplyingFactor = 0;
 mysqlConnection.connect((err) => {
   if (!err) {
     console.log("Connected to MySQL");
@@ -439,7 +446,7 @@ app.post("/api/admin/login", cors(), (req, res) => {
   const { email, password } = req.body;
 
   // Replace this with your actual query to check the credentials
-  const sql = `SELECT * FROM CRBN.admin WHERE email = ? AND password = ?`;
+  const sql = `SELECT * FROM CRBN.admin WHERE email = ? AND password = ? and flag=1`;
   mysqlConnection.query(sql, [email, password], (err, results) => {
     if (err) {
       console.error("Database query error:", err);
@@ -1026,23 +1033,6 @@ app.post("/api/send-email", async (req, res) => {
           transporter.sendMail(mailOptions, (error, info) => {
             if (error) {
               console.error("Error sending email:", error);
-            } else {
-              // If the email was sent successfully, insert a record into the notifications table
-              const notificationData = {
-                customer_Emailid: customerEmail,
-                notification_subject: subject,
-                notification_message: body,
-              };
-
-              mysqlConnection.query(
-                "INSERT INTO CRBN.notification SET ?",
-                notificationData,
-                (error) => {
-                  if (error) {
-                    console.error("Error inserting notification:", error);
-                  }
-                }
-              );
             }
           });
         });
@@ -1054,6 +1044,24 @@ app.post("/api/send-email", async (req, res) => {
     console.error("Error sending email:", error);
     res.status(500).send("Failed to send emails");
   }
+});
+
+app.post("/api/update-notification", (req, res) => {
+  const { subject, body } = req.body;
+
+  console.log("Received request to update notification:", { subject, body });
+
+  const queryupdate =
+    "INSERT INTO CRBN.notification (notification_subject, notification_message) VALUES (?, ?)";
+  mysqlConnection.query(queryupdate, [subject, body], (err, result) => {
+    if (err) {
+      console.error("Error inserting into notification table:", err);
+      return res.status(500).json({ error: "Internal Server Error" });
+    }
+
+    console.log("Notification updated successfully");
+    res.status(200).json({ message: "Notification updated successfully" });
+  });
 });
 
 app.get("/api/enquiry_main_fetch_waiting_for_response", (req, res) => {
@@ -1796,6 +1804,8 @@ app.post("/api/calculateFormula", async (req, res) => {
     const result = (parsedVar1 * parsedVar2) / (parsedVar3 * parsedVar4);
 
     res.json({ result });
+    multiplyingFactor = result;
+    console.log("multiplying Factor", result);
   } catch (error) {
     console.error("Error calculating formula:", error);
     res.status(500).json({ error: "Internal Server Error" });
@@ -1825,18 +1835,39 @@ app.post("/api/calculateFormula", async (req, res) => {
 // });
 
 app.post("/api/calculateFootprint", cors(), async (req, res) => {
-  const answers = req.body; // Array containing question IDs, user answers, and household values
+  console.log("Answers Array", req.body.answersArr);
+  console.log("Indexes Array", req.body.unitIndexArr);
+  console.log("Formula Values Array", req.body.formulaValArr);
+
+  const answers = req.body.answersArr; // Array containing question IDs, user answers, and household values
+  const unitIndexes = req.body.unitIndexArr;
+  const formulaVals = req.body.formulaValArr;
 
   let totalCarbonFootprint = 0;
-
+  console.log("Answers ---->", answers);
   try {
     for (let answer of answers) {
-      console.log("answer is", answer);
-      //console.log("answers is :",answers);
+      console.log("answer", answer);
       const id = answer.id;
-      console.log("question id", id);
       const userValue = answer.value;
-      //console.log("user value",userValue);
+      let unit_Index;
+      let formulaValue;
+
+      for (let arr of unitIndexes) {
+        if (arr.id == id) {
+          if (arr.index === undefined) {
+            unit_Index = arr.unitIndex;
+          } else {
+            unit_Index = arr.index;
+          }
+        }
+      }
+
+      for (let arr of formulaVals) {
+        if (arr.id == id) {
+          formulaValue = arr.formulaVal;
+        }
+      }
       // Fetch refs (constants or formulas) for the question based on questionType and choiceAns
       const [results] = await mysqlConnection
         .promise()
@@ -1846,13 +1877,10 @@ app.post("/api/calculateFootprint", cors(), async (req, res) => {
         );
 
       if (results.length === 0) {
-        console.error(`No data found for id: ${id}`);
         continue; // Skip the rest of this iteration and proceed to the next id in the loop
       }
-      console.log("array :", results);
       const refs = results[0].refs;
       let household = results[0].household;
-      console.log("Househole value", household);
       const questionType = results[0].questionType;
       const choiceAns = results[0].choiceAns;
 
@@ -1860,11 +1888,13 @@ app.post("/api/calculateFootprint", cors(), async (req, res) => {
       let carbonValue = 0;
       if (questionType === 1) {
         if (choiceAns === "1") {
-          carbonValue = household ? (refs * userValue) / 1 : refs * userValue; // Use the user-selected choice's refValue
+          carbonValue = household
+            ? (refs * userValue) / familyMembers
+            : refs * userValue; // Use the user-selected choice's refValue
         } else if (choiceAns === "2") {
           if (userValue >= 0 && userValue < refs[0].length) {
             carbonValue = household
-              ? refs[0][userValue] / 1
+              ? refs[0][userValue] / familyMembers
               : refs[0][userValue];
           } else {
             console.error("Invalid user-selected choice index:", userValue);
@@ -1877,8 +1907,39 @@ app.post("/api/calculateFootprint", cors(), async (req, res) => {
             for (const choiceIndex of selectedChoices) {
               if (choiceIndex >= 0 && choiceIndex < refs[0].length) {
                 carbonValue += household
-                  ? refs[0][choiceIndex] / 1
+                  ? refs[0][choiceIndex] / familyMembers
                   : refs[0][choiceIndex];
+              } else {
+                console.error(
+                  "Invalid user-selected choice index:",
+                  choiceIndex
+                );
+              }
+            }
+          } else {
+            console.error("Invalid user-selected choices:", userValue);
+          }
+        }
+      } else {
+        if (choiceAns === "1") {
+          console.log("family members", familyMembers);
+          carbonValue = (userValue * formulaValue) / familyMembers;
+        } else if (choiceAns === "2") {
+          if (unit_Index >= 0 && userValue >= 0) {
+            carbonValue =
+              (refs[unit_Index][userValue] * formulaValue) / familyMembers;
+          }
+        } else if (choiceAns === "3") {
+          // User can select multiple choices
+          if (Array.isArray(userValue)) {
+            const selectedChoices = userValue;
+            // Calculate footprint based on selected choices
+            for (const choiceIndex of selectedChoices) {
+              if (choiceIndex >= 0 && choiceIndex < refs[0].length) {
+                carbonValue += household
+                  ? (refs[unit_Index][choiceIndex] * formulaValue) /
+                    familyMembers
+                  : refs[unit_Index][choiceIndex] * formulaValue;
               } else {
                 console.error(
                   "Invalid user-selected choice index:",
@@ -1909,10 +1970,11 @@ app.post("/api/calculateFootprint", cors(), async (req, res) => {
     res.status(500).json({ message: "Internal Server Error" });
   }
 });
+
 app.post("/api/forgotpassword", cors(), async (req, res) => {
   const { email } = req.body;
   // Check if the email exists in the 'admin' table
-  const sql = `SELECT * FROM CRBN.admin WHERE email = ?`;
+  const sql = `SELECT * FROM CRBN.admin WHERE email = ? and flag=1`;
   try {
     const [user] = await mysqlConnection.promise().query(sql, [email]);
 
@@ -1997,14 +2059,14 @@ app.post("/api/setFamilyMembers", cors(), (req, res) => {
 });
 
 app.post("/api/contact/insert", cors(), (req, res) => {
-  const { email, phone } = req.body;
+  const { email, phone, address } = req.body;
 
   // Replace this with your actual database update logic
-  const updateSql = `UPDATE CRBN.admincontact SET email = ? ,phone= ? WHERE admincontactid = 1`;
+  const updateSql = `UPDATE CRBN.admincontact SET email = ? ,phone= ?, address = ? WHERE admincontactid = 1`;
 
   mysqlConnection.query(
     updateSql,
-    [email, phone],
+    [email, phone, address],
     (updateErr, updateResults) => {
       if (updateErr) {
         console.error("Database update query error:", updateErr);
@@ -2024,6 +2086,25 @@ app.post("/api/contact/insert", cors(), (req, res) => {
     }
   );
 });
+
+app.get("/api/contact", cors(), (req, res) => {
+  const sql = "SELECT * FROM CRBN.admincontact";
+
+  // Execute the SQL query using the MySQL connection
+  mysqlConnection.query(sql, (error, results) => {
+    if (error) {
+      console.error("Error executing SQL query:", error.message);
+      res
+        .status(500)
+        .json({ error: "Error retrieving utility data from the database" });
+      return;
+    }
+    // Send the retrieved utility data as a JSON response
+    res.json(results);
+  });
+});
+
+// Helper function to get the variable value from the conversion_table
 const getVariableValue = async (variableName) => {
   const connection = await pool.getConnection();
   const [rows] = await connection.query(
@@ -2035,6 +2116,36 @@ const getVariableValue = async (variableName) => {
   // If the variable is present in the conversion_table, return its value, otherwise parse as float
   return rows.length > 0 ? rows[0].value : parseFloat(variableName);
 };
+
+app.post("/api/resetpassword", cors(), (req, res) => {
+  const { password, reset_token } = req.body;
+
+  const updateSql = `UPDATE CRBN.admin SET password = ? WHERE reset_token = ?`;
+
+  mysqlConnection.query(
+    updateSql,
+    [password, reset_token],
+    (updateErr, updateResults) => {
+      if (updateErr) {
+        console.error("Database update query error:", updateErr);
+        return res
+          .status(500)
+          .json({ error: "Internal Server Error", details: updateErr.message });
+      }
+
+      if (updateResults.affectedRows > 0) {
+        return res.status(200).json({ message: "Successfully reset password" });
+      } else {
+        return res
+          .status(500)
+          .json({
+            error: "Failed to update password",
+            details: "No rows affected",
+          });
+      }
+    }
+  );
+});
 
 // Start the server
 app.listen(port, () => {

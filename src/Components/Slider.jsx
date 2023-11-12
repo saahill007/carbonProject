@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./Slider.css";
-import axiosInstance from './axiosconfig';
+import axiosInstance from '../axiosconfig';
 
 
 export function Slider() {

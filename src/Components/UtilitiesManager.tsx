@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 // import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./UtilitiesManager.css";
-import axiosInstance from './axiosconfig';
+import axiosInstance from '../axiosconfig';
 
 
 interface Utility {

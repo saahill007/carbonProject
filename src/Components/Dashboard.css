@@ -3,7 +3,7 @@
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    background-color: #84d2f3;
+    background-color: rgb(255, 87, 1);
     padding: 10px;
     border-radius: 10px;
     margin-bottom: 10px;
@@ -49,7 +49,7 @@
     height: 50px;
     width: 100px;
     border-radius: 15px;
-    background-color:  hsl(114, 25%, 71%);
+    background-color:  rgb(255, 87, 1);
 }
 
 .secondline button {
@@ -64,7 +64,7 @@
 /* Any other specific styles for buttons within .secondline */
   
 .secondline .apply-button:hover {
-    background-color: hsl(114, 25%, 71%);
+    background-color: hsl(30, 63%, 50%);
 }
   
 .secondline .apply-button:active {

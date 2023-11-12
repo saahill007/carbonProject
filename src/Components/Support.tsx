@@ -22,7 +22,6 @@ const Support: React.FC = () => {
           </Link>
         </div>
       </div>
-      <div className="bottom"></div>
     </div>
   );
 }

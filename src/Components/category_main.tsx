@@ -5,7 +5,7 @@ import "./category_main.css";
 import addImg from "../assets/add.png";
 import delImg from "../assets/delete.png";
 import editImg from "../assets/edit.png";
-import axiosInstance from "./axiosconfig";
+import axiosInstance from "../axiosconfig";
 
 interface Category {
   category_id: number;
@@ -105,6 +105,7 @@ const Category_main: React.FC = () => {
   };
 
   return (
+    <div className="content-beside-navbar">
     <div style={{ paddingLeft: "100px", paddingTop: "70px" }}>
       <div className="action">
         <div className="action-item">Action item:</div>
@@ -176,6 +177,7 @@ const Category_main: React.FC = () => {
       </button>
 
       {/* <div className="bottom-border"></div> */}
+    </div>
     </div>
   );
 };

@@ -115,6 +115,7 @@ const UtilitiesEdit: React.FC = () => {
   };
 
   return (
+    <div className="content-beside-navbar">
     <div
       className="utilities-edit-container"
       style={{ paddingLeft: "100px", paddingTop: "70px" }}
@@ -316,7 +317,7 @@ const UtilitiesEdit: React.FC = () => {
       <button className="back" onClick={handleUtility}>
         Back
       </button>
-      <div className="bottom-border"></div>
+    </div>
     </div>
   );
 };
