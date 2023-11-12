@@ -101,6 +101,7 @@ const AdminEdit: React.FC = () => {
   };
 
   return (
+    <div className="content-beside-navbar">
     <div
       className="admin-edit-container"
       style={{ paddingLeft: "100px", paddingTop: "70px" }}
@@ -176,6 +177,7 @@ const AdminEdit: React.FC = () => {
         Back
       </button>
       {/* <div className="bottom-border"></div> */}
+    </div>
     </div>
   );
 };

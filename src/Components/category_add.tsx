@@ -83,6 +83,7 @@ const Category_add: React.FC = () => {
   }, []);
 
   return (
+    <div className="content-beside-navbar">
     <div style={{ paddingLeft: "100px", paddingTop: "70px" }}>
       {/* <div className="action">
                 <div className="action-item">Action item:</div>
@@ -141,6 +142,7 @@ const Category_add: React.FC = () => {
         Save
       </button>
 
+    </div>
     </div>
   );
 };

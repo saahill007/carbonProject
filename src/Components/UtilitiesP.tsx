@@ -130,6 +130,7 @@ const Utilities: React.FC = () => {
       const totalPages = Math.ceil(data.length / itemsPerPage);
 
       return (
+        <div className="content-beside-navbar">
         <div style={{ paddingLeft: "75px",paddingTop: "70px" }}>
           <div className="action">
             <div className="action-item">Action item:</div>
@@ -244,6 +245,7 @@ const Utilities: React.FC = () => {
           <button className="back" onClick={handleadmin}>
             Back
           </button>
+        </div>
         </div>
       );
     

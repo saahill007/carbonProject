@@ -174,7 +174,7 @@ body {
 
 .main-window {
   flex: 1;
-  padding: 0;
+  padding-left: 0;
 }
 
 /* ... (rest of your styles) */
@@ -199,4 +199,14 @@ body {
 .traffic-comp{
   padding-left: 10%;
   padding-right:20px;
+}
+/* This assumes "content-beside-navbar" is the class of the adjacent content */
+
+.content-beside-navbar {
+  transition: margin-left 0.1s ease;
+  margin-left: 0; /* Initial position, no offset */
+}
+
+.values-page.panel-expanded .content-beside-navbar {
+  margin-left: 150px; /* Adjust the value to match your expanded panel width */
 }
