@@ -13,7 +13,7 @@ app.use(bodyParser.json());
 const port = 3000;
 
 const dbConfig = {
-  host: "3.136.83.126",
+  host: "3.140.241.230",
   user: "carbonuser",
   password: "Carbon@123", // Fix the case of 'PASSWORD' to 'password'
   database: "CRBN", // Fix the case of 'DB' to 'database'
@@ -23,7 +23,7 @@ const dbConfig = {
 //   host: "127.0.0.1",
 //   user: "root",
 //   password: "", // Fix the case of 'PASSWORD' to 'password'
-//   database: "CRBN", // Fix the case of 'DB' to 'database'
+//   database: "", // Fix the case of 'DB' to 'database'
 // };
 
 
@@ -437,7 +437,7 @@ app.post("/api/admin/login", cors(), (req, res) => {
   const { email, password } = req.body;
 
   // Replace this with your actual query to check the credentials
-  const sql = `SELECT * FROM CRBN.admin WHERE email = ? AND password = ?`;
+  const sql = `SELECT * FROM CRBN.admin WHERE email = ? AND password = ? and flag=1`;
   mysqlConnection.query(sql, [email, password], (err, results) => {
     if (err) {
       console.error("Database query error:", err);
@@ -1013,6 +1013,7 @@ app.post("/api/send-email", async (req, res) => {
 
         const customerEmails = results.map((row) => row.Email); // Ensure the field name matches your database structure
 
+
         customerEmails.forEach((customerEmail) => {
           const mailOptions = {
             from: "carbonoffset08@gmail.com",
@@ -1024,23 +1025,6 @@ app.post("/api/send-email", async (req, res) => {
           transporter.sendMail(mailOptions, (error, info) => {
             if (error) {
               console.error("Error sending email:", error);
-            } else {
-              // If the email was sent successfully, insert a record into the notifications table
-              const notificationData = {
-                customer_Emailid: customerEmail,
-                notification_subject: subject,
-                notification_message: body,
-              };
-
-              mysqlConnection.query(
-                "INSERT INTO CRBN.notification SET ?",
-                notificationData,
-                (error) => {
-                  if (error) {
-                    console.error("Error inserting notification:", error);
-                  }
-                }
-              );
             }
           });
         });
@@ -1052,6 +1036,25 @@ app.post("/api/send-email", async (req, res) => {
     console.error("Error sending email:", error);
     res.status(500).send("Failed to send emails");
   }
+});
+
+
+app.post("/api/update-notification", (req, res) => {
+  const { subject, body } = req.body;
+
+  console.log("Received request to update notification:", { subject, body });
+
+  const queryupdate =
+    "INSERT INTO CRBN.notification (notification_subject, notification_message) VALUES (?, ?)";
+  mysqlConnection.query(queryupdate, [subject, body], (err, result) => {
+    if (err) {
+      console.error("Error inserting into notification table:", err);
+      return res.status(500).json({ error: "Internal Server Error" });
+    }
+
+    console.log("Notification updated successfully");
+    res.status(200).json({ message: "Notification updated successfully" });
+  });
 });
 
 app.get("/api/enquiry_main_fetch_waiting_for_response", (req, res) => {
@@ -1950,7 +1953,7 @@ app.post('/api/calculateFootprint', cors(), async (req, res) => {
 app.post("/api/forgotpassword", cors(), async (req, res) => {
   const { email } = req.body;
   // Check if the email exists in the 'admin' table
-  const sql = `SELECT * FROM CRBN.admin WHERE email = ?`;
+  const sql = `SELECT * FROM CRBN.admin WHERE email = ? and flag=1`;
   try {
     const [user] = await mysqlConnection.promise().query(sql, [email]);
 
@@ -2097,31 +2100,23 @@ const getVariableValue = async (variableName) => {
 app.post("/api/resetpassword", cors(), (req, res) => {
   const { password, reset_token } = req.body;
 
-  // Replace this with your actual database update logic
   const updateSql = `UPDATE CRBN.admin SET password = ? WHERE reset_token = ?`;
 
-  mysqlConnection.query(
-    updateSql,
-    [password, reset_token],
-    (updateErr, updateResults) => {
-      if (updateErr) {
-        console.error("Database update query error:", updateErr);
-        return res.status(500).json({ error: "Internal Server Error" });
-      }
-
-      // Check if the update was successful
-      if (updateResults.affectedRows > 0) {
-        return res
-          .status(200)
-          .json({ message: "Successfully reset password" });
-      } else {
-        return res
-          .status(500)
-          .json({ error: "Failed to update password" });
-      }
+  mysqlConnection.query(updateSql, [password, reset_token], (updateErr, updateResults) => {
+    if (updateErr) {
+      console.error("Database update query error:", updateErr);
+      return res.status(500).json({ error: "Internal Server Error", details: updateErr.message });
     }
-  );
+
+    if (updateResults.affectedRows > 0) {
+      return res.status(200).json({ message: "Successfully reset password" });
+    } else {
+      return res.status(500).json({ error: "Failed to update password", details: "No rows affected" });
+    }
+  });
 });
+
+
 
 // Start the server
 app.listen(port, () => {
