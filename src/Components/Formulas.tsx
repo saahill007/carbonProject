@@ -11,6 +11,7 @@ import RefValueSelector from "./RefValueSelector";
 
 const Formulas = () => {
   return (
+    <div className="content-beside-navbar">
     <div>
       {/* <UnitsSelector onSelectionChange={handleSelectionChange} />
       <Ques onQuestionChange={handleQuestionChange} />
@@ -21,6 +22,7 @@ const Formulas = () => {
       {/* <Choice onValuesChange={handleValuesChange} /> */}
       {/* <DisplayFormulas /> */}
       <DisplayNewFormulas />
+    </div>
     </div>
   );
 };

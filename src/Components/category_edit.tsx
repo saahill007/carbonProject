@@ -108,6 +108,7 @@ const CategoryEdit: React.FC = () => {
   };
 
   return (
+    <div className="content-beside-navbar">
     <div
       className="category-edit-container"
       style={{ paddingLeft: "100px", paddingTop: "70px" }}
@@ -173,6 +174,7 @@ const CategoryEdit: React.FC = () => {
       <button className="back" onClick={handlecategory}>
         Back
       </button>
+    </div>
     </div>
   );
 };

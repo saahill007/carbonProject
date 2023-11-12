@@ -141,6 +141,7 @@ const Admin_add: React.FC = () => {
   }, []);
 
   return (
+    <div className="content-beside-navbar">
     <div style={{ paddingLeft: "100px", paddingTop: "70px", paddingRight: "30px" }}>
       <div className="Admin">
         <div className="Admin_Details">View Existing Admin's:</div>
@@ -227,6 +228,7 @@ const Admin_add: React.FC = () => {
       </button>
 
       {/* <div className="bottom-border"></div> */}
+    </div>
     </div>
   );
 };

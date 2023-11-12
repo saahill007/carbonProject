@@ -109,6 +109,7 @@ const Admin_main: React.FC = () => {
   }, []);
 
   return (
+    <div className="content-beside-navbar">
     <div style={{ paddingLeft: "100px", paddingTop: "70px" }}>
       <div className="action">
         <div className="action-item">Action item:</div>
@@ -189,6 +190,7 @@ const Admin_main: React.FC = () => {
       </button>
 
       {/* <div className="bottom-border"></div> */}
+    </div>
     </div>
   );
 };
