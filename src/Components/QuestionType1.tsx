@@ -48,7 +48,7 @@ const QuestionType1: React.FC<QuestionType1Props> = ({
   label,
   questionData,
 }) => {
-  const { id } = useParams<{ id: string }>();
+  let { id } = useParams<{ id: string }>();
 
   // const [twoArrayOption, setTwoArrayOption] = useState<string[][]>([]);
   // const [twoArrayValue, setTwoArrayValue] = useState<number[][]>([]);
@@ -126,6 +126,9 @@ const QuestionType1: React.FC<QuestionType1Props> = ({
 
   useEffect(() => {
     determineQuestionType();
+    if (id === undefined) {
+      id = "";
+    }
   }, []);
   const radioContainerStyle = {
     display: "inline-flex",
@@ -166,6 +169,52 @@ const QuestionType1: React.FC<QuestionType1Props> = ({
 
     // onChange(twoArrayOption, twoArrayValue, questionType);
   };
+
+  useEffect(() => {
+    if (questionData.choiceAns === "1" && questionData.refs?.[0]?.[0] != null) {
+      updateFib(true);
+      determineQuestionType();
+      console.log("inside1");
+      updateType1Ans(questionData.refs[0][0]);
+    }
+
+    if (questionData.choiceAns === "2" && questionData.refs?.[0] != null) {
+      updateFib(false);
+
+      updateHasMultiple(false);
+      determineQuestionType();
+      console.log("inside2");
+      const flattenedChoices = questionData.choices.flat();
+
+      // Create an array of objects where each object has a 'name' property from flattenedChoices
+      // and a 'value' property from refs
+      const newData: DataItem[] = flattenedChoices.map((choice, index) => ({
+        name: choice,
+        value: questionData.refs[0]?.[index] ?? 0, // Adjust the default value as needed
+      }));
+
+      // Update the data state
+      setData(newData);
+    }
+
+    if (questionData.choiceAns === "3" && questionData.refs?.[0] != null) {
+      updateFib(false);
+      updateHasMultiple(true);
+      determineQuestionType;
+      console.log("inside3");
+      const flattenedChoices = questionData.choices.flat();
+
+      // Create an array of objects where each object has a 'name' property from flattenedChoices
+      // and a 'value' property from refs
+      const newData: DataItem[] = flattenedChoices.map((choice, index) => ({
+        name: choice,
+        value: questionData.refs[0]?.[index] ?? 0, // Adjust the default value as needed
+      }));
+
+      // Update the data state
+      setData(newData);
+    }
+  }, [questionData]);
 
   // const handleReferenceValueChange = (
   //   event: React.ChangeEvent<HTMLInputElement>
@@ -213,16 +262,16 @@ const QuestionType1: React.FC<QuestionType1Props> = ({
   };
 
   const saveOptionsToDatabase = async () => {
+    // console.log(id);
     try {
       console.log("This is id:" + id);
-      const url = `${apiUrlBase}/api/addQuestion`;
-      // id === ""
-      //   ? `${apiUrlBase}/api/addQuestion`
-      //   : `${apiUrlBase}/api/updateQuestion/${id}`;
+      const url =
+        id !== undefined && id !== null && id !== ""
+          ? `${apiUrlBase}/api/updateQuestion/${id}`
+          : `${apiUrlBase}/api/addQuestion`;
 
       const response = await fetch(url, {
-        method: "POST",
-        // id == "" ? "POST" : "PATCH",
+        method: id !== undefined && id !== null && id !== "" ? "PATCH" : "POST",
 
         headers: {
           "Content-Type": "application/json",
@@ -258,14 +307,13 @@ const QuestionType1: React.FC<QuestionType1Props> = ({
     const { choicess, refss } = generateChoiceAndRefsArrays(data);
     try {
       console.log(id);
-      const url = `${apiUrlBase}/api/addQuestion`;
-      // id == ""
-      //   ? `${apiUrlBase}/api/addQuestion`
-      //   : `${apiUrlBase}/api/updateQuestion/${id}`;
+      const url =
+        id !== undefined && id !== null && id !== ""
+          ? `${apiUrlBase}/api/updateQuestion/${id}`
+          : `${apiUrlBase}/api/addQuestion`;
 
       const response = await fetch(url, {
-        method: "POST",
-        // id == "" ? "POST" : "PATCH",
+        method: id !== undefined && id !== null && id !== "" ? "PATCH" : "POST",
 
         headers: {
           "Content-Type": "application/json",
@@ -325,7 +373,7 @@ const QuestionType1: React.FC<QuestionType1Props> = ({
               name="radioGrp"
               style={{ width: "30px", height: "30px" }}
               onChange={() => handleRadioChange(true)}
-              defaultChecked
+              checked={isFib}
             />
           </div>
           <div className="col-lg">Fill In the Blank</div>
@@ -335,6 +383,7 @@ const QuestionType1: React.FC<QuestionType1Props> = ({
               name="radioGrp"
               style={{ width: "30px", height: "30px" }}
               onChange={() => handleRadioChange(false)}
+              checked={!isFib}
             />
           </div>
           <div className="col-lg">Single / Multiple Selection</div>
@@ -364,6 +413,7 @@ const QuestionType1: React.FC<QuestionType1Props> = ({
             <input
               className="form-control rounded"
               type="number"
+              value={type1Ans}
               // onChange={handleReferenceValueChange}
               onChange={(e) => updateType1Ans(parseFloat(e.target.value))}
               style={{ paddingLeft: "15px" }}
@@ -394,6 +444,7 @@ const QuestionType1: React.FC<QuestionType1Props> = ({
               <SwitchContent
                 label="Allow Multiple"
                 onChange={handleSwitchChange}
+                defaultChecked={hasMultiple}
               />
             </div>
             <div style={{}}>

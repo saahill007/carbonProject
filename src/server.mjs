@@ -2136,12 +2136,10 @@ app.post("/api/resetpassword", cors(), (req, res) => {
       if (updateResults.affectedRows > 0) {
         return res.status(200).json({ message: "Successfully reset password" });
       } else {
-        return res
-          .status(500)
-          .json({
-            error: "Failed to update password",
-            details: "No rows affected",
-          });
+        return res.status(500).json({
+          error: "Failed to update password",
+          details: "No rows affected",
+        });
       }
     }
   );

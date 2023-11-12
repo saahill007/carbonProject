@@ -338,6 +338,14 @@ const AllTypesUnits: React.FC<AllTypesUnitsProps> = ({
     // formulas
   ]);
 
+  useEffect(() => {
+    // if (questionData?.selectedUnits.length !== 0) {
+    //   const indexesOfSelectedUnitsInABC = questionData?.selectedUnits.map(
+    //     (unit) => unitLabels.indexOf(unit)
+    //   );
+    //   setSelectedUnits(indexesOfSelectedUnitsInABC || []);
+    // }
+  }, []);
   const radioContainerStyle = {
     display: "inline-flex",
     alignItems: "center",
@@ -451,14 +459,16 @@ const AllTypesUnits: React.FC<AllTypesUnitsProps> = ({
         updateHasMultiple(true);
       }
       updateChoiceAns(questionData.choiceAns);
-
-      const getSelected = questionData.selectedUnits.map((element) =>
-        unitLabels.indexOf(element)
-      );
-      // const indexesOfXyzInAbc = xyz.map((element) => abc.indexOf(element));
-      setSelectedUnits(getSelected);
-      console.log(getSelected);
     }
+    const getSelected =
+      questionData?.selectedUnits !== null
+        ? questionData?.selectedUnits.map((element) =>
+            unitLabels.indexOf(element)
+          )
+        : [];
+    // const indexesOfXyzInAbc = xyz.map((element) => abc.indexOf(element));
+    setSelectedUnits(getSelected || []);
+    console.log(getSelected);
   }, []);
 
   return (
@@ -645,6 +655,9 @@ const AllTypesUnits: React.FC<AllTypesUnitsProps> = ({
                   fetchFormulas();
                   setFormulaName("");
                   setFormulaData(null);
+                  console.log(selectedUnits);
+                  console.log(unitLabels);
+                  console.log(questionData?.selectedUnits);
                 }}
                 style={{
                   height: "35px",

@@ -12,12 +12,14 @@
     display: inline-block;
     width: 60px;
     height: 34px;
+    /* border: 1px solid black; */
   }
   
   .switch input {
     opacity: 0;
     width: 0;
     height: 0;
+    /* background:"yellow" */
   }
   
   .slider {
@@ -27,10 +29,11 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: black;
+    background-color: #dedbd5;
     -webkit-transition: 0.4s;
     transition: 0.4s;
     border-radius: 34px;
+    /* border: 2px solid black; */
   }
   
   .slider:before {
@@ -47,7 +50,7 @@
   }
   
   input:checked + .slider {
-    background-color: #FF5701 ;
+    background-color: black;
     border: 2px black;
   }
   
