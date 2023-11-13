@@ -12,12 +12,15 @@ app.use(bodyParser.json());
 
 const port = 3000;
 
+const hostmain = "18.191.232.91";
+
 const dbConfig = {
-  host: "18.119.9.92",
+  host: hostmain,
   user: "carbonuser",
   password: "Carbon@123", // Fix the case of 'PASSWORD' to 'password'
   database: "CRBN", // Fix the case of 'DB' to 'database'
 };
+
 
 // const dbConfig = {
 //   host: "127.0.0.1",
@@ -75,11 +78,9 @@ app.get("/api/filterCustomer", cors(), (req, res) => {
   ) {
     const formattedFromDate = fromDate.split("/").reverse().join("-");
     const formattedToDate = toDate.split("/").reverse().join("-");
-    query += ` WHERE date_answered BETWEEN STR_TO_DATE('${formattedFromDate}', '%Y-%m-%d') AND STR_TO_DATE('${formattedToDate}', '%Y-%m-%d') AND zipcode = '${zipcode}' AND total_carbon_footprint ${
-      carbonComparison === "=" ? "=" : carbonComparison === ">" ? ">" : "<"
-    } ${carbonFootprintFilter} AND number_of_trees ${
-      treesComparison === "=" ? "=" : treesComparison === ">" ? ">" : "<"
-    } ${treesFilter}`;
+    query += ` WHERE date_answered BETWEEN STR_TO_DATE('${formattedFromDate}', '%Y-%m-%d') AND STR_TO_DATE('${formattedToDate}', '%Y-%m-%d') AND zipcode = '${zipcode}' AND total_carbon_footprint ${carbonComparison === "=" ? "=" : carbonComparison === ">" ? ">" : "<"
+      } ${carbonFootprintFilter} AND number_of_trees ${treesComparison === "=" ? "=" : treesComparison === ">" ? ">" : "<"
+      } ${treesFilter}`;
   } else if (
     fromDate &&
     toDate &&
@@ -90,11 +91,9 @@ app.get("/api/filterCustomer", cors(), (req, res) => {
   ) {
     const formattedFromDate = fromDate.split("/").reverse().join("-");
     const formattedToDate = toDate.split("/").reverse().join("-");
-    query += ` WHERE date_answered BETWEEN STR_TO_DATE('${formattedFromDate}', '%Y-%m-%d') AND STR_TO_DATE('${formattedToDate}', '%Y-%m-%d') AND total_carbon_footprint ${
-      carbonComparison === "=" ? "=" : carbonComparison === ">" ? ">" : "<"
-    } ${carbonFootprintFilter} AND number_of_trees ${
-      treesComparison === "=" ? "=" : treesComparison === ">" ? ">" : "<"
-    } ${treesFilter}`;
+    query += ` WHERE date_answered BETWEEN STR_TO_DATE('${formattedFromDate}', '%Y-%m-%d') AND STR_TO_DATE('${formattedToDate}', '%Y-%m-%d') AND total_carbon_footprint ${carbonComparison === "=" ? "=" : carbonComparison === ">" ? ">" : "<"
+      } ${carbonFootprintFilter} AND number_of_trees ${treesComparison === "=" ? "=" : treesComparison === ">" ? ">" : "<"
+      } ${treesFilter}`;
   } else if (fromDate && toDate && zipcode) {
     const formattedFromDate = fromDate.split("/").reverse().join("-");
     const formattedToDate = toDate.split("/").reverse().join("-");
@@ -102,15 +101,13 @@ app.get("/api/filterCustomer", cors(), (req, res) => {
   } else if (fromDate && toDate && carbonComparison && carbonFootprintFilter) {
     const formattedFromDate = fromDate.split("/").reverse().join("-");
     const formattedToDate = toDate.split("/").reverse().join("-");
-    query += ` WHERE date_answered BETWEEN STR_TO_DATE('${formattedFromDate}', '%Y-%m-%d') AND STR_TO_DATE('${formattedToDate}', '%Y-%m-%d') AND total_carbon_footprint ${
-      carbonComparison === "=" ? "=" : carbonComparison === ">" ? ">" : "<"
-    } ${carbonFootprintFilter}`;
+    query += ` WHERE date_answered BETWEEN STR_TO_DATE('${formattedFromDate}', '%Y-%m-%d') AND STR_TO_DATE('${formattedToDate}', '%Y-%m-%d') AND total_carbon_footprint ${carbonComparison === "=" ? "=" : carbonComparison === ">" ? ">" : "<"
+      } ${carbonFootprintFilter}`;
   } else if (fromDate && toDate && treesComparison && treesFilter) {
     const formattedFromDate = fromDate.split("/").reverse().join("-");
     const formattedToDate = toDate.split("/").reverse().join("-");
-    query += ` WHERE date_answered BETWEEN STR_TO_DATE('${formattedFromDate}', '%Y-%m-%d') AND STR_TO_DATE('${formattedToDate}', '%Y-%m-%d') AND number_of_trees ${
-      treesComparison === "=" ? "=" : treesComparison === ">" ? ">" : "<"
-    } ${treesFilter}`;
+    query += ` WHERE date_answered BETWEEN STR_TO_DATE('${formattedFromDate}', '%Y-%m-%d') AND STR_TO_DATE('${formattedToDate}', '%Y-%m-%d') AND number_of_trees ${treesComparison === "=" ? "=" : treesComparison === ">" ? ">" : "<"
+      } ${treesFilter}`;
   } else if (fromDate && toDate) {
     const formattedFromDate = fromDate.split("/").reverse().join("-");
     const formattedToDate = toDate.split("/").reverse().join("-");
@@ -123,27 +120,21 @@ app.get("/api/filterCustomer", cors(), (req, res) => {
     treesComparison &&
     treesFilter
   ) {
-    query += ` WHERE total_carbon_footprint ${
-      carbonComparison === "=" ? "=" : carbonComparison === ">" ? ">" : "<"
-    } ${carbonFootprintFilter} AND number_of_trees ${
-      treesComparison === "=" ? "=" : treesComparison === ">" ? ">" : "<"
-    } ${treesFilter}`;
+    query += ` WHERE total_carbon_footprint ${carbonComparison === "=" ? "=" : carbonComparison === ">" ? ">" : "<"
+      } ${carbonFootprintFilter} AND number_of_trees ${treesComparison === "=" ? "=" : treesComparison === ">" ? ">" : "<"
+      } ${treesFilter}`;
   } else if (carbonComparison && carbonFootprintFilter) {
-    query += ` WHERE total_carbon_footprint ${
-      carbonComparison === "=" ? "=" : carbonComparison === ">" ? ">" : "<"
-    } ${carbonFootprintFilter}`;
+    query += ` WHERE total_carbon_footprint ${carbonComparison === "=" ? "=" : carbonComparison === ">" ? ">" : "<"
+      } ${carbonFootprintFilter}`;
   } else if (treesComparison && treesFilter) {
-    query += ` WHERE number_of_trees ${
-      treesComparison === "=" ? "=" : treesComparison === ">" ? ">" : "<"
-    } ${treesFilter}`;
+    query += ` WHERE number_of_trees ${treesComparison === "=" ? "=" : treesComparison === ">" ? ">" : "<"
+      } ${treesFilter}`;
   } else if (zipcode && carbonComparison && carbonFootprintFilter) {
-    query += ` WHERE zipcode = '${zipcode}' AND total_carbon_footprint ${
-      carbonComparison === "=" ? "=" : carbonComparison === ">" ? ">" : "<"
-    } ${carbonFootprintFilter}`;
+    query += ` WHERE zipcode = '${zipcode}' AND total_carbon_footprint ${carbonComparison === "=" ? "=" : carbonComparison === ">" ? ">" : "<"
+      } ${carbonFootprintFilter}`;
   } else if (zipcode && treesComparison && treesFilter) {
-    query += ` WHERE zipcode = '${zipcode}' AND number_of_trees ${
-      treesComparison === "=" ? "=" : treesComparison === ">" ? ">" : "<"
-    } ${treesFilter}`;
+    query += ` WHERE zipcode = '${zipcode}' AND number_of_trees ${treesComparison === "=" ? "=" : treesComparison === ">" ? ">" : "<"
+      } ${treesFilter}`;
   }
 
   mysqlConnection.query(query, (error, results) => {
@@ -1938,7 +1929,7 @@ app.post("/api/calculateFootprint", cors(), async (req, res) => {
               if (choiceIndex >= 0 && choiceIndex < refs[0].length) {
                 carbonValue += household
                   ? (refs[unit_Index][choiceIndex] * formulaValue) /
-                    familyMembers
+                  familyMembers
                   : refs[unit_Index][choiceIndex] * formulaValue;
               } else {
                 console.error(
@@ -1991,7 +1982,7 @@ app.post("/api/forgotpassword", cors(), async (req, res) => {
     await mysqlConnection.promise().query(updateTokenSql, [resetToken, email]);
 
     // Send a password reset email with a link to a reset page
-    const resetLink = `http://localhost:5173/resetpassword?token=${resetToken}`;
+    const resetLink = `http://${hostmain}:${port}/resetpassword?token=${resetToken}`;
     await sendPasswordResetEmail(email, resetLink);
 
     return res
@@ -2143,6 +2134,23 @@ app.post("/api/resetpassword", cors(), (req, res) => {
       }
     }
   );
+});
+
+app.get("/api/get-notifications", cors(), (req, res) => {
+  const sql = "SELECT * FROM CRBN.notification";
+
+  // Execute the SQL query using the MySQL connection
+  mysqlConnection.query(sql, (error, results) => {
+    if (error) {
+      console.error("Error executing SQL query:", error.message);
+      res
+        .status(500)
+        .json({ error: "Error retrieving utility data from the database" });
+      return;
+    }
+    // Send the retrieved utility data as a JSON response
+    res.json(results);
+  });
 });
 
 // Start the server
