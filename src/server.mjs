@@ -11,6 +11,7 @@ app.use(cors());
 app.use(bodyParser.json());
 
 const port = 3000;
+const codeport = 5173;
 
 const hostmain = "3.139.84.108";
 
@@ -2106,7 +2107,7 @@ app.post("/api/forgotpassword", cors(), async (req, res) => {
     await mysqlConnection.promise().query(updateTokenSql, [resetToken, email]);
 
     // Send a password reset email with a link to a reset page
-    const resetLink = `http://${hostmain}:${port}/resetpassword?token=${resetToken}`;
+    const resetLink = `http://${hostmain}:${codeport}/resetpassword?token=${resetToken}`;
     await sendPasswordResetEmail(email, resetLink);
 
     return res
