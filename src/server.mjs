@@ -217,7 +217,7 @@ app.post("/api/update_utility_name/:utilityId", cors(), (req, res) => {
   console.log("Utility Name:", utility_name);
   console.log("Utility Units:", utility_units);
 
-  const query = "UPDATE CRBN.utility SET utility_name = ?, utility_units = ? WHERE utility_id = ?";
+  const query = "UPDATE Utility SET utility_name = ?, utility_units = ? WHERE utility_id = ?";
   const values = [utility_name, utility_units, utilityId];
 
   mysqlConnection.query(query, values, (error, results) => {
