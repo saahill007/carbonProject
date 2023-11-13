@@ -147,7 +147,7 @@ app.get("/api/filterCustomer", cors(), (req, res) => {
 
 app.get('/api/country_list', cors(), (req, res) => {
   console.log('Received request for /api/country_list');
-  const sql = 'SELECT country_name FROM Country';
+  const sql = 'SELECT country_name FROM CRBN.Country';
 
   mysqlConnection.query(sql, (error, results) => {
     if (error) {
@@ -162,7 +162,7 @@ app.get('/api/country_list', cors(), (req, res) => {
 
 
 app.get('/api/utility_list', cors(), (req, res) => {
-  const sql = 'SELECT * FROM Utility';
+  const sql = 'SELECT * FROM CRBN.Utility';
 
   mysqlConnection.query(sql, (error, results) => {
     if (error) {
@@ -175,7 +175,7 @@ app.get('/api/utility_list', cors(), (req, res) => {
 });
 
 app.get('/api/get_utilities', cors(), (req, res) => {
-  const sql = 'SELECT utility_name FROM Utility';
+  const sql = 'SELECT utility_name FROM CRBN.Utility';
 
   mysqlConnection.query(sql, (error, results) => {
     if (error) {
@@ -194,7 +194,7 @@ app.post('/api/new_utility_add', cors(), (req, res) => {
     return res.status(400).json({ error: 'Utility name and units are required' });
   }
 
-  const sql = 'INSERT INTO Utility (utility_name, utility_units) VALUES (?, ?)';
+  const sql = 'INSERT INTO CRBN.Utility (utility_name, utility_units) VALUES (?, ?)';
 
   mysqlConnection.query(sql, [utility_name, utility_units], (error, results) => {
     if (error) {
@@ -217,7 +217,7 @@ app.post("/api/update_utility_name/:utilityId", cors(), (req, res) => {
   console.log("Utility Name:", utility_name);
   console.log("Utility Units:", utility_units);
 
-  const query = "UPDATE CRBN.utility SET utility_name = ?, utility_units = ? WHERE utility_id = ?";
+  const query = "UPDATE CRBN.Utility SET utility_name = ?, utility_units = ? WHERE utility_id = ?";
   const values = [utility_name, utility_units, utilityId];
 
   mysqlConnection.query(query, values, (error, results) => {
@@ -234,7 +234,7 @@ app.delete("/api/delete_utility_name/:utilityId", cors(), (req, res) => {
   const utilityId = req.params.utilityId;
 
   // Perform the deletion in the database
-  const query = "DELETE FROM Utility WHERE utility_id = ?";
+  const query = "DELETE FROM CRBN.Utility WHERE utility_id = ?";
   mysqlConnection.query(query, [utilityId], (error, results) => {
     if (error) {
       console.error("Error deleting utility data: " + error);
