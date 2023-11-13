@@ -5,7 +5,7 @@ import "./Utilities_add.css";
 // import addImg from "../assets/add.png";
 // import delImg from "../assets/delete.png";
 // import editImg from "../assets/edit.png";
-// import axiosInstance from './axiosconfig';
+import axiosInstance from '../axiosconfig';
 import axios from "axios";
 import { apiUrlBase } from "../config";
 
@@ -21,10 +21,22 @@ interface Utility {
   // Ref_Value: string;
   Sources: string;
   Date_of_Source: string;
+  utility_name: string;
+  utility_id: number;
+  utility_units: string;
 }
+
+interface Country {
+  country_id: number;
+  country_name: string;
+}
+
 
 const Utilities_add: React.FC = () => {
   const [data, setData] = useState<Utility[]>([]);
+  const [utilities, setUtilities] = useState<Utility[]>([]);
+  const [countries, setCountries] = useState<Country[]>([]);
+
   const [newUtility, setNewUtility] = useState<Utility>({
     Zipcode: "",
     Country: "",
@@ -37,6 +49,9 @@ const Utilities_add: React.FC = () => {
     // Ref_Value: "",
     Sources: "",
     Date_of_Source: "",
+    utility_name:"",
+    utility_id:0,
+    utility_units:"",
   });
   const [error, setError] = useState<string>(""); // To track and display error message
   const [SuccessMessage, setSuccessMessage] = useState<string>("");
@@ -45,6 +60,18 @@ const Utilities_add: React.FC = () => {
   const handleUtility = () => {
     navigate("/values/utilities");
   };
+
+  const fetchCountries = async () => {
+    try {
+      const response = await axiosInstance.get<Country[]>(
+        "/api/country_list"
+      );
+      setCountries(response.data);
+    } catch (error) {
+      console.error("Error fetching countries:", error);
+    }
+  };
+  
 
   const fetchData = async () => {
     try {
@@ -57,6 +84,20 @@ const Utilities_add: React.FC = () => {
       console.error("Error fetching data:", error);
     }
   };
+
+ 
+
+  const fetchUtilities = async () => {
+    try {
+      const response = await axios.get<Utility[]>(`${apiUrlBase}/api/utility_list`);
+      setUtilities(response.data);
+    } catch (error) {
+      console.error("Error fetching utilities:", error);
+    }
+  };
+
+  
+
 
   const handleSave = async () => {
     // if any of the feild is empty
@@ -88,7 +129,7 @@ const Utilities_add: React.FC = () => {
       try {
         // Send the newUtility data to your server for saving
         const response = await axios.post(
-          `${apiUrlBase}/api/new_utility_add`,
+          `${apiUrlBase}/api/new_utilities_add`,
           newUtility
         );
         console.log("Data saved:", response.data);
@@ -106,6 +147,9 @@ const Utilities_add: React.FC = () => {
           // Ref_Value: "",
           Sources: "",
           Date_of_Source: "",
+          utility_name:"",
+          utility_id:0,
+          utility_units:""
         });
 
         // Reset the error message
@@ -130,10 +174,12 @@ const Utilities_add: React.FC = () => {
 
   useEffect(() => {
     fetchData();
+    fetchUtilities();
+    fetchCountries(); // Add this line
   }, []);
+  
 
   return (
-    <div className="content-beside-navbar">
     <div
       className="Utilities"
       style={{ paddingLeft: "100px", paddingTop: "70px" }}
@@ -173,17 +219,19 @@ const Utilities_add: React.FC = () => {
                 />
               </td>
               <td>
-                <input
-                  type="text"
-                  placeholder="Country"
+                <select
                   value={newUtility.Country}
-                  onChange={(e) => {
-                    if (/^[a-zA-Z\s]*$/.test(e.target.value)) {
-                      setNewUtility({ ...newUtility, Country: e.target.value });
-                    }
-                  }}
-                  
-                />
+                  onChange={(e) =>
+                    setNewUtility({ ...newUtility, Country: e.target.value })
+                  }
+                >
+                  <option value="">Select Country</option>
+                  {countries.map((country) => (
+                    <option key={country.country_id} value={country.country_name}>
+                      {country.country_name}
+                    </option>
+                  ))}
+                </select>
               </td>
               <td>
                 <input
@@ -198,14 +246,19 @@ const Utilities_add: React.FC = () => {
                 />
               </td>
               <td>
-                <input
-                  type="text"
-                  placeholder="Utility"
-                  value={newUtility.Utility}
-                  onChange={(e) =>
-                    setNewUtility({ ...newUtility, Utility: e.target.value })
-                  }
-                />
+              <select
+                value={newUtility.Utility}
+                onChange={(e) =>
+                  setNewUtility({ ...newUtility, Utility: e.target.value })
+                }
+              >
+                <option value="">Select Utility</option>
+                {utilities.map((utility) => (
+                  <option key={utility.utility_id} value={utility.utility_name}>
+                    {utility.utility_name}
+                  </option>
+                ))}
+              </select>
               </td>
               <td>
                 <input
@@ -221,17 +274,19 @@ const Utilities_add: React.FC = () => {
                 />
               </td>
               <td>
-                <input
-                  type="text"
-                  placeholder="Utility Units"
-                  value={newUtility.Utility_Units}
-                  onChange={(e) =>
-                    setNewUtility({
-                      ...newUtility,
-                      Utility_Units: e.target.value,
-                    })
-                  }
-                />
+              <select
+                value={newUtility.Utility_Units}
+                onChange={(e) =>
+                  setNewUtility({ ...newUtility, Utility_Units: e.target.value })
+                }
+              >
+                <option value="">Select Utility Unit</option>
+                {utilities.map((utility) => (
+                  <option key={utility.utility_id} value={utility.utility_units}>
+                    {utility.utility_units}
+                  </option>
+                ))}
+              </select>
               </td>
               {/* <td>
                             <input
@@ -298,7 +353,6 @@ const Utilities_add: React.FC = () => {
       </button>
 
       {/* <div className="bottom-border"></div> */}
-    </div>
     </div>
   );
 };
