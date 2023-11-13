@@ -129,9 +129,26 @@ const Utilities: React.FC = () => {
 
       const totalPages = Math.ceil(data.length / itemsPerPage);
 
+      
+      const handleAddEditUtility = () => {
+        navigate("/values/Utilities/Utility_add_edit");
+      }
+
       return (
-        <div className="content-beside-navbar">
         <div style={{ paddingLeft: "75px",paddingTop: "70px" }}>
+          <div
+          className="add-edit-utility-container"
+          style={{ display: "flex", alignItems: "center", marginTop:"2.5vh" }}
+        >
+          {/* Button for adding or editing utility */}
+          <button className="add-edit-utility-button" onClick={handleAddEditUtility}>
+            Click
+          </button>
+          {/* Text beside the button */}
+          <div className="add-edit-utility-text">
+            to add or edit new utility
+          </div>
+        </div>
           <div className="action">
             <div className="action-item">Action item:</div>
             <div className="modify">
@@ -218,15 +235,33 @@ const Utilities: React.FC = () => {
       </table>
       <div style={{ display: "flex", justifyContent: "center", marginTop: "20px" }}>
         <button
+        style={{
+            backgroundColor: "black",
+            width: "6vw",
+            padding: "10px",
+            color: "white",
+            border: "none",
+            cursor: "pointer",
+            borderRadius: "7.5px",
+          }}
           onClick={() => setCurrentPage(currentPage > 1 ? currentPage - 1 : currentPage)}
           disabled={currentPage === 1}
         >
           Previous
         </button>
-        <span style={{ margin: "0 10px" }}>
+        <span style={{ margin: "5px 10px" }}>
           Page {currentPage} / {Math.ceil(data.length / itemsPerPage)}
         </span>
         <button
+        style={{
+            backgroundColor: "black",
+            color: "white",
+            width: "6vw",
+            padding: "10px",
+            border: "none",
+            cursor: "pointer",
+            borderRadius: "7.5px",
+          }}
           onClick={() =>
             setCurrentPage(
               currentPage < Math.ceil(data.length / itemsPerPage)
@@ -245,7 +280,6 @@ const Utilities: React.FC = () => {
           <button className="back" onClick={handleadmin}>
             Back
           </button>
-        </div>
         </div>
       );
     

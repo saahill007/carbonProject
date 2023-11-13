@@ -12,7 +12,7 @@ app.use(bodyParser.json());
 
 const port = 3000;
 
-const hostmain = "18.191.232.91";
+const hostmain = "3.139.84.108";
 
 const dbConfig = {
   host: hostmain,
@@ -43,6 +43,7 @@ mysqlConnection.connect((err) => {
     console.error("Connection to MySQL failed:", err);
   }
 });
+
 
 app.get("/api/Customer", cors(), (req, res) => {
   const query =
@@ -143,6 +144,111 @@ app.get("/api/filterCustomer", cors(), (req, res) => {
   });
 });
 
+app.get('/api/country_list', cors(), (req, res) => {
+  console.log('Received request for /api/country_list');
+  const sql = 'SELECT country_name FROM Country';
+
+  mysqlConnection.query(sql, (error, results) => {
+    if (error) {
+      console.error('Error executing SQL query:', error.message);
+      res.status(500).json({ error: 'Error retrieving countries from the database' });
+      return;
+    }
+    res.json(results);
+  });
+});
+
+
+
+app.get('/api/utility_list', cors(), (req, res) => {
+  const sql = 'SELECT * FROM Utility';
+
+  mysqlConnection.query(sql, (error, results) => {
+    if (error) {
+      console.error('Error executing SQL query:', error.message);
+      res.status(500).json({ error: 'Error retrieving utilities from the database' });
+      return;
+    }
+    res.json(results);
+  });
+});
+
+app.get('/api/get_utilities', cors(), (req, res) => {
+  const sql = 'SELECT utility_name FROM Utility';
+
+  mysqlConnection.query(sql, (error, results) => {
+    if (error) {
+      console.error('Error executing SQL query:', error.message);
+      res.status(500).json({ error: 'Error retrieving utilities from the database' });
+      return;
+    }
+    res.json(results);
+  });
+});
+
+app.post('/api/new_utility_add', cors(), (req, res) => {
+  const { utility_name, utility_units } = req.body;
+
+  if (!utility_name || !utility_units) {
+    return res.status(400).json({ error: 'Utility name and units are required' });
+  }
+
+  const sql = 'INSERT INTO Utility (utility_name, utility_units) VALUES (?, ?)';
+
+  mysqlConnection.query(sql, [utility_name, utility_units], (error, results) => {
+    if (error) {
+      console.error('Error executing SQL query:', error.message);
+      return res.status(500).json({ error: 'Error adding utility to the database' });
+    }
+
+    // If the utility was added successfully, return the new utility details
+    const newUtilityId = results.insertId;
+    const newUtility = { utility_id: newUtilityId, utility_name, utility_units };
+    res.status(200).json(newUtility);
+  });
+});
+
+app.post("/api/update_utility_name/:utilityId", cors(), (req, res) => {
+  const utilityId = req.params.utilityId;
+  console.log("Utility ID:", utilityId);
+
+  const { utility_name, utility_units } = req.body;
+  console.log("Utility Name:", utility_name);
+  console.log("Utility Units:", utility_units);
+
+  const query = "UPDATE CRBN.utility SET utility_name = ?, utility_units = ? WHERE utility_id = ?";
+  const values = [utility_name, utility_units, utilityId];
+
+  mysqlConnection.query(query, values, (error, results) => {
+    if (error) {
+      console.error("Error updating utility data: " + error);
+      res.status(500).json({ message: "Internal Server Error" });
+    } else {
+      res.status(200).json({ message: "Utility data updated successfully" });
+    }
+  });
+});
+
+app.delete("/api/delete_utility_name/:utilityId", cors(), (req, res) => {
+  const utilityId = req.params.utilityId;
+
+  // Perform the deletion in the database
+  const query = "DELETE FROM Utility WHERE utility_id = ?";
+  mysqlConnection.query(query, [utilityId], (error, results) => {
+    if (error) {
+      console.error("Error deleting utility data: " + error);
+      res.status(500).json({ message: "Internal Server Error" });
+    } else {
+      if (results.affectedRows > 0) {
+        res.status(200).json({ message: "Utility data deleted successfully" });
+      } else {
+        res.status(404).json({ message: "Utility data not found" });
+      }
+    }
+  });
+});
+
+
 app.get("/api/utility_add", cors(), (req, res) => {
   const sql = "SELECT * FROM CRBN.utilities";
 
@@ -161,7 +267,7 @@ app.get("/api/utility_add", cors(), (req, res) => {
 });
 
 // Define a route to save new utility data
-app.post("/api/new_utility_add", (req, res) => {
+app.post("/api/new_utilities_add", (req, res) => {
   const {
     Zipcode,
     Country,
@@ -514,6 +620,24 @@ app.get("/api/Utility", cors(), (req, res) => {
 });
 
 // Define a route to retrieve Category table from the database
+app.get("/api/Category", cors(), (req, res) => {
+  const sql = "SELECT * FROM CRBN.Category";
+
+  // Execute the SQL query using the MySQL connection
+  mysqlConnection.query(sql, (error, results) => {
+    if (error) {
+      console.error("Error executing SQL query:", error.message);
+      res
+        .status(500)
+        .json({ error: "Error retrieving questions from the database" });
+      return;
+    }
+
+    // Send the retrieved questions as a JSON response
+    res.json(results);
+  });
+});
+
 app.get("/api/Category", cors(), (req, res) => {
   const sql = "SELECT * FROM CRBN.Category";
 

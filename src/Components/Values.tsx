@@ -16,6 +16,7 @@ import CategoryEdit from "./category_edit";
 import CategoryImg from "../assets/Category.png";
 import Utilities_add from "./Utilities_add";
 import UtilitiesEdit from "./Utilities_edit";
+import Utility_add_edit from "./Utility_add_edit";
 // import { Link, Routes, Route, Outlet, useNavigate } from "react-router-dom";
 
 interface ValuesProps {
@@ -159,6 +160,7 @@ const ValuesPage: React.FC<ValuesProps> = ({ children }) => {
                     height: "1.5em",
                     width: "1.5em",
                     background: "black",
+                    display: "flex"
                   }}
                 />
               </div>
@@ -205,6 +207,7 @@ const Values: React.FC = () => {
       <Route path="/admin/admin_edit/:adminIds" element={<AdminEdit />} />
       <Route path="category" element={<Category />} />
       <Route path="/category/category_add" element={<Category_add />} />
+      <Route path="/utilities/utility_add_edit" element={<Utility_add_edit />} />
       <Route
         path="/category/category_edit/:categoryIds"
         element={<CategoryEdit />}

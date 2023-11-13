@@ -103,7 +103,7 @@ input[type="checkbox"] {
 .table-space th,
 .table-space td {
     padding: 8px;
-    /* width: 30px; */
+    width: vw !important;
     text-align: center;
     vertical-align: middle;
     border: 1px solid #ddd;
