@@ -2278,6 +2278,24 @@ app.get("/api/get-notifications", cors(), (req, res) => {
   });
 });
 
+app.post("/api/utilityzipcode", (req, res) => {
+  const { zipcode } = req.body; // Assuming the zipcode is sent in the request body
+  // Perform a query to retrieve the data based on the utility_id
+  const query = "SELECT * FROM CRBN.utilities WHERE Zipcode = ?";
+  mysqlConnection.query(query, [zipcode], (error, rows) => {
+    if (error) {
+      console.error(`Error fetching utility data for zipcode ${zipcode}:`, error);
+      res.status(500).json({ error: "Internal server error" });
+    } else {
+      if (rows.length === 0) {
+        res.status(404).json({ error: "Zipcode not found" });
+      } else {
+        res.json(rows[0]);
+      }
+    }
+  });
+});
+
 // Start the server
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
