@@ -13,7 +13,7 @@ app.use(bodyParser.json());
 const port = 3000;
 const codeport = 5173;
 
-const hostmain = "3.139.84.108";
+const hostmain = "3.133.102.189";
 
 const dbConfig = {
   host: hostmain,
@@ -1286,7 +1286,7 @@ app.post("/api/sendCustomerEnquiryEmail", (req, res) => {
 // Define a route to retrieve questions with a specific flag from the database
 app.get("/api/questionsuser", cors(), (req, res) => {
   const sql =
-  "SELECT * FROM CRBN.questionsTable WHERE enabled = 1 ORDER BY CASE WHEN label = 'Personal' THEN 1 ELSE 2 END, label, id";
+    "SELECT * FROM CRBN.questionsTable WHERE enabled = 1 ORDER BY CASE WHEN label = 'Personal' THEN 1 ELSE 2 END, label, id";
 
   // Execute the SQL query using the MySQL connection
   mysqlConnection.query(sql, (error, results) => {
