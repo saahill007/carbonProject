@@ -33,6 +33,7 @@ const UtilitiesEdit: React.FC = () => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [SuccessMessage, setSuccessMessage] = useState<string>("");
   const [countries, setCountries] = useState<Country[]>([]);
+  const [selectedUtility, setSelectedUtility] = useState<string>("");
   const navigate = useNavigate();
   const [editUtility, setEditUtility] = useState<Utility>({
     Val_Id: 0,
@@ -246,9 +247,17 @@ const UtilitiesEdit: React.FC = () => {
               {editUtility?.Val_Id === utility.Val_Id ? (
                 <select
                   value={editUtility.Utility}
-                  onChange={(e) =>
-                    setEditUtility({ ...editUtility, Utility: e.target.value })
-                  }
+                  onChange={(e) => {
+                    const selectedUtility = e.target.value;
+                    setEditUtility({
+                      ...editUtility,
+                      Utility: selectedUtility,
+                      Utility_Units: utilities.find(
+                        (utility) => utility.utility_name === selectedUtility
+                      )?.utility_units || "", // Set Utility_Units based on the selected Utility
+                    });
+                    setSelectedUtility(selectedUtility);
+                  }}
                   style={{ width: "5vw" }}
                 >
                   <option value="">Select Utility</option>
@@ -292,11 +301,16 @@ const UtilitiesEdit: React.FC = () => {
                   style={{ width: "5vw" }}
                 >
                   <option value="">Select Utility Unit</option>
-                  {utilities.map((utility) => (
-                    <option key={utility.utility_id} value={utility.utility_units}>
-                      {utility.utility_units}
-                    </option>
-                  ))}
+                  {utilities
+                    .filter((utility) => utility.utility_name === editUtility.Utility)
+                    .map((utility) => (
+                      <option
+                        key={utility.utility_id}
+                        value={utility.utility_units}
+                      >
+                        {utility.utility_units}
+                      </option>
+                    ))}
                 </select>
               ) : (
                 utility.Utility_Units
