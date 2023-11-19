@@ -11,9 +11,12 @@ app.use(cors());
 app.use(bodyParser.json());
 
 const port = 3000;
+const codeport = 5173;
+
+const hostmain = "3.133.102.189";
 
 const dbConfig = {
-  host: "3.133.102.189",
+  host: hostmain,
   user: "carbonuser",
   password: "Carbon@123", // Fix the case of 'PASSWORD' to 'password'
   database: "CRBN", // Fix the case of 'DB' to 'database'
@@ -152,6 +155,128 @@ app.get("/api/filterCustomer", cors(), (req, res) => {
   });
 });
 
+app.get("/api/country_list", cors(), (req, res) => {
+  console.log("Received request for /api/country_list");
+  const sql = "SELECT country_name FROM CRBN.Country";
+
+  mysqlConnection.query(sql, (error, results) => {
+    if (error) {
+      console.error("Error executing SQL query:", error.message);
+      res
+        .status(500)
+        .json({ error: "Error retrieving countries from the database" });
+      return;
+    }
+    res.json(results);
+  });
+});
+
+app.get("/api/utility_list", cors(), (req, res) => {
+  const sql = "SELECT * FROM CRBN.Utility";
+
+  mysqlConnection.query(sql, (error, results) => {
+    if (error) {
+      console.error("Error executing SQL query:", error.message);
+      res
+        .status(500)
+        .json({ error: "Error retrieving utilities from the database" });
+      return;
+    }
+    res.json(results);
+  });
+});
+
+app.get("/api/get_utilities", cors(), (req, res) => {
+  const sql = "SELECT utility_name FROM CRBN.Utility";
+
+  mysqlConnection.query(sql, (error, results) => {
+    if (error) {
+      console.error("Error executing SQL query:", error.message);
+      res
+        .status(500)
+        .json({ error: "Error retrieving utilities from the database" });
+      return;
+    }
+    res.json(results);
+  });
+});
+
+app.post("/api/new_utility_add", cors(), (req, res) => {
+  const { utility_name, utility_units } = req.body;
+
+  if (!utility_name || !utility_units) {
+    return res
+      .status(400)
+      .json({ error: "Utility name and units are required" });
+  }
+
+  const sql =
+    "INSERT INTO CRBN.Utility (utility_name, utility_units) VALUES (?, ?)";
+
+  mysqlConnection.query(
+    sql,
+    [utility_name, utility_units],
+    (error, results) => {
+      if (error) {
+        console.error("Error executing SQL query:", error.message);
+        return res
+          .status(500)
+          .json({ error: "Error adding utility to the database" });
+      }
+
+      // If the utility was added successfully, return the new utility details
+      const newUtilityId = results.insertId;
+      const newUtility = {
+        utility_id: newUtilityId,
+        utility_name,
+        utility_units,
+      };
+      res.status(200).json(newUtility);
+    }
+  );
+});
+
+app.post("/api/update_utility_name/:utilityId", cors(), (req, res) => {
+  const utilityId = req.params.utilityId;
+  console.log("Utility ID:", utilityId);
+
+  const { utility_name, utility_units } = req.body;
+  console.log("Utility Name:", utility_name);
+  console.log("Utility Units:", utility_units);
+
+  const query =
+    "UPDATE CRBN.Utility SET utility_name = ?, utility_units = ? WHERE utility_id = ?";
+  const values = [utility_name, utility_units, utilityId];
+
+  mysqlConnection.query(query, values, (error, results) => {
+    if (error) {
+      console.error("Error updating utility data: " + error);
+      res.status(500).json({ message: "Internal Server Error" });
+    } else {
+      res.status(200).json({ message: "Utility data updated successfully" });
+    }
+  });
+});
+
+app.delete("/api/delete_utility_name/:utilityId", cors(), (req, res) => {
+  const utilityId = req.params.utilityId;
+
+  // Perform the deletion in the database
+  const query = "DELETE FROM CRBN.Utility WHERE utility_id = ?";
+  mysqlConnection.query(query, [utilityId], (error, results) => {
+    if (error) {
+      console.error("Error deleting utility data: " + error);
+      res.status(500).json({ message: "Internal Server Error" });
+    } else {
+      if (results.affectedRows > 0) {
+        res.status(200).json({ message: "Utility data deleted successfully" });
+      } else {
+        res.status(404).json({ message: "Utility data not found" });
+      }
+    }
+  });
+});
+
 app.get("/api/utility_add", cors(), (req, res) => {
   const sql = "SELECT * FROM CRBN.utilities";
 
@@ -170,7 +295,7 @@ app.get("/api/utility_add", cors(), (req, res) => {
 });
 
 // Define a route to save new utility data
-app.post("/api/new_utility_add", (req, res) => {
+app.post("/api/new_utilities_add", (req, res) => {
   const {
     Zipcode,
     Country,
@@ -523,6 +648,24 @@ app.get("/api/Utility", cors(), (req, res) => {
 });
 
 // Define a route to retrieve Category table from the database
+app.get("/api/Category", cors(), (req, res) => {
+  const sql = "SELECT * FROM CRBN.Category";
+
+  // Execute the SQL query using the MySQL connection
+  mysqlConnection.query(sql, (error, results) => {
+    if (error) {
+      console.error("Error executing SQL query:", error.message);
+      res
+        .status(500)
+        .json({ error: "Error retrieving questions from the database" });
+      return;
+    }
+
+    // Send the retrieved questions as a JSON response
+    res.json(results);
+  });
+});
+
 app.get("/api/Category", cors(), (req, res) => {
   const sql = "SELECT * FROM CRBN.Category";
 
@@ -1170,7 +1313,7 @@ app.post("/api/sendCustomerEnquiryEmail", (req, res) => {
 // Define a route to retrieve questions with a specific flag from the database
 app.get("/api/questionsuser", cors(), (req, res) => {
   const sql =
-    "SELECT * FROM CRBN.questionsTable WHERE enabled = 1 ORDER BY label, id";
+    "SELECT * FROM CRBN.questionsTable WHERE enabled = 1 ORDER BY CASE WHEN label = 'Personal' THEN 1 ELSE 2 END, label, id";
 
   // Execute the SQL query using the MySQL connection
   mysqlConnection.query(sql, (error, results) => {
@@ -2103,7 +2246,7 @@ app.post("/api/forgotpassword", cors(), async (req, res) => {
     await mysqlConnection.promise().query(updateTokenSql, [resetToken, email]);
 
     // Send a password reset email with a link to a reset page
-    const resetLink = `http://localhost:5173/resetpassword?token=${resetToken}`;
+    const resetLink = `http://${hostmain}:${codeport}/resetpassword?token=${resetToken}`;
     await sendPasswordResetEmail(email, resetLink);
 
     return res
@@ -2255,6 +2398,44 @@ app.post("/api/resetpassword", cors(), (req, res) => {
       }
     }
   );
+});
+
+app.get("/api/get-notifications", cors(), (req, res) => {
+  const sql = "SELECT * FROM CRBN.notification";
+
+  // Execute the SQL query using the MySQL connection
+  mysqlConnection.query(sql, (error, results) => {
+    if (error) {
+      console.error("Error executing SQL query:", error.message);
+      res
+        .status(500)
+        .json({ error: "Error retrieving utility data from the database" });
+      return;
+    }
+    // Send the retrieved utility data as a JSON response
+    res.json(results);
+  });
+});
+
+app.post("/api/utilityzipcode", (req, res) => {
+  const { zipcode } = req.body; // Assuming the zipcode is sent in the request body
+  // Perform a query to retrieve the data based on the utility_id
+  const query = "SELECT * FROM CRBN.utilities WHERE Zipcode = ?";
+  mysqlConnection.query(query, [zipcode], (error, rows) => {
+    if (error) {
+      console.error(
+        `Error fetching utility data for zipcode ${zipcode}:`,
+        error
+      );
+      res.status(500).json({ error: "Internal server error" });
+    } else {
+      if (rows.length === 0) {
+        res.status(404).json({ error: "Zipcode not found" });
+      } else {
+        res.json(rows[0]);
+      }
+    }
+  });
 });
 
 // Start the server

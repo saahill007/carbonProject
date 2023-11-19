@@ -20,12 +20,21 @@ function ForgotPassword() {
 
             if (response.status === 200) {
                 setResetMessage('Password reset email sent. Check your inbox.');
+                setTimeout(() => {
+                    setResetMessage('');
+                }, 30000);
             } else {
                 setResetError('An error occurred while resetting your password. Please try again later.');
+                setTimeout(() => {
+                    setResetError('');
+                }, 3000);
             }
         } catch (error) {
             console.error('Error resetting password:', error);
             setResetError('An error occurred while resetting your password. Please try again later.');
+            setTimeout(() => {
+                setResetError('');
+            }, 3000);
         }
     };
 
@@ -47,7 +56,7 @@ function ForgotPassword() {
                         />
                     </div>
                     <div className="buttonclass">
-                        <button type="submit">Reset Password</button>
+                        <button type="submit" className='submitresetpassword'>Reset Password</button>
                     </div>
                 </form>
                 <p className="reset-message">{resetMessage}</p>

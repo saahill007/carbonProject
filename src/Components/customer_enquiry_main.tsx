@@ -13,6 +13,11 @@ interface enquiry {
     enquiry_response: string;
 }
 
+const formatDate = (dateString: string): string => {
+    const datePortion = dateString.split('T')[0];
+    return datePortion;
+};
+
 const Customer_enquiry_main: React.FC = () => {
     const [waitingForResponseData, setWaitingForResponseData] = useState<enquiry[]>([]);
     const [answeredEnquiriesData, setAnsweredEnquiriesData] = useState<enquiry[]>([]);
@@ -58,7 +63,7 @@ const Customer_enquiry_main: React.FC = () => {
                     <thead>
                         <tr className="enquiry_sticky_header">
                             <th>Name</th>
-                            <th>Inquiry Date</th>
+                            <th>Inquiry Date[YYYY-MM-DD]</th>
                             <th>Email ID</th>
                             <th>Inquiry_Question</th>
                             <th>Action</th>
@@ -68,7 +73,7 @@ const Customer_enquiry_main: React.FC = () => {
                         {waitingForResponseData.map((item) => (
                             <tr key={item.enquiry_id}>
                                 <td>{item.firstname} {item.lastname}</td>
-                                <td>{item.enquiry_date}</td>
+                                <td>{formatDate(item.enquiry_date)}</td>
                                 <td>{item.email}</td>
                                 <td>{item.enquiry_question}</td>
                                 <td>
@@ -92,7 +97,7 @@ const Customer_enquiry_main: React.FC = () => {
                     <thead>
                         <tr className="enquiry_sticky_header">
                             <th>Name</th>
-                            <th>Enquiry Date</th>
+                            <th>Inquiry Date[YYYY-MM-DD]</th>
                             <th>Email ID</th>
                             <th>Inquiry Question</th>
                             <th>Inquiry Response</th>
@@ -102,7 +107,7 @@ const Customer_enquiry_main: React.FC = () => {
                         {answeredEnquiriesData.map((item) => (
                             <tr key={item.enquiry_id}>
                                 <td>{item.firstname} {item.lastname}</td>
-                                <td>{item.enquiry_date}</td>
+                                <td>{formatDate(item.enquiry_date)}</td>
                                 <td>{item.email}</td>
                                 <td>{item.enquiry_question}</td>
                                 <td>{item.enquiry_response}</td>

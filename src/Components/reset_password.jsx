@@ -135,7 +135,7 @@ function ResetPassword() {
                         />
                     </div>
                     <div className="buttonclass">
-                        <button type="submit">Reset Password</button>
+                        <button type="submit" className='passwordresetbutton'>Reset Password</button>
                     </div>
                 </form>
 

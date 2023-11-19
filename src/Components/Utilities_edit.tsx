@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import "./category_edit.css";
+import "./Utility_edit.css";
 // import axiosInstance from './axiosconfig';
 import axios from "axios";
 import { apiUrlBase } from "../config";
@@ -15,14 +15,24 @@ interface Utility {
   Utility_Units: string;
   Sources: string;
   Date_of_Source: string;
+  utility_name: string;
+  utility_id: number;
+  utility_units: string;
+}
+
+interface Country {
+  country_id: number;
+  country_name: string;
 }
 
 const UtilitiesEdit: React.FC = () => {
   const { utilityIds } = useParams<{ utilityIds?: string }>();
+  const [utilities, setUtilities] = useState<Utility[]>([]);
   const utilityIdArray = utilityIds ? utilityIds.split(",") : [];
   const [utilityData, setUtilityData] = useState<Utility[]>([]);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [SuccessMessage, setSuccessMessage] = useState<string>("");
+  const [countries, setCountries] = useState<Country[]>([]);
   const navigate = useNavigate();
   const [editUtility, setEditUtility] = useState<Utility>({
     Val_Id: 0,
@@ -34,6 +44,9 @@ const UtilitiesEdit: React.FC = () => {
     Utility_Units: "",
     Sources: "",
     Date_of_Source: "",
+    utility_name:"",
+    utility_id:0,
+    utility_units:""
   });
 
   useEffect(() => {
@@ -64,6 +77,31 @@ const UtilitiesEdit: React.FC = () => {
   const handleEdit = (utility: Utility) => {
     setEditUtility(utility);
   };
+
+  const fetchUtilities = async () => {
+    try {
+      const response = await axios.get<Utility[]>(`${apiUrlBase}/api/utility_list`);
+      setUtilities(response.data);
+    } catch (error) {
+      console.error("Error fetching utilities:", error);
+    }
+  };
+
+  const fetchCountries = async () => {
+    try {
+      const response = await axios.get<Country[]>(
+        `${apiUrlBase}/api/country_list`
+      );
+      setCountries(response.data);
+    } catch (error) {
+      console.error("Error fetching countries:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchUtilities();
+    fetchCountries();
+  }, []);
 
   const handleSave = async () => {
     if (
@@ -107,6 +145,9 @@ const UtilitiesEdit: React.FC = () => {
       }
     } else {
       setErrorMessage("All fields are required. Please fill them in.");
+      setTimeout(() => {
+        setErrorMessage("")
+      }, 1000); // Adjust the delay time as needed
     }
   };
 
@@ -115,7 +156,6 @@ const UtilitiesEdit: React.FC = () => {
   };
 
   return (
-    <div className="content-beside-navbar">
     <div
       className="utilities-edit-container"
       style={{ paddingLeft: "100px", paddingTop: "70px" }}
@@ -164,25 +204,24 @@ const UtilitiesEdit: React.FC = () => {
                   )}
                 </td>
                 <td>
-                  {editUtility?.Val_Id === utility.Val_Id ? (
-                    <input
-                      type="text"
-                      placeholder={utility.Country}
-                      value={editUtility.Country}
-                      onChange={(e) => {
-                        const re = /^[a-zA-Z\s]*$/;
-                        if (e.target.value === "" || re.test(e.target.value)) {
-                          setEditUtility({
-                            ...editUtility,
-                            Country: e.target.value,
-                          });
-                        }
-                      }}
-                    />
-                  ) : (
-                    utility.Country
-                  )}
-                </td>
+                {editUtility?.Val_Id === utility.Val_Id ? (
+                <select
+                  value={editUtility.Country}
+                  onChange={(e) =>
+                    setEditUtility({ ...editUtility, Country: e.target.value })
+                  }
+                >
+                  <option value="">Select Country</option>
+                  {countries.map((country) => (
+                    <option key={country.country_id} value={country.country_name}>
+                      {country.country_name}
+                    </option>
+                  ))}
+                </select>
+                ) : (
+                  utility.Country
+                )}
+              </td>
                 <td>
                   {editUtility?.Val_Id === utility.Val_Id ? (
                     <input
@@ -204,22 +243,25 @@ const UtilitiesEdit: React.FC = () => {
                   )}
                 </td>
                 <td>
-                  {editUtility?.Val_Id === utility.Val_Id ? (
-                    <input
-                      type="text"
-                      placeholder={utility.Utility}
-                      value={editUtility.Utility}
-                      onChange={(e) =>
-                        setEditUtility({
-                          ...editUtility,
-                          Utility: e.target.value,
-                        })
-                      }
-                    />
-                  ) : (
-                    utility.Utility
-                  )}
-                </td>
+              {editUtility?.Val_Id === utility.Val_Id ? (
+                <select
+                  value={editUtility.Utility}
+                  onChange={(e) =>
+                    setEditUtility({ ...editUtility, Utility: e.target.value })
+                  }
+                  style={{ width: "5vw" }}
+                >
+                  <option value="">Select Utility</option>
+                  {utilities.map((utility) => (
+                    <option key={utility.utility_id} value={utility.utility_name}>
+                      {utility.utility_name}
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                utility.Utility
+              )}
+            </td>
                 <td>
                   {editUtility?.Val_Id === utility.Val_Id ? (
                     <input
@@ -238,22 +280,28 @@ const UtilitiesEdit: React.FC = () => {
                   )}
                 </td>
                 <td>
-                  {editUtility?.Val_Id === utility.Val_Id ? (
-                    <input
-                      type="text"
-                      placeholder={utility.Utility_Units}
-                      value={editUtility.Utility_Units}
-                      onChange={(e) =>
-                        setEditUtility({
-                          ...editUtility,
-                          Utility_Units: e.target.value,
-                        })
-                      }
-                    />
-                  ) : (
-                    utility.Utility_Units
-                  )}
-                </td>
+              {editUtility?.Val_Id === utility.Val_Id ? (
+                <select
+                  value={editUtility.Utility_Units}
+                  onChange={(e) =>
+                    setEditUtility({
+                      ...editUtility,
+                      Utility_Units: e.target.value,
+                    })
+                  }
+                  style={{ width: "5vw" }}
+                >
+                  <option value="">Select Utility Unit</option>
+                  {utilities.map((utility) => (
+                    <option key={utility.utility_id} value={utility.utility_units}>
+                      {utility.utility_units}
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                utility.Utility_Units
+              )}
+            </td>
 
                 <td>
                   {editUtility?.Val_Id === utility.Val_Id ? (
@@ -317,7 +365,6 @@ const UtilitiesEdit: React.FC = () => {
       <button className="back" onClick={handleUtility}>
         Back
       </button>
-    </div>
     </div>
   );
 };

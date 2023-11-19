@@ -11,8 +11,32 @@
     text-decoration: none;
 }
 
+.add-edit-utility-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+  
+.add-edit-utility-button {
+    margin-top: 2.5vh;
+    background-color: black;
+    color: white;
+    width: 7.5vw;
+    border: none;
+    border-radius: 15px;
+    padding: 10px;
+    margin-left: 10px;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+.add-edit-utility-text {
+    margin-top: 2.5vh;
+    font-size: 15px;
+}
+
 .action{
-    margin-top: 30px;
+    margin-top: 10px!important;
 }
 
 .action-item{

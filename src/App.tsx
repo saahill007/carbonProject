@@ -33,17 +33,24 @@ const Home: React.FC = () => <div>Home Page</div>;
 
 const App: React.FC = () => {
   const [isAdmin, setAdmin] = useState(true);
+
   useEffect(() => {
     const currentPath = window.location.pathname;
     console.log(currentPath);
     console.log(isAdmin);
-    if (currentPath == "/" || currentPath == "/login") {
+    if (currentPath === "/" || currentPath === "/logout") {
       console.log("admin");
       setAdmin(true);
     } else {
       setAdmin(false);
     }
-  }, [window.location.pathname]);
+  }, [window.location.pathname, isAdmin]);
+
+  const handleLogout = () => {
+    setAdmin(true); // or whatever logic you need
+  };
+
+
   return (
     <Router>
       <div className="app-container">
@@ -67,15 +74,11 @@ const App: React.FC = () => {
           </div>
           {!isAdmin && (
             <div className="navbar-right">
-              {/* <NavLink to="/" end>
-              Login
-            </NavLink> */}
               <NavLink to="/values">Values</NavLink>
               <NavLink to="/questions">Questions</NavLink>
               <NavLink to="/support">Support</NavLink>
               <NavLink to="/contact">Contact</NavLink>
-              <NavLink to="/">Logout</NavLink>
-              {/* Add other navigation links */}
+              <NavLink to="/logout" onClick={handleLogout} >Logout</NavLink>
             </div>
           )}
         </nav>
@@ -93,18 +96,13 @@ const App: React.FC = () => {
             />
             <Route path="/questions" element={<Questions />} />
             <Route path="/questions/add" element={<QuestionAdmin />} />
-
-            {/* <Route
-              path="/questions/fillintheblanks"
-              element={<FillInTheBlank />}
-            /> */}
             <Route path="/support" element={<Support />} />
             <Route path="/contact/:id" element={<QuestionAdmin />} />
             <Route path="/contact" element={<Contact />} />
-            <Route path="/" element={<Logout />} />
+            <Route path="/logout" element={<Logout />} />
             <Route path="/questions/slider" element={<Slider />} />
             <Route path="/questions/dropdown" element={<Dropdown />} />
-            <Route path="/dashboard" element={<Dashboard />} /> 
+            <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/resetpassword" element={<ResetPassword />} />
             <Route
               path="/customer_enquiry_main"
@@ -120,7 +118,6 @@ const App: React.FC = () => {
               element={<Customer_queries />}
             />
             <Route path="forgotpassword" element={<ForgotPassword />} />
-            <Route path="/logout" element={<Logout />} />
           </Routes>
         </div>
       </div>
