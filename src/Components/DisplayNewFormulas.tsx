@@ -88,11 +88,12 @@ const DisplayNewFormulas = () => {
     }
   };
 
-  const calculateFormula = async (formulaName, zipcode = "", utility = "") => {
+  const calculateFormula = async (formulaName, zipcode = "") => {
     // Make an API call to calculate the formula
     try {
       const response = await axios.post(`${apiUrlBase}/api/calculateFormula`, {
         formulaName,
+        zipcode,
       });
 
       // Get the result from the response
@@ -110,14 +111,12 @@ const DisplayNewFormulas = () => {
   };
   return (
     <>
-      {/* <button
+      <button
         style={{ marginTop: "200px", marginLeft: "200px" }}
-        onClick={() =>
-          console.log(calculateFormula("NewF", "12345", "Electricity"))
-        }
+        onClick={() => console.log(calculateFormula("NewTestForm"))}
       >
         click
-      </button> */}
+      </button>
       {formulas
         .filter((formula) => formula.formulaName === selectedFormula)
         .map((f, index) => (

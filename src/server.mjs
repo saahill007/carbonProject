@@ -1877,9 +1877,36 @@ app.get("/api/getCategories", async (req, res) => {
   }
 });
 
+async function getUtilityValue(utilityName, zipcode) {
+  try {
+    const connection = await pool.getConnection();
+    const [rows] = await connection.query(
+      "SELECT Utility_Value FROM utilities WHERE Utility = ? AND Zipcode = ?",
+      [utilityName, zipcode]
+    );
+    const [avg] = await connection.query(
+      "SELECT Avg(Utility_Value) as av FROM utilities WHERE Utility = ? ",
+      [utilityName]
+    );
+    connection.release();
+
+    if (rows.length === 0) {
+      // Handle the case where the utility value is not found
+      return avg[0].av; // or any default value as needed
+    }
+
+    return rows[0].Utility_Value;
+  } catch (error) {
+    console.error("Error fetching utility value:", error);
+    throw error;
+  }
+}
+
+// Your existing route handler
 app.post("/api/calculateFormula", async (req, res) => {
   try {
-    const { formulaName, zipcode, utility } = req.body;
+    //sjjsjsjs
+    const { formulaName, zipcode } = req.body;
 
     // Fetch the formula from the database based on the formulaName
     const connection = await pool.getConnection();
@@ -1887,25 +1914,40 @@ app.post("/api/calculateFormula", async (req, res) => {
       "SELECT var1, var2, var3, var4 FROM formulasTable WHERE formulaName = ?",
       [formulaName]
     );
+    const [utilRows] = await connection.query(
+      "SELECT utility_name FROM Utility"
+    );
     connection.release();
 
     if (rows.length === 0) {
-      // Formula not found
       res.status(404).json({ error: "Formula not found" });
+      return;
+    }
+    if (utilRows.length === 0) {
+      res.status(404).json({ error: "No Utilities found" });
       return;
     }
 
     // Extract variables from the database response
     const { var1, var2, var3, var4 } = rows[0];
+    const utilities = utilRows.map((row) => row.utility_name);
 
     // Check if var1 is present in the conversion_table, if not, parse as float
-    const parsedVar1 = await getVariableValue(var1);
-    // Repeat for var2, var3, and var4
-    const parsedVar2 = await getVariableValue(var2);
-    const parsedVar3 = await getVariableValue(var3);
-    const parsedVar4 = await getVariableValue(var4);
+    const parsedVar1 = utilities.includes(var1)
+      ? await getUtilityValue(var1, zipcode)
+      : await getVariableValue(var1);
+    const parsedVar2 = utilities.includes(var2)
+      ? await getUtilityValue(var1, zipcode)
+      : await getVariableValue(var2);
+    const parsedVar3 = utilities.includes(var3)
+      ? await getUtilityValue(var1, zipcode)
+      : await getVariableValue(var3);
+    const parsedVar4 = utilities.includes(var4)
+      ? await getUtilityValue(var1, zipcode)
+      : await getVariableValue(var4);
 
     // Perform the calculation based on the parsed variables
+    console.log(parsedVar1);
     const result = (parsedVar1 * parsedVar2) / (parsedVar3 * parsedVar4);
 
     res.json({ result });
@@ -1917,7 +1959,7 @@ app.post("/api/calculateFormula", async (req, res) => {
 
 // app.post("/api/calculateFormula", async (req, res) => {
 //   try {
-//     const { formulaName, zipcode, utility } = req.body;
+//     const { formulaName, zipcode } = req.body;
 
 //     // Fetch the formula from the database based on the formulaName
 //     const connection = await pool.getConnection();
@@ -1925,6 +1967,64 @@ app.post("/api/calculateFormula", async (req, res) => {
 //       "SELECT var1, var2, var3, var4 FROM formulasTable WHERE formulaName = ?",
 //       [formulaName]
 //     );
+//     const [utilRows] = await connection.query(
+//       "SELECT utility_name FROM Utility"
+//     );
+//     connection.release();
+//     console.log(formulaName, zipcode, utility);
+//     if (rows.length === 0) {
+//       res.status(404).json({ error: "Formula not found" });
+//       return;
+//     }
+//     if (utilRows.length === 0) {
+//       res.status(404).json({ error: "No Utilities found" });
+//       return;
+//     }
+
+//     // Extract variables from the database response
+//     const { var1, var2, var3, var4 } = rows[0];
+//     // const utils = utilRows;
+//     const utilities = utilRows.map((row) => row.utility_name);
+//     console.log(var1, var2, var3, var4);
+//     console.log("This is utils", utilities);
+
+//     // Check if var1 is present in the conversion_table, if not, parse as float
+
+//     const parsedVar1 = utilities.includes(var1)
+//       ? await getUtilityValue(var1)
+//       : await getVariableValue(var1);
+//     const parsedVar2 = utilities.includes(var2)
+//       ? 1.5
+//       : await getVariableValue(var2);
+//     const parsedVar3 = utilities.includes(var3)
+//       ? 1
+//       : await getVariableValue(var3);
+//     const parsedVar4 = utilities.includes(var4)
+//       ? 1
+//       : await getVariableValue(var4);
+//     console.log(parsedVar1, parsedVar2, parsedVar3, parsedVar4);
+//     // Perform the calculation based on the parsed variables
+//     const result = (parsedVar1 * parsedVar2) / (parsedVar3 * parsedVar4);
+
+//     res.json({ result });
+//   } catch (error) {
+//     console.error("Error calculating formula:", error);
+//     res.status(500).json({ error: "Internal Server Error" });
+//   }
+// });
+
+// app.post("/api/calculateFormula", async (req, res) => {
+//   try {
+//     const { formulaName, zipcode, utility } = req.body;
+//     console.log(formulaName, zipcode, utility);
+
+//     // Fetch the formula from the database based on the formulaName
+//     const connection = await pool.getConnection();
+//     const [rows] = await connection.query(
+//       "SELECT var1, var2, var3, var4 FROM formulasTable WHERE formulaName = ?",
+//       [formulaName]
+//     );
+//     console.log()
 //     connection.release();
 
 //     if (rows.length === 0) {
@@ -1935,11 +2035,6 @@ app.post("/api/calculateFormula", async (req, res) => {
 
 //     // Extract variables from the database response
 //     const { var1, var2, var3, var4 } = rows[0];
-
-//     // Check if var1 is present in the conversion_table, if not, parse as float
-
-//     // Check if any variable is the name of the utility, if yes, fetch utility value
-//     // Check if any variable is the name of the utility, if yes, fetch utility value
 
 //     const parsedVar1 =
 //       var1 && var1 === utility
@@ -2015,57 +2110,57 @@ app.post("/api/calculateFormula", async (req, res) => {
 //   }
 // });
 
-async function getUtilityValue(zipcode, utility) {
-  try {
-    // Establish a database connection
-    const connection = await pool.getConnection();
+// async function getUtilityValue(zipcode, utility) {
+//   try {
+//     // Establish a database connection
+//     const connection = await pool.getConnection();
 
-    // Fetch utility information from the utilities table based on the given zipcode and utility
-    const [utilityRows] = await connection.query(
-      "SELECT Utility_Value FROM utilities WHERE Zipcode = ? AND Utility = ?",
-      [zipcode, utility]
-    );
+//     // Fetch utility information from the utilities table based on the given zipcode and utility
+//     const [utilityRows] = await connection.query(
+//       "SELECT Utility_Value FROM utilities WHERE Zipcode = ? AND Utility = ?",
+//       [zipcode, utility]
+//     );
 
-    if (utilityRows.length === 0) {
-      // Utility information not found for the specified zipcode and utility
-      // Calculate the average utility value for all rows where utility = utility name
-      const [averageUtilityRows] = await connection.query(
-        "SELECT AVG(Utility_Value) AS avgUtilityValue FROM utilities WHERE Utility = ?",
-        [utility]
-      );
+//     if (utilityRows.length === 0) {
+//       // Utility information not found for the specified zipcode and utility
+//       // Calculate the average utility value for all rows where utility = utility name
+//       const [averageUtilityRows] = await connection.query(
+//         "SELECT AVG(Utility_Value) AS avgUtilityValue FROM utilities WHERE Utility = ?",
+//         [utility]
+//       );
 
-      connection.release();
+//       connection.release();
 
-      if (
-        averageUtilityRows.length === 0 ||
-        averageUtilityRows[0].avgUtilityValue === null
-      ) {
-        // No utility information found, return null or handle it appropriately
-        return null;
-      }
+//       if (
+//         averageUtilityRows.length === 0 ||
+//         averageUtilityRows[0].avgUtilityValue === null
+//       ) {
+//         // No utility information found, return null or handle it appropriately
+//         return null;
+//       }
 
-      // Extract the average utility value from the database response
-      const averageUtilityValue = parseFloat(
-        averageUtilityRows[0].avgUtilityValue
-      );
+//       // Extract the average utility value from the database response
+//       const averageUtilityValue = parseFloat(
+//         averageUtilityRows[0].avgUtilityValue
+//       );
 
-      return averageUtilityValue;
-    }
+//       return averageUtilityValue;
+//     }
 
-    // Extract utility value from the database response
-    const { Utility_Value } = utilityRows[0];
+//     // Extract utility value from the database response
+//     const { Utility_Value } = utilityRows[0];
 
-    // Convert utility value to the appropriate data type if needed
-    const parsedUtilityValue = parseFloat(Utility_Value);
+//     // Convert utility value to the appropriate data type if needed
+//     const parsedUtilityValue = parseFloat(Utility_Value);
 
-    connection.release();
+//     connection.release();
 
-    return parsedUtilityValue;
-  } catch (error) {
-    console.error("Error fetching utility value:", error);
-    return null;
-  }
-}
+//     return parsedUtilityValue;
+//   } catch (error) {
+//     console.error("Error fetching utility value:", error);
+//     return null;
+//   }
+// }
 
 // app.get("/formulas", async (req, res) => {
 //   try {
