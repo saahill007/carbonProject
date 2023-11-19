@@ -50,46 +50,14 @@ const QuestionType1: React.FC<QuestionType1Props> = ({
 }) => {
   let { id } = useParams<{ id: string }>();
 
-  // const [twoArrayOption, setTwoArrayOption] = useState<string[][]>([]);
-  // const [twoArrayValue, setTwoArrayValue] = useState<number[][]>([]);
-  // const [optionCount, updateOptionCount] = useState<number>(4);
   const [choiceAns, updateChoiceAns] = useState("1");
   const [deletedKeys, updateDeletedKeys] = useState<string[]>([]);
   const [type1Ans, updateType1Ans] = useState<number>(1);
-  // const [inputs, updateInputs] = useState<InputOptions[]>([]);
   const navigate = useNavigate();
   const [data, setData] = useState<DataItem[]>([]);
   const [newName, setNewName] = useState<string>("");
   const [newValue, setNewValue] = useState<number | string>("");
-  // Function to initialize arrays
-  // const initializeArrays = () => {
-  //   const numRows: number = 7;
-  //   const numCols: number = 8;
 
-  //   // Initialize the 2D array with empty strings
-  //   const optionArray: string[][] = [];
-  //   for (let i = 0; i < numRows; i++) {
-  //     let row: string[] = [];
-  //     for (let j = 0; j < numCols; j++) {
-  //       row.push("");
-  //     }
-  //     optionArray.push(row);
-  //   }
-
-  //   // Initialize the 2D array with number 1
-  //   const valueArray: number[][] = [];
-  //   for (let i = 0; i < numRows; i++) {
-  //     let row: number[] = [];
-  //     for (let j = 0; j < numCols; j++) {
-  //       row.push(1);
-  //     }
-  //     valueArray.push(row);
-  //   }
-
-  //   // Set state variables
-  //   setTwoArrayOption(optionArray);
-  //   setTwoArrayValue(valueArray);
-  // };
   const handleAddValue = () => {
     // Validate that both name and value are provided
     if (newName && newValue !== "") {
@@ -120,9 +88,6 @@ const QuestionType1: React.FC<QuestionType1Props> = ({
   };
 
   const [hasMultiple, updateHasMultiple] = useState(false);
-  // React.useEffect(() => {
-  //   initializeArrays();
-  // }, [isFib, hasMultiple]);
 
   useEffect(() => {
     determineQuestionType();
@@ -152,8 +117,6 @@ const QuestionType1: React.FC<QuestionType1Props> = ({
         updateChoiceAns("2");
       }
     }
-    // determineQuestionType();
-    // onChange(twoArrayOption, twoArrayValue, questionType);
   };
   const handleSwitchChange = (value: boolean) => {
     updateHasMultiple(value);
@@ -166,8 +129,6 @@ const QuestionType1: React.FC<QuestionType1Props> = ({
     } else if (!isFib) {
       updateChoiceAns("2");
     }
-
-    // onChange(twoArrayOption, twoArrayValue, questionType);
   };
 
   useEffect(() => {
@@ -186,14 +147,11 @@ const QuestionType1: React.FC<QuestionType1Props> = ({
       console.log("inside2");
       const flattenedChoices = questionData.choices.flat();
 
-      // Create an array of objects where each object has a 'name' property from flattenedChoices
-      // and a 'value' property from refs
       const newData: DataItem[] = flattenedChoices.map((choice, index) => ({
         name: choice,
-        value: questionData.refs[0]?.[index] ?? 0, // Adjust the default value as needed
+        value: questionData.refs[0]?.[index] ?? 0,
       }));
 
-      // Update the data state
       setData(newData);
     }
 
@@ -204,51 +162,15 @@ const QuestionType1: React.FC<QuestionType1Props> = ({
       console.log("inside3");
       const flattenedChoices = questionData.choices.flat();
 
-      // Create an array of objects where each object has a 'name' property from flattenedChoices
-      // and a 'value' property from refs
       const newData: DataItem[] = flattenedChoices.map((choice, index) => ({
         name: choice,
         value: questionData.refs[0]?.[index] ?? 0, // Adjust the default value as needed
       }));
 
-      // Update the data state
       setData(newData);
     }
   }, [questionData]);
 
-  // const handleReferenceValueChange = (
-  //   event: React.ChangeEvent<HTMLInputElement>
-  // ) => {
-  //   const value = parseFloat(event.target.value);
-  //   setTwoArrayValue((prevTwoArrayValue) => {
-  //     const newTwoArrayValue = [...prevTwoArrayValue];
-  //     newTwoArrayValue[0][0] = isNaN(value) ? 0 : value;
-  //     return newTwoArrayValue;
-  //   });
-
-  //   // Call onChange with the updated values
-  //   // onChange(twoArrayOption, twoArrayValue, questionType);
-  // };
-
-  // const handleValuesChange = (index: number, choice: string, value: number) => {
-  //   // Update twoArrayOption
-  //   setTwoArrayOption((prevTwoArrayOption) => {
-  //     const newTwoArrayOption = [...prevTwoArrayOption];
-  //     newTwoArrayOption[0][index] = choice;
-  //     return newTwoArrayOption;
-  //   });
-
-  //   // Update twoArrayValue
-  //   setTwoArrayValue((prevTwoArrayValue) => {
-  //     const newTwoArrayValue = [...prevTwoArrayValue];
-  //     newTwoArrayValue[0][index] = value;
-  //     return newTwoArrayValue;
-  //   });
-
-  //   // Call onChange with the updated values
-  //   // onChange(twoArrayOption, twoArrayValue, questionType);
-  // };
-  //
   const generateChoiceAndRefsArrays = (data: DataItem[]) => {
     const choicess: string[] = [];
     const refss: number[] = [];
@@ -346,14 +268,9 @@ const QuestionType1: React.FC<QuestionType1Props> = ({
   };
 
   const handleDeleteOption = (key: string) => {
-    // Handle the deletion logic here
-    // updateOptionCount(optionCount - 1);
-    // updateDeletedKeys([...deletedKeys, key]);
-
     updateDeletedKeys((prevDeletedKeys) => [...prevDeletedKeys, key]);
     console.log("Option deleted!");
   };
-  // const [inputArr, updateInputArr] = useState<String[]>([]);
 
   return (
     <>
@@ -565,30 +482,6 @@ const QuestionType1: React.FC<QuestionType1Props> = ({
                 </div>
               </div>
             </div>
-            {/* <div
-              className="row"
-              style={{
-                marginLeft: "10%",
-                marginRight: "10%",
-                marginBottom: "10px",
-                marginTop: "20px",
-              }}
-            >
-              <div className="col">
-                <button
-                  className="btn btn-primary"
-                  style={{ backgroundColor: "#84D2F3", border: "0px" }}
-                  onClick={() => {
-                    updateOptionCount(optionCount + 1);
-
-                    console.log(deletedKeys);
-                    console.log(twoArrayOption);
-                  }}
-                >
-                  Add New Option
-                </button>
-              </div>
-            </div> */}
           </div>
         )}
       </div>

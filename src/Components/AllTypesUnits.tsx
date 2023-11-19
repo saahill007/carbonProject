@@ -3,7 +3,7 @@ import NewFormula from "./NewFormula";
 import UnitsSelector from "./UnitsSelector";
 // import OptionValue from "./OptionValue";
 import SwitchContent from "./SwitchContent";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import MultipleSelections from "./MultipleSelections";
 import { apiUrlBase } from "../config";
 import axios from "axios";
@@ -103,12 +103,27 @@ const AllTypesUnits: React.FC<AllTypesUnitsProps> = ({
   questionType,
   enabled,
   label,
-  questionData,
+  questionData = {
+    // Provide a default value
+    questionContent: "",
+    household: false,
+    zipcode: false,
+    questionType: 0,
+    enabled: false,
+    choiceAns: "",
+    choices: [[]],
+    refs: [[1]],
+    selectedUnits: [],
+    selectedFormulas: [],
+    label: "",
+  },
 }) => {
   const [isFib, updateFib] = useState(true);
   const [formulaName, setFormulaName] = useState(""); // Set the formulaName you want to fetch
   const [formulaData, setFormulaData] = useState<FormulaData | null>(null);
+  const questions: QuestionData = questionData;
 
+  const [matchingIndices, setMatchingIndices] = useState<number[]>([]);
   useEffect(() => {
     const fetchFormula = async () => {
       try {
@@ -170,9 +185,11 @@ const AllTypesUnits: React.FC<AllTypesUnitsProps> = ({
     }
     console.log("updated choice");
   };
-
+  //needed
   const [selectedUnits, setSelectedUnits] = useState<number[]>([]);
+  //needed
   const [selectedUnitsString, setSelectedUnitsString] = useState<String[]>([]);
+
   const [unitRefs, updateUnitRefs] = useState<string[]>([
     "1",
     "1",
@@ -185,7 +202,7 @@ const AllTypesUnits: React.FC<AllTypesUnitsProps> = ({
 
   const [formulas, setFormulas] = useState<String[]>([]);
   const [isAddNewActive, updateAddNew] = useState(false);
-
+  const { id } = useParams<{ id: string }>();
   const [unitFormulas, setUnitFormulas] = useState<string[]>([]);
   const [selectedFormulas, setSelectedFormulas] = useState<
     { unitIndex: number; formula: string }[]
@@ -338,14 +355,6 @@ const AllTypesUnits: React.FC<AllTypesUnitsProps> = ({
     // formulas
   ]);
 
-  useEffect(() => {
-    // if (questionData?.selectedUnits.length !== 0) {
-    //   const indexesOfSelectedUnitsInABC = questionData?.selectedUnits.map(
-    //     (unit) => unitLabels.indexOf(unit)
-    //   );
-    //   setSelectedUnits(indexesOfSelectedUnitsInABC || []);
-    // }
-  }, []);
   const radioContainerStyle = {
     display: "inline-flex",
     alignItems: "center",
@@ -446,34 +455,152 @@ const AllTypesUnits: React.FC<AllTypesUnitsProps> = ({
     }));
   };
 
+  // useEffect(() => {
+  //   if (questionData) {
+  //     if (questionData.choiceAns == "1") {
+  //       updateFib(true);
+  //       updateHasMultiple(false);
+  //     } else if (questionData.choiceAns == "2") {
+  //       updateFib(false);
+  //       updateHasMultiple(false);
+  //     } else {
+  //       updateFib(false);
+  //       updateHasMultiple(true);
+  //     }
+  //     updateChoiceAns(questionData.choiceAns);
+  //   }
+  //   const getSelected =
+  //     questionData?.selectedUnits !== null
+  //       ? questionData?.selectedUnits.map((element) =>
+  //           unitLabels.indexOf(element)
+  //         )
+  //       : [];
+  //   // const indexesOfXyzInAbc = xyz.map((element) => abc.indexOf(element));
+  //   setSelectedUnits(getSelected || []);
+  //   console.log(getSelected);
+  // }, []);
+
   useEffect(() => {
-    if (questionData) {
-      if (questionData.choiceAns == "1") {
-        updateFib(true);
-        updateHasMultiple(false);
-      } else if (questionData.choiceAns == "2") {
-        updateFib(false);
-        updateHasMultiple(false);
-      } else {
-        updateFib(false);
-        updateHasMultiple(true);
+    console.log("Entered forEach");
+    const indices: number[] = [];
+
+    unitLabels.forEach((item, index) => {
+      console.log("item:", item);
+      console.log("selectedUnits:", questions.selectedUnits);
+      const stringValue = item.toString();
+      console.log("stringValue:", stringValue);
+
+      if (questions.selectedUnits.includes(stringValue)) {
+        indices.push(index);
       }
-      updateChoiceAns(questionData.choiceAns);
+    });
+
+    // Update the state with the matching indices
+    setMatchingIndices(indices);
+  }, [unitLabels]);
+
+  useEffect(() => {
+    setSelectedUnits(matchingIndices);
+    setSelectedUnitsString(questions.selectedUnits);
+  }, [matchingIndices]);
+  const selectedUnitsStringtostring: string[] = selectedUnitsString.map((str) =>
+    str.toString()
+  );
+
+  useEffect(() => {
+    if (questionData.choiceAns === "1") {
+      updateFib(true);
+      determineQuestionType();
+      console.log("inside1");
+      // updateType1Ans(questionData.refs[0][0]);
     }
-    const getSelected =
-      questionData?.selectedUnits !== null
-        ? questionData?.selectedUnits.map((element) =>
-            unitLabels.indexOf(element)
-          )
-        : [];
-    // const indexesOfXyzInAbc = xyz.map((element) => abc.indexOf(element));
-    setSelectedUnits(getSelected || []);
-    console.log(getSelected);
-  }, []);
+
+    if (questionData.choiceAns === "2") {
+      updateFib(false);
+
+      updateHasMultiple(false);
+      determineQuestionType();
+      console.log("inside2");
+      // const flattenedChoices = questionData.choices.flat();
+
+      // // Create an array of objects where each object has a 'name' property from flattenedChoices
+      // // and a 'value' property from refs
+      // const newData: DataItem[] = flattenedChoices.map((choice, index) => ({
+      //   name: choice,
+      //   value: questionData.refs[0]?.[index] ?? 0, // Adjust the default value as needed
+      // }));
+
+      // // Update the data state
+      // setData(newData);
+    }
+
+    if (questionData.choiceAns === "3") {
+      updateFib(false);
+      updateHasMultiple(true);
+      determineQuestionType;
+      console.log("inside3");
+      // const flattenedChoices = questionData.choices.flat();
+
+      // // Create an array of objects where each object has a 'name' property from flattenedChoices
+      // // and a 'value' property from refs
+      // const newData: DataItem[] = flattenedChoices.map((choice, index) => ({
+      //   name: choice,
+      //   value: questionData.refs[0]?.[index] ?? 0, // Adjust the default value as needed
+      // }));
+
+      // // Update the data state
+      // setData(newData);
+    }
+  }, [questionData]);
+
+  // useEffect(() => {
+  //   const newAnsMap: { [key: string]: string } = {};
+  //   selectedLabels.forEach((label, index) => {
+  //     if (index < selectedFormulas.length) {
+  //       newAnsMap[label.toString()] = selectedFormulas[index];
+  //     }
+  //   });
+
+  //   setAnsMap(newAnsMap);
+  // }, [questionData]);
+  // useEffect(() => {
+  //   const newAnsMap: { [key: string]: string } = {};
+
+  //   // Check if selectedLabels and selectedFormulas are defined and not empty
+  //   if (
+  //     Array.isArray(selectedLabels) &&
+  //     Array.isArray(selectedFormulas) &&
+  //     selectedLabels.length > 0 &&
+  //     selectedFormulas.length > 0
+  //   ) {
+  //     selectedLabels.forEach((label, index) => {
+  //       // Check if index is within the bounds of selectedFormulas array
+  //       if (index < selectedFormulas.length) {
+  //         newAnsMap[label as string] = selectedFormulas[index];
+  //       }
+  //     });
+  //   }
+
+  //   setAnsMap(newAnsMap);
+  // }, [selectedLabels, selectedFormulas, questionData]);
+  useEffect(() => {
+    // Check if both selectedLabels and questions.selectedFormulas have the same length
+    if (selectedLabels.length === questions.selectedFormulas.length) {
+      const newAnsMap: { [key: string]: string } = {};
+
+      // Populate ansMap using selectedLabels and questions.selectedFormulas
+      selectedLabels.forEach((label, index) => {
+        newAnsMap[label as string] = questions.selectedFormulas[index];
+      });
+
+      // Set the state with the newAnsMap
+      setAnsMap(newAnsMap);
+    }
+  }, [selectedLabels, questionData]); // The empty dependency array ensures that this effect runs only once when the component mounts
 
   return (
     <>
-      {/* <button onClick={() => console.log(selectedUnits)}>shhshshshshs</button> */}
+      {/* <button onClick={() => console.log("Thissss: ", ansMap)}>sh</button> */}
       <div className="container" style={{ fontSize: "16px" }}>
         <div
           className="row"
@@ -496,7 +623,8 @@ const AllTypesUnits: React.FC<AllTypesUnitsProps> = ({
                 background: "black",
               }}
               onChange={() => handleRadioChange(true)}
-              defaultChecked
+              // defaultChecked
+              checked={isFib}
             />
           </div>
           <div className="col-lg" style={{ color: "white" }}>
@@ -508,6 +636,7 @@ const AllTypesUnits: React.FC<AllTypesUnitsProps> = ({
               name="radioGrp"
               style={{ width: "30px", height: "30px" }}
               onChange={() => handleRadioChange(false)}
+              checked={!isFib}
             />
           </div>
           <div className="col-lg" style={{ color: "white" }}>
@@ -528,6 +657,7 @@ const AllTypesUnits: React.FC<AllTypesUnitsProps> = ({
             <SwitchContent
               label="Allow Multiple"
               onChange={handleSwitchChange}
+              defaultChecked={hasMultiple}
             />
           </div>
         )}
@@ -554,6 +684,8 @@ const AllTypesUnits: React.FC<AllTypesUnitsProps> = ({
           </p>
 
           <UnitsSelector
+            selectedUnitLabelsInitial={selectedUnitsStringtostring}
+            selectedUnitsInitial={selectedUnits}
             onSelectionChangeString={handleSelectionChangeString}
             onSelectionChange={handleSelectionChange}
             key={unitsSelectorKey}
@@ -858,6 +990,8 @@ const AllTypesUnits: React.FC<AllTypesUnitsProps> = ({
                 zipcode={zipcode}
                 integerArray={selectedUnits}
                 stringArray={unitLabels}
+                questionData={questionData}
+                id={id}
                 // onDataUpdate={handleDataUpdate}
               />
             </div>

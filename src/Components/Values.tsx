@@ -150,7 +150,7 @@ const ValuesPage: React.FC<ValuesProps> = ({ children }) => {
           style={{ position: "relative", zIndex: 1000 }}
         >
           <div className="side-panel-link">
-            <div className="icon-and-text">
+            <div className="icon-and-text" style={{ display: "flex" }}>
               <div className="icon">
                 <img
                   src={CategoryImg}
@@ -163,7 +163,9 @@ const ValuesPage: React.FC<ValuesProps> = ({ children }) => {
                 />
               </div>
               {isPanelExpanded ? (
-                <div className="text">Category</div>
+                <div className="text" style={{ marginLeft: "10px" }}>
+                  Category
+                </div>
               ) : (
                 <div className="text" style={{ display: "none" }}>
                   Category
