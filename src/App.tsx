@@ -50,7 +50,6 @@ const App: React.FC = () => {
     setAdmin(true); // or whatever logic you need
   };
 
-
   return (
     <Router>
       <div className="app-container">
@@ -78,7 +77,9 @@ const App: React.FC = () => {
               <NavLink to="/questions">Questions</NavLink>
               <NavLink to="/support">Support</NavLink>
               <NavLink to="/contact">Contact</NavLink>
-              <NavLink to="/logout" onClick={handleLogout} >Logout</NavLink>
+              <NavLink to="/logout" onClick={handleLogout}>
+                Logout
+              </NavLink>
             </div>
           )}
         </nav>
@@ -97,7 +98,7 @@ const App: React.FC = () => {
             <Route path="/questions" element={<Questions />} />
             <Route path="/questions/add" element={<QuestionAdmin />} />
             <Route path="/support" element={<Support />} />
-            <Route path="/contact/:id" element={<QuestionAdmin />} />
+            <Route path="/questions/:id" element={<QuestionAdmin />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/logout" element={<Logout />} />
             <Route path="/questions/slider" element={<Slider />} />

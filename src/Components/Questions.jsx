@@ -79,7 +79,7 @@ export function Questions(props) {
               {/* <div>
                 <button className="btn btn-primary" style={{background:"#FF5701", border:"1px solid #FF5701 "}}>Edit</button>
                 </div>    */}
-              <button onClick={()=>navigate("/contact/"+question.id)} style={{width: "10%", height: 57, left:"70vw", top: 31, position: 'absolute', background: '#FF5701', boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)', borderRadius: 300,fontWeight:"bold" ,border: '1px black solid'}}>Edit</button>
+              <button onClick={()=>navigate("/questions/"+question.id)} style={{width: "10%", height: 57, left:"70vw", top: 31, position: 'absolute', background: '#FF5701', boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)', borderRadius: 300,fontWeight:"bold" ,border: '1px black solid'}}>Edit</button>
       {/* <div  onClick={()=>navigate("/contact/"+question.id)} style={{width: 37, left: 1040, top: 50, background:"#FF5701", position: 'absolute', color: 'black', fontSize: 20, fontFamily: 'Outfit', fontWeight: '600', wordWrap: 'break-word',cursor: 'pointer',} }>Edit</div> */}
      <div style={{ paddingLeft:"10px",width: 64, height: 32, left: 3, top: 40, position: 'absolute', background: 'black', justifyContent: 'flex-start', alignItems: 'flex-start', gap: 10, display: 'inline-flex', cursor: 'pointer', }} onClick={() => handleToggleClick(question.id)}>
       <div style={{ width: 64, height: 32, justifyContent: question.toggleState ? 'flex-end' : 'flex-start', alignItems: 'center', background: question.enabled ? '#FF5701' : 'white', borderRadius: '20px', transition: 'background-color 0.2s ease-in-out, transform 0.2s ease-in-out', display: 'flex', justifyContent: question.enabled ? 'flex-end' : 'flex-start', alignItems: 'center', }}>
