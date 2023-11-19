@@ -111,12 +111,12 @@ const DisplayNewFormulas = () => {
   };
   return (
     <>
-      <button
+      {/* <button
         style={{ marginTop: "200px", marginLeft: "200px" }}
         onClick={() => console.log(calculateFormula("NewTestForm"))}
       >
-        click
-      </button>
+        clickMe
+      </button> */}
       {formulas
         .filter((formula) => formula.formulaName === selectedFormula)
         .map((f, index) => (

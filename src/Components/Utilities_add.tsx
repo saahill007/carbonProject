@@ -36,10 +36,11 @@ const Utilities_add: React.FC = () => {
   const [data, setData] = useState<Utility[]>([]);
   const [utilities, setUtilities] = useState<Utility[]>([]);
   const [countries, setCountries] = useState<Country[]>([]);
+  const [selectedUtility, setSelectedUtility] = useState<string>("");
 
   const [newUtility, setNewUtility] = useState<Utility>({
     Zipcode: "",
-    Country: "",
+    Country: "United States",
     City: "",
     Utility: "",
     Utility_Value: "",
@@ -137,7 +138,7 @@ const Utilities_add: React.FC = () => {
         // If the data is successfully saved, reset the newUtility state to an empty template
         setNewUtility({
           Zipcode: "",
-          Country: "",
+          Country: "United States",
           City: "",
           Utility: "",
           Utility_Value: "",
@@ -247,18 +248,26 @@ const Utilities_add: React.FC = () => {
               </td>
               <td>
               <select
-                value={newUtility.Utility}
-                onChange={(e) =>
-                  setNewUtility({ ...newUtility, Utility: e.target.value })
-                }
-              >
-                <option value="">Select Utility</option>
-                {utilities.map((utility) => (
-                  <option key={utility.utility_id} value={utility.utility_name}>
-                    {utility.utility_name}
-                  </option>
-                ))}
-              </select>
+                  value={newUtility.Utility}
+                  onChange={(e) => {
+                    const selectedUtility = e.target.value;
+                    setNewUtility({
+                      ...newUtility,
+                      Utility: selectedUtility,
+                      Utility_Units: utilities.find(
+                        (utility) => utility.utility_name === selectedUtility
+                      )?.utility_units || "", // Set Utility_Units based on the selected Utility
+                    });
+                    setSelectedUtility(selectedUtility);
+                  }}
+                >
+                  <option value="">Select Utility</option>
+                  {utilities.map((utility) => (
+                    <option key={utility.utility_id} value={utility.utility_name}>
+                      {utility.utility_name}
+                    </option>
+                  ))}
+                </select>
               </td>
               <td>
                 <input
@@ -275,18 +284,26 @@ const Utilities_add: React.FC = () => {
               </td>
               <td>
               <select
-                value={newUtility.Utility_Units}
-                onChange={(e) =>
-                  setNewUtility({ ...newUtility, Utility_Units: e.target.value })
-                }
-              >
-                <option value="">Select Utility Unit</option>
-                {utilities.map((utility) => (
-                  <option key={utility.utility_id} value={utility.utility_units}>
-                    {utility.utility_units}
-                  </option>
-                ))}
-              </select>
+                  value={newUtility.Utility_Units}
+                  onChange={(e) =>
+                    setNewUtility({
+                      ...newUtility,
+                      Utility_Units: e.target.value,
+                    })
+                  }
+                >
+                  <option value="">Select Utility Unit</option>
+                  {utilities
+                    .filter((utility) => utility.utility_name === selectedUtility)
+                    .map((utility) => (
+                      <option
+                        key={utility.utility_id}
+                        value={utility.utility_units}
+                      >
+                        {utility.utility_units}
+                      </option>
+                    ))}
+                </select>
               </td>
               {/* <td>
                             <input
