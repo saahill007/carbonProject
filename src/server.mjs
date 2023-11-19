@@ -16,7 +16,7 @@ const codeport = 5173;
 const hostmain = "3.133.102.189";
 
 const dbConfig = {
-  host: "3.133.102.189",
+  host: "18.118.218.56",
   user: "carbonuser",
   password: "Carbon@123", // Fix the case of 'PASSWORD' to 'password'
   database: "CRBN", // Fix the case of 'DB' to 'database'
@@ -1931,23 +1931,23 @@ app.post("/api/calculateFormula", async (req, res) => {
     // Extract variables from the database response
     const { var1, var2, var3, var4 } = rows[0];
     const utilities = utilRows.map((row) => row.utility_name);
-
+    console.log(var1, var2, var3, var4);
     // Check if var1 is present in the conversion_table, if not, parse as float
     const parsedVar1 = utilities.includes(var1)
       ? await getUtilityValue(var1, zipcode)
       : await getVariableValue(var1);
     const parsedVar2 = utilities.includes(var2)
-      ? await getUtilityValue(var1, zipcode)
+      ? await getUtilityValue(var2, zipcode)
       : await getVariableValue(var2);
     const parsedVar3 = utilities.includes(var3)
-      ? await getUtilityValue(var1, zipcode)
+      ? await getUtilityValue(var3, zipcode)
       : await getVariableValue(var3);
     const parsedVar4 = utilities.includes(var4)
-      ? await getUtilityValue(var1, zipcode)
+      ? await getUtilityValue(var4, zipcode)
       : await getVariableValue(var4);
 
     // Perform the calculation based on the parsed variables
-    console.log(parsedVar1);
+    console.log(parsedVar1, parsedVar2, parsedVar3, parsedVar4);
     const result = (parsedVar1 * parsedVar2) / (parsedVar3 * parsedVar4);
 
     res.json({ result });

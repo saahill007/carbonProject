@@ -113,7 +113,7 @@ const DisplayNewFormulas = () => {
     <>
       {/* <button
         style={{ marginTop: "200px", marginLeft: "200px" }}
-        onClick={() => console.log(calculateFormula("NewTestForm"))}
+        onClick={() => console.log(calculateFormula("DollarToCForElectricity"))}
       >
         clickMe
       </button> */}
