@@ -21,6 +21,7 @@ const Utility_add_edit: React.FC = () => {
   });
   const [editUtility, setEditUtility] = useState<Utility | null>(null);
   const [error, setError] = useState<string>("");
+  const [adderror, setAddError] = useState<string>("");
 
   const handleutility = () => {
     navigate("/values/utilities");
@@ -42,6 +43,14 @@ const Utility_add_edit: React.FC = () => {
 
   const handleSave = async () => {
     try {
+
+      if (!newUtility.utility_name || !newUtility.utility_units) {
+        setAddError("Please fill in all fields.");
+        setTimeout(() => {
+          setAddError("");
+        }, 1000);
+        return;
+      }
       // Send the new utility data to your server for saving
       const response = await axios.post(`${apiUrlBase}/api/new_utility_add`, {
         utility_name: newUtility.utility_name,
@@ -61,11 +70,22 @@ const Utility_add_edit: React.FC = () => {
     } catch (error) {
       console.error("Error saving utility data:", error);
       setError("Failed to save utility. Please try again.");
+      setTimeout(() => {
+        setError("");
+      }, 1000);
     }
   };
 
   const handleEditSave = async () => {
     try {
+      if (!editUtility?.utility_name || !editUtility?.utility_units) {
+        setError("Please fill in all fields.");
+        setTimeout(() => {
+          setError("");
+        }, 1000);
+        return;
+      }
+
       // Send a POST request to your API endpoint for updating utility data
       await axios.post(`${apiUrlBase}/api/update_utility_name/${editUtility?.utility_id}`, {
         utility_name: editUtility?.utility_name,
@@ -223,6 +243,7 @@ const Utility_add_edit: React.FC = () => {
           </tbody>
         </table>
       </div>
+      {adderror && <div className="error-message">{adderror}</div>}
       <button className="back_option" onClick={handleutility}>
         Back
       </button>
