@@ -149,43 +149,48 @@ const Dashboard: React.FC = () => {
         count: number;
       };
     } = {
-      "age<20": { carbonFootprints: [], treeCounts: [], count: 0 },
-      "20-30": { carbonFootprints: [], treeCounts: [], count: 0 },
-      "30-40": { carbonFootprints: [], treeCounts: [], count: 0 },
-      "40-50": { carbonFootprints: [], treeCounts: [], count: 0 },
-      "50-60": { carbonFootprints: [], treeCounts: [], count: 0 },
-      "60+": { carbonFootprints: [], treeCounts: [], count: 0 },
-      // add more age groups as needed
+      "0 - 15 Years": { carbonFootprints: [], treeCounts: [], count: 0 },
+      "16 - 30 Years": { carbonFootprints: [], treeCounts: [], count: 0 },
+      "31- 45 Years": { carbonFootprints: [], treeCounts: [], count: 0 },
+      "Above 45 Years": { carbonFootprints: [], treeCounts: [], count: 0 },
+      // "50-60": { carbonFootprints: [], treeCounts: [], count: 0 },
+      // "60+": { carbonFootprints: [], treeCounts: [], count: 0 },
+      // // add more age groups as needed
     };
 
     data.forEach((item) => {
       const { age, total_carbon_footprint, number_of_trees } = item;
-
-      if (age <= 20) {
-        ageGroups["age<20"].carbonFootprints.push(total_carbon_footprint);
-        ageGroups["age<20"].treeCounts.push(number_of_trees);
-        ageGroups["age<20"].count++;
-      } else if (age > 20 && age <= 30) {
-        ageGroups["20-30"].carbonFootprints.push(total_carbon_footprint);
-        ageGroups["20-30"].treeCounts.push(number_of_trees);
-        ageGroups["20-30"].count++;
-      } else if (age > 30 && age <= 40) {
-        ageGroups["30-40"].carbonFootprints.push(total_carbon_footprint);
-        ageGroups["30-40"].treeCounts.push(number_of_trees);
-        ageGroups["30-40"].count++;
-      } else if (age > 40 && age <= 50) {
-        ageGroups["40-50"].carbonFootprints.push(total_carbon_footprint);
-        ageGroups["40-50"].treeCounts.push(number_of_trees);
-        ageGroups["40-50"].count++;
-      } else if (age > 50 && age <= 60) {
-        ageGroups["50-60"].carbonFootprints.push(total_carbon_footprint);
-        ageGroups["50-60"].treeCounts.push(number_of_trees);
-        ageGroups["50-60"].count++;
-      } else if (age > 60) {
-        ageGroups["60+"].carbonFootprints.push(total_carbon_footprint);
-        ageGroups["60+"].treeCounts.push(number_of_trees);
-        ageGroups["60+"].count++;
+      if (ageGroups[age]) {
+        ageGroups[age].carbonFootprints.push(total_carbon_footprint);
+        ageGroups[age].treeCounts.push(number_of_trees);
+        ageGroups[age].count++;
       }
+
+      // if (age <= 20) {
+      //   ageGroups["age<20"].carbonFootprints.push(total_carbon_footprint);
+      //   ageGroups["age<20"].treeCounts.push(number_of_trees);
+      //   ageGroups["age<20"].count++;
+      // } else if (age > 20 && age <= 30) {
+      //   ageGroups["20-30"].carbonFootprints.push(total_carbon_footprint);
+      //   ageGroups["20-30"].treeCounts.push(number_of_trees);
+      //   ageGroups["20-30"].count++;
+      // } else if (age > 30 && age <= 40) {
+      //   ageGroups["30-40"].carbonFootprints.push(total_carbon_footprint);
+      //   ageGroups["30-40"].treeCounts.push(number_of_trees);
+      //   ageGroups["30-40"].count++;
+      // } else if (age > 40 && age <= 50) {
+      //   ageGroups["40-50"].carbonFootprints.push(total_carbon_footprint);
+      //   ageGroups["40-50"].treeCounts.push(number_of_trees);
+      //   ageGroups["40-50"].count++;
+      // } else if (age > 50 && age <= 60) {
+      //   ageGroups["50-60"].carbonFootprints.push(total_carbon_footprint);
+      //   ageGroups["50-60"].treeCounts.push(number_of_trees);
+      //   ageGroups["50-60"].count++;
+      // } else if (age > 60) {
+      //   ageGroups["60+"].carbonFootprints.push(total_carbon_footprint);
+      //   ageGroups["60+"].treeCounts.push(number_of_trees);
+      //   ageGroups["60+"].count++;
+      // }
       // add more conditions for other age groups
     });
 
