@@ -39,7 +39,7 @@ h2 {
 
 .background_container2 {
     margin: 20px 10px 10px 25px;
-    background: #84D2F3;
+    background: rgb(255, 87, 1);
     width: 95%;
     height: 75%;
     border-radius: 15px;
@@ -89,8 +89,8 @@ h2 {
 
 .send_response {
     margin: 10px 10px;
-    background-color: hsl(114, 25%, 71%);
-    color: black;
+    background-color: hsl(0, 0%, 0%);
+    color: rgb(251, 251, 251);
     height: 50px;
     width: 60px;
     border-radius: 15px;
