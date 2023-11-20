@@ -2250,7 +2250,10 @@ app.post("/api/calculateFootprint", cors(), async (req, res) => {
       let household = results[0].household;
       const questionType = results[0].questionType;
       const choiceAns = results[0].choiceAns;
-
+      if(familyMembers === undefined)
+      {
+        familyMembers = 1;
+      }
       // Calculate carbon footprint based on questionType and choiceAns using the dynamically set familyMembers
       let carbonValue = 0;
       if (questionType === 1) {
