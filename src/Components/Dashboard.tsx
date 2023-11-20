@@ -42,6 +42,7 @@ const Dashboard: React.FC = () => {
   const [filteredData, setFilteredData] =
     useState<CustomerData[]>(customerData);
   const [fromDate, setFromDate] = useState<string>("");
+  const [ageChoices, setAgeChoices] = useState<string[]>([]);
   const [toDate, setToDate] = useState<string>("");
   const [zipcodeFilter, setZipcodeFilter] = useState<string>("");
   const [carbonFootprintFilter, setCarbonFootprintFilter] = useState<
@@ -77,6 +78,7 @@ const Dashboard: React.FC = () => {
 
   useEffect(() => {
     fetchData();
+    fetchAgeChoices();
   }, []);
 
   const handleFilter = async () => {
@@ -141,22 +143,51 @@ const Dashboard: React.FC = () => {
   };
   const formattedData = groupDataByDate(filteredData);
 
-  const groupDataByAge = (data: CustomerData[]) => {
+  const fetchAgeChoices = async () => {
+    try {
+      const response = await axiosInstance.get("/api/questions");
+      const ageQuestion = response.data.find((question) => question.id === 104);
+  
+      console.log("Age Question:", ageQuestion);
+  
+      if (
+        ageQuestion &&
+        ageQuestion.choices &&
+        Array.isArray(ageQuestion.choices[0])
+      ) {
+        const ageChoices = ageQuestion.choices[0].map((choice) =>
+          typeof choice === "string" ? choice.trim() : choice
+        );
+  
+        console.log("Age Choices:", ageChoices);
+
+        setAgeChoices(ageChoices);
+  
+      }
+    } catch (error) {
+      console.error("Error fetching age choices:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchAgeChoices();
+  }, []);
+
+  const groupDataByAge = (
+    data: CustomerData[],
+    ageChoices: string[]
+  ) => {
     const ageGroups: {
       [ageGroup: string]: {
         carbonFootprints: number[];
         treeCounts: number[];
         count: number;
       };
-    } = {
-      "0 - 15 Years": { carbonFootprints: [], treeCounts: [], count: 0 },
-      "16 - 30 Years": { carbonFootprints: [], treeCounts: [], count: 0 },
-      "31- 45 Years": { carbonFootprints: [], treeCounts: [], count: 0 },
-      "Above 45 Years": { carbonFootprints: [], treeCounts: [], count: 0 },
-      // "50-60": { carbonFootprints: [], treeCounts: [], count: 0 },
-      // "60+": { carbonFootprints: [], treeCounts: [], count: 0 },
-      // // add more age groups as needed
-    };
+    } = {};
+
+    ageChoices.forEach((choice) => {
+      ageGroups[choice] = { carbonFootprints: [], treeCounts: [], count: 0 };
+    });
 
     data.forEach((item) => {
       const { age, total_carbon_footprint, number_of_trees } = item;
@@ -165,33 +196,6 @@ const Dashboard: React.FC = () => {
         ageGroups[age].treeCounts.push(number_of_trees);
         ageGroups[age].count++;
       }
-
-      // if (age <= 20) {
-      //   ageGroups["age<20"].carbonFootprints.push(total_carbon_footprint);
-      //   ageGroups["age<20"].treeCounts.push(number_of_trees);
-      //   ageGroups["age<20"].count++;
-      // } else if (age > 20 && age <= 30) {
-      //   ageGroups["20-30"].carbonFootprints.push(total_carbon_footprint);
-      //   ageGroups["20-30"].treeCounts.push(number_of_trees);
-      //   ageGroups["20-30"].count++;
-      // } else if (age > 30 && age <= 40) {
-      //   ageGroups["30-40"].carbonFootprints.push(total_carbon_footprint);
-      //   ageGroups["30-40"].treeCounts.push(number_of_trees);
-      //   ageGroups["30-40"].count++;
-      // } else if (age > 40 && age <= 50) {
-      //   ageGroups["40-50"].carbonFootprints.push(total_carbon_footprint);
-      //   ageGroups["40-50"].treeCounts.push(number_of_trees);
-      //   ageGroups["40-50"].count++;
-      // } else if (age > 50 && age <= 60) {
-      //   ageGroups["50-60"].carbonFootprints.push(total_carbon_footprint);
-      //   ageGroups["50-60"].treeCounts.push(number_of_trees);
-      //   ageGroups["50-60"].count++;
-      // } else if (age > 60) {
-      //   ageGroups["60+"].carbonFootprints.push(total_carbon_footprint);
-      //   ageGroups["60+"].treeCounts.push(number_of_trees);
-      //   ageGroups["60+"].count++;
-      // }
-      // add more conditions for other age groups
     });
 
     const formattedAverageData: {
@@ -201,10 +205,7 @@ const Dashboard: React.FC = () => {
       count: number;
     }[] = [];
 
-    for (const [
-      ageGroup,
-      { carbonFootprints, treeCounts, count },
-    ] of Object.entries(ageGroups)) {
+    for (const [ageGroup, { carbonFootprints, treeCounts, count }] of Object.entries(ageGroups)) {
       if (carbonFootprints.length > 0 && treeCounts.length > 0) {
         const averageCarbonFootprint =
           carbonFootprints.reduce((acc, curr) => acc + curr, 0) /
@@ -225,7 +226,7 @@ const Dashboard: React.FC = () => {
     return formattedAverageData;
   };
 
-  const formattedAverageData = groupDataByAge(filteredData);
+  const formattedAverageData = groupDataByAge(filteredData, ageChoices);
 
   const CustomTooltip = ({ active, label }) => {
     if (active) {
