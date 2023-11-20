@@ -44,6 +44,23 @@ mysqlConnection.connect((err) => {
   }
 });
 
+app.post('/api/insertCustomerData', cors(), (req, res) => {
+  const { zipcode, finalFootprint, finalTrees, age } = req.body;
+
+  const insertQuery =
+    'INSERT INTO CRBN.Customer (total_carbon_footprint, number_of_trees, zipcode, age, date_answered) VALUES (?, ?, ?, ?, CURDATE())';
+
+  mysqlConnection.query(insertQuery, [finalFootprint, finalTrees, zipcode, age], (error, results) => {
+    if (error) {
+      console.error('Error inserting data into customer table:', error);
+      res.status(500).json({ error: 'Internal server error' });
+    } else {
+      console.log('Data inserted into customer table successfully:', results);
+      res.status(200).json({ message: 'Data inserted successfully' });
+    }
+  });
+});
+
 app.get("/api/Customer", cors(), (req, res) => {
   const query =
     "SELECT cust_id, first_name,last_name, age, email, total_carbon_footprint, number_of_trees, date_answered, zipcode FROM CRBN.Customer";
