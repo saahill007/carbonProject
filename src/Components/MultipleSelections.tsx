@@ -14,6 +14,7 @@ interface QuestionData {
   selectedFormulas: string[];
   label: string;
 }
+
 interface MultipleSelectionsProps {
   stringArray: String[];
   isFib: boolean;
@@ -29,6 +30,7 @@ interface MultipleSelectionsProps {
   ansMap: { [key: string]: string };
   questionData: QuestionData;
   id: string | undefined;
+  hasMultiple: boolean;
 
   //   onDataUpdate: (unitData: { [key: number]: DataItem[] }) => void;
 }
@@ -53,6 +55,7 @@ const MultipleSelections: React.FC<MultipleSelectionsProps> = ({
   ansMap,
   questionData,
   id,
+  hasMultiple,
   //   onDataUpdate,
 }) => {
   const [unitData, setUnitData] = useState<{ [key: number]: DataItem[] }>({});
@@ -145,8 +148,18 @@ const MultipleSelections: React.FC<MultipleSelectionsProps> = ({
       return newData;
     });
   };
-
+  // const [choiceAns, updateChoiceAns] = useState<string>("");
   const navigate = useNavigate();
+
+  // const determineQuestionType = () => {
+  //   if (isFib) {
+  //     updateChoiceAns("1");
+  //   } else if (!isFib && hasMultiple) {
+  //     updateChoiceAns("3");
+  //   } else {
+  //     updateChoiceAns("2");
+  //   }
+  // };
 
   const saveOptionsToDatabase = async () => {
     const { choices, refs } = getChoicesAndRefs();
@@ -155,6 +168,7 @@ const MultipleSelections: React.FC<MultipleSelectionsProps> = ({
         Object.entries(ansMap).filter(([key]) => selectedUnits.includes(key))
       )
     );
+    const ansChoice = isFib ? "1" : hasMultiple ? "3" : "2";
     try {
       console.log(id);
       const url =
@@ -175,7 +189,7 @@ const MultipleSelections: React.FC<MultipleSelectionsProps> = ({
           zipcode,
           questionType: questionType,
           enabled,
-          choiceAns: choiceAns,
+          choiceAns: ansChoice,
           choices: choices,
           refs: refs,
           selectedUnits,
@@ -194,44 +208,46 @@ const MultipleSelections: React.FC<MultipleSelectionsProps> = ({
       console.error("Error:", error);
     }
   };
-  const saveOptionsToDatabase2 = async () => {
-    const { choices, refs } = getChoicesAndRefs();
-    const selectedValues = Object.values(
-      Object.fromEntries(
-        Object.entries(ansMap).filter(([key]) => selectedUnits.includes(key))
-      )
-    );
-    try {
-      const response = await fetch(`${apiUrlBase}/api/addQuestion`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          questionContent,
-          household,
-          zipcode,
-          questionType,
-          enabled,
-          choiceAns,
-          choices: choices, // Assuming twoArrayOption represents choices
-          refs: refs, // Assuming twoArrayValue represents refs
-          selectedUnits,
-          selectedFormulas: selectedValues,
-          label,
-        }),
-      });
 
-      if (!response.ok) {
-        throw new Error("Error saving options to the database");
-      }
+  // const saveOptionsToDatabase2 = async () => {
+  //   // determineQuestionType();
+  //   const { choices, refs } = getChoicesAndRefs();
+  //   const selectedValues = Object.values(
+  //     Object.fromEntries(
+  //       Object.entries(ansMap).filter(([key]) => selectedUnits.includes(key))
+  //     )
+  //   );
+  //   try {
+  //     const response = await fetch(`${apiUrlBase}/api/addQuestion`, {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({
+  //         questionContent,
+  //         household,
+  //         zipcode,
+  //         questionType,
+  //         enabled,
+  //         choiceAns: choiceAns,
+  //         choices: choices, // Assuming twoArrayOption represents choices
+  //         refs: refs, // Assuming twoArrayValue represents refs
+  //         selectedUnits,
+  //         selectedFormulas: selectedValues,
+  //         label,
+  //       }),
+  //     });
 
-      console.log("Options saved successfully!");
-      navigate("/questions");
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  };
+  //     if (!response.ok) {
+  //       throw new Error("Error saving options to the database");
+  //     }
+
+  //     console.log("Options saved successfully!");
+  //     navigate("/questions");
+  //   } catch (error) {
+  //     console.error("Error:", error);
+  //   }
+  // };
   useEffect(() => {
     // Set initial unitData based on questionData.choices and questionData.refs
 

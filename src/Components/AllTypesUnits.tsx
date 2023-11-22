@@ -992,6 +992,7 @@ const AllTypesUnits: React.FC<AllTypesUnitsProps> = ({
                 stringArray={unitLabels}
                 questionData={questionData}
                 id={id}
+                hasMultiple={hasMultiple}
                 // onDataUpdate={handleDataUpdate}
               />
             </div>

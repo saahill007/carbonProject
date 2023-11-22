@@ -205,7 +205,7 @@ const QuestionType1: React.FC<QuestionType1Props> = ({
           zipcode,
           questionType,
           enabled,
-          choiceAns,
+          choiceAns: 1,
           choices: [],
           refs: [[type1Ans]],
           selectedUnits,
@@ -227,6 +227,7 @@ const QuestionType1: React.FC<QuestionType1Props> = ({
 
   const saveOptionsToDatabase2 = async () => {
     const { choicess, refss } = generateChoiceAndRefsArrays(data);
+    const ansType = hasMultiple ? "3" : "2";
     try {
       console.log(id);
       const url =
@@ -247,7 +248,7 @@ const QuestionType1: React.FC<QuestionType1Props> = ({
           zipcode,
           questionType,
           enabled,
-          choiceAns,
+          choiceAns: ansType,
           choices: [choicess],
           refs: [refss],
           selectedUnits,

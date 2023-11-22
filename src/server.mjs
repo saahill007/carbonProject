@@ -16,7 +16,7 @@ const codeport = 5173;
 const hostmain = "3.133.102.189";
 
 const dbConfig = {
-  host: "18.118.218.56",
+  host: "3.141.36.125",
   user: "carbonuser",
   password: "Carbon@123", // Fix the case of 'PASSWORD' to 'password'
   database: "CRBN", // Fix the case of 'DB' to 'database'
