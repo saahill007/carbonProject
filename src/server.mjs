@@ -1334,7 +1334,7 @@ app.post("/api/sendCustomerEnquiryEmail", (req, res) => {
 // Define a route to retrieve questions with a specific flag from the database
 app.get("/api/questionsuser", cors(), (req, res) => {
   const sql =
-    "SELECT * FROM CRBN.questionsTable WHERE enabled = 1 ORDER BY CASE WHEN label = 'InfoPersonal' THEN 1 ELSE 2 END, label, id";
+    "SELECT * FROM CRBN.questionsTable  WHERE enabled = 1  ORDER BY  CASE  WHEN label = 'InfoPersonal' THEN 1 WHEN label = 'Household' THEN 2 WHEN label = 'Air Travel' THEN 3 WHEN label = 'Personal Vehicles' THEN 4 WHEN label = 'Public Transit' THEN 5 WHEN label = 'Shopping' THEN 6 ELSE 7 END,  id;";
 
   // Execute the SQL query using the MySQL connection
   mysqlConnection.query(sql, (error, results) => {
