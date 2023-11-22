@@ -13,10 +13,10 @@ app.use(bodyParser.json());
 const port = 3000;
 const codeport = 5173;
 
-const hostmain = "3.133.102.189";
+const hostmain = "18.118.218.56";
 
 const dbConfig = {
-  host: "3.141.36.125",
+  host: hostmain,
   user: "carbonuser",
   password: "Carbon@123", // Fix the case of 'PASSWORD' to 'password'
   database: "CRBN", // Fix the case of 'DB' to 'database'
@@ -42,6 +42,27 @@ mysqlConnection.connect((err) => {
   } else {
     console.error("Connection to MySQL failed:", err);
   }
+});
+
+app.post("/api/insertCustomerData", cors(), (req, res) => {
+  const { zipcode, finalFootprint, finalTrees, age } = req.body;
+
+  const insertQuery =
+    "INSERT INTO CRBN.Customer (total_carbon_footprint, number_of_trees, zipcode, age, date_answered) VALUES (?, ?, ?, ?, CURDATE())";
+
+  mysqlConnection.query(
+    insertQuery,
+    [finalFootprint, finalTrees, zipcode, age],
+    (error, results) => {
+      if (error) {
+        console.error("Error inserting data into customer table:", error);
+        res.status(500).json({ error: "Internal server error" });
+      } else {
+        console.log("Data inserted into customer table successfully:", results);
+        res.status(200).json({ message: "Data inserted successfully" });
+      }
+    }
+  );
 });
 
 app.get("/api/Customer", cors(), (req, res) => {
@@ -1313,7 +1334,7 @@ app.post("/api/sendCustomerEnquiryEmail", (req, res) => {
 // Define a route to retrieve questions with a specific flag from the database
 app.get("/api/questionsuser", cors(), (req, res) => {
   const sql =
-    "SELECT * FROM CRBN.questionsTable WHERE enabled = 1 ORDER BY CASE WHEN label = 'Personal' THEN 1 ELSE 2 END, label, id";
+    "SELECT * FROM CRBN.questionsTable WHERE enabled = 1 ORDER BY CASE WHEN label = 'InfoPersonal' THEN 1 ELSE 2 END, label, id";
 
   // Execute the SQL query using the MySQL connection
   mysqlConnection.query(sql, (error, results) => {
@@ -2233,7 +2254,9 @@ app.post("/api/calculateFootprint", cors(), async (req, res) => {
       let household = results[0].household;
       const questionType = results[0].questionType;
       const choiceAns = results[0].choiceAns;
-
+      if (familyMembers === undefined) {
+        familyMembers = 1;
+      }
       // Calculate carbon footprint based on questionType and choiceAns using the dynamically set familyMembers
       let carbonValue = 0;
       if (questionType === 1) {
