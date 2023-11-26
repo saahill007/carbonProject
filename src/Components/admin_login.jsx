@@ -40,7 +40,7 @@ function AdminLogin() {
 
             if (response.status === 200) {
                 // Redirect to admin dashboard upon successful login
-                window.location.href = '/values';
+                window.location.href = '/values/admin';
             } else {
                 setLoginError('Invalid credentials. Please try again.');
                 setTimeout(() => {

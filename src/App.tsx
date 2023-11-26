@@ -73,7 +73,7 @@ const App: React.FC = () => {
           </div>
           {!isAdmin && (
             <div className="navbar-right">
-              <NavLink to="/values">Values</NavLink>
+              <NavLink to="/values/admin">Values</NavLink>
               <NavLink to="/questions">Questions</NavLink>
               <NavLink to="/support">Support</NavLink>
               <NavLink to="/contact">Contact</NavLink>
