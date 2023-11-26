@@ -451,23 +451,23 @@ app.post("/api/ContactUs", cors(), (req, res) => {
 
       // const enquiryId = result.insertId;
 
-      // 2) Inserting a new entry into the Customer table
-      const insertCustomerSql = `INSERT INTO Customer (date_answered, session_id, first_name, last_name, email, total_carbon_footprint, answers, number_of_trees, zipcode) 
-      VALUES (CURDATE(), "N/A", ?, ?, ?, 0, "N/A", 0, "N/A")`;
-      mysqlConnection.query(
-        insertCustomerSql,
-        [firstName, lastName, email],
-        (err, insertResult) => {
-          if (err) {
-            console.error("Error inserting into Customer table:", err);
-            return res.status(500).json({ error: "Internal Server Error" });
-          }
+      // // 2) Inserting a new entry into the Customer table
+      // const insertCustomerSql = `INSERT INTO Customer (date_answered, session_id, first_name, last_name, email, total_carbon_footprint, answers, number_of_trees, zipcode) 
+      // VALUES (CURDATE(), "N/A", ?, ?, ?, 0, "N/A", 0, "N/A")`;
+      // mysqlConnection.query(
+      //   insertCustomerSql,
+      //   [firstName, lastName, email],
+      //   (err, insertResult) => {
+      //     if (err) {
+      //       console.error("Error inserting into Customer table:", err);
+      //       return res.status(500).json({ error: "Internal Server Error" });
+      //     }
 
-          return res
-            .status(200)
-            .json({ message: "Enquiry and Customer added successfully" });
-        }
-      );
+      //     return res
+      //       .status(200)
+      //       .json({ message: "Enquiry and Customer added successfully" });
+      //   }
+      // );
     }
   );
 });

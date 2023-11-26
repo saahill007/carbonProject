@@ -25,7 +25,7 @@ type CustomerData = {
   session_id: string;
   first_name: string;
   last_name: string;
-  age: number;
+  age: string;
   email: string;
   total_carbon_footprint: number;
   number_of_trees: number;
@@ -42,7 +42,7 @@ const Dashboard: React.FC = () => {
   const [filteredData, setFilteredData] =
     useState<CustomerData[]>(customerData);
   const [fromDate, setFromDate] = useState<string>("");
-  const [ageChoices, setAgeChoices] = useState<string[]>([]);
+  // const [ageChoices, setAgeChoices] = useState<string[]>([]);
   const [toDate, setToDate] = useState<string>("");
   const [zipcodeFilter, setZipcodeFilter] = useState<string>("");
   const [carbonFootprintFilter, setCarbonFootprintFilter] = useState<
@@ -78,7 +78,7 @@ const Dashboard: React.FC = () => {
 
   useEffect(() => {
     fetchData();
-    fetchAgeChoices();
+    // fetchAgeChoices();
   }, []);
 
   const handleFilter = async () => {
@@ -143,60 +143,67 @@ const Dashboard: React.FC = () => {
   };
   const formattedData = groupDataByDate(filteredData);
 
-  const fetchAgeChoices = async () => {
-    try {
-      const response = await axiosInstance.get("/api/questions");
-      const ageQuestion = response.data.find((question) => question.id === 104);
+  // const fetchAgeChoices = async () => {
+  //   try {
+  //     const response = await axiosInstance.get("/api/questions");
+  //     const ageQuestion = response.data.find((question) => question.id === 104);
   
-      console.log("Age Question:", ageQuestion);
+  //     console.log("Age Question:", ageQuestion);
   
-      if (
-        ageQuestion &&
-        ageQuestion.choices &&
-        Array.isArray(ageQuestion.choices[0])
-      ) {
-        const ageChoices = ageQuestion.choices[0].map((choice) =>
-          typeof choice === "string" ? choice.trim() : choice
-        );
+  //     if (
+  //       ageQuestion &&
+  //       ageQuestion.choices &&
+  //       Array.isArray(ageQuestion.choices[0])
+  //     ) {
+  //       const ageChoices = ageQuestion.choices[0].map((choice) =>
+  //         typeof choice === "string" ? choice.trim() : choice
+  //       );
   
-        console.log("Age Choices:", ageChoices);
+  //       console.log("Age Choices:", ageChoices);
 
-        setAgeChoices(ageChoices);
+  //       setAgeChoices(ageChoices);
   
-      }
-    } catch (error) {
-      console.error("Error fetching age choices:", error);
-    }
-  };
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching age choices:", error);
+  //   }
+  // };
 
-  useEffect(() => {
-    fetchAgeChoices();
-  }, []);
+  // useEffect(() => {
+  //   fetchAgeChoices();
+  // }, []);
 
-  const groupDataByAge = (
-    data: CustomerData[],
-    ageChoices: string[]
-  ) => {
+  const groupDataByAge = (data: CustomerData[]) => {
     const ageGroups: {
       [ageGroup: string]: {
         carbonFootprints: number[];
         treeCounts: number[];
         count: number;
       };
-    } = {};
-
-    ageChoices.forEach((choice) => {
-      ageGroups[choice] = { carbonFootprints: [], treeCounts: [], count: 0 };
-    });
+    } = {
+      "Teenager (Under 18)": { carbonFootprints: [], treeCounts: [], count: 0 },
+      "Young Adult (19 to 39)": { carbonFootprints: [], treeCounts: [], count: 0 },
+      "Middle-Aged Adult (40 to 65)": { carbonFootprints: [], treeCounts: [], count: 0 },
+      "Senior Citizen (Above 65)": { carbonFootprints: [], treeCounts: [], count: 0 },
+      // "50-60": { carbonFootprints: [], treeCounts: [], count: 0 },
+      // "60+": { carbonFootprints: [], treeCounts: [], count: 0 },
+      // add more age groups as needed
+    };
 
     data.forEach((item) => {
       const { age, total_carbon_footprint, number_of_trees } = item;
-      if (ageGroups[age]) {
-        ageGroups[age].carbonFootprints.push(total_carbon_footprint);
-        ageGroups[age].treeCounts.push(number_of_trees);
-        ageGroups[age].count++;
+  
+      // Check if the age group exists, if not, initialize it
+      if (!(age in ageGroups)) {
+        ageGroups[age] = { carbonFootprints: [], treeCounts: [], count: 0 };
       }
+  
+      // Push values into the arrays of the corresponding age group
+      ageGroups[age].carbonFootprints.push(total_carbon_footprint);
+      ageGroups[age].treeCounts.push(number_of_trees);
+      ageGroups[age].count++;
     });
+  
 
     const formattedAverageData: {
       ageGroup: string;
@@ -205,7 +212,10 @@ const Dashboard: React.FC = () => {
       count: number;
     }[] = [];
 
-    for (const [ageGroup, { carbonFootprints, treeCounts, count }] of Object.entries(ageGroups)) {
+    for (const [
+      ageGroup,
+      { carbonFootprints, treeCounts, count },
+    ] of Object.entries(ageGroups)) {
       if (carbonFootprints.length > 0 && treeCounts.length > 0) {
         const averageCarbonFootprint =
           carbonFootprints.reduce((acc, curr) => acc + curr, 0) /
@@ -226,7 +236,7 @@ const Dashboard: React.FC = () => {
     return formattedAverageData;
   };
 
-  const formattedAverageData = groupDataByAge(filteredData, ageChoices);
+  const formattedAverageData = groupDataByAge(filteredData);
 
   const CustomTooltip = ({ active, label }) => {
     if (active) {
@@ -404,7 +414,7 @@ const Dashboard: React.FC = () => {
             Apply Filters
           </button>
         </div>
-        <div className="search-container">
+        {/* <div className="search-container">
           <input
             type="text"
             placeholder="Search by Name"
@@ -417,15 +427,15 @@ const Dashboard: React.FC = () => {
               }
             }}
           />
-        </div>
+        </div> */}
       </div>
       <div className="carbon-table">
         <table className="tableclass">
           <thead>
             <tr>
               <th>Customer ID</th>
-              <th>Name</th>
-              <th>Email</th>
+              {/* <th>Name</th>
+              <th>Email</th> */}
               <th>Age</th>
               <th>Total Carbon Footprint</th>
               <th>Number of Trees</th>
@@ -438,8 +448,8 @@ const Dashboard: React.FC = () => {
               filteredData.map((item) => (
                 <tr key={item.cust_id}>
                   <td>{item.cust_id}</td>
-                  <td>{item.first_name + " " + item.last_name}</td>
-                  <td>{item.email}</td>
+                  {/* <td>{item.first_name + " " + item.last_name}</td>
+                  <td>{item.email}</td> */}
                   <td>{item.age}</td>
                   <td>{item.total_carbon_footprint}</td>
                   <td>{item.number_of_trees}</td>
@@ -474,13 +484,10 @@ const Dashboard: React.FC = () => {
             margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
           >
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="ageGroup" />
+            <XAxis dataKey="ageGroup"/>
             <YAxis yAxisId="left" />
             <YAxis yAxisId="right" orientation="right" />
-            <Tooltip
-              content={<CustomTooltip active={true} label="exampleLabel" />}
-            />
-
+            <Tooltip content={<CustomTooltip active={true} label="exampleLabel" />} />
             <Legend />
             <Bar
               dataKey="averageCarbonFootprint"
@@ -491,23 +498,7 @@ const Dashboard: React.FC = () => {
             {/* <Bar dataKey="count" fill="#ffc658" yAxisId="left"/> */}
           </BarChart>
         </div>
-        {/* <div className='chart-container'>
-        <BarChart
-          width={600}
-          height={300}
-          data={filteredData}
-          margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-        >
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="cust_id" />
-          <YAxis yAxisId="left" />
-          <YAxis yAxisId="right" orientation="right" />
-          <Tooltip />
-          <Legend />
-          <Bar dataKey="total_carbon_footprint" fill="#8884d8" yAxisId="left" />
-          <Bar dataKey="number_of_trees" fill="#82ca9d" yAxisId="right" />
-        </BarChart>
-      </div> */}
+  
       </div>
       <div className="graph2">
         <div className="chart-container">
@@ -518,7 +509,7 @@ const Dashboard: React.FC = () => {
               nameKey="name"
               cx="50%"
               cy="50%"
-              outerRadius={80}
+              outerRadius={110}
               fill="#8884d8"
               label
             >
