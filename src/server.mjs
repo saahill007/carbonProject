@@ -2427,6 +2427,7 @@ let familyMembers; // Declare a module-scoped variable
 
 app.post("/api/setFamilyMembers", cors(), (req, res) => {
   familyMembers = req.body.familyMembers; // Assign the value to the module-scoped variable
+  ageGroup = req.body.ageGroup;
   console.log("Received familyMembers:", familyMembers);
   res.status(200).json({ message: "Family members set successfully" });
 });
