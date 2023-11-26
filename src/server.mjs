@@ -13,7 +13,7 @@ app.use(bodyParser.json());
 const port = 3000;
 const codeport = 5173;
 
-const hostmain = "18.118.218.56";
+const hostmain = "3.15.156.179";
 
 const dbConfig = {
   host: hostmain,
