@@ -181,10 +181,10 @@ const Dashboard: React.FC = () => {
         count: number;
       };
     } = {
-      "Teenager (Under 18)": { carbonFootprints: [], treeCounts: [], count: 0 },
-      "Young Adult (19 to 39)": { carbonFootprints: [], treeCounts: [], count: 0 },
-      "Middle-Aged Adult (40 to 65)": { carbonFootprints: [], treeCounts: [], count: 0 },
-      "Senior Citizen (Above 65)": { carbonFootprints: [], treeCounts: [], count: 0 },
+      "Teenager": { carbonFootprints: [], treeCounts: [], count: 0 },
+      "Young Adult": { carbonFootprints: [], treeCounts: [], count: 0 },
+      "Middle-Aged Adult": { carbonFootprints: [], treeCounts: [], count: 0 },
+      "Senior Citizen": { carbonFootprints: [], treeCounts: [], count: 0 },
       // "50-60": { carbonFootprints: [], treeCounts: [], count: 0 },
       // "60+": { carbonFootprints: [], treeCounts: [], count: 0 },
       // add more age groups as needed
@@ -258,46 +258,47 @@ const Dashboard: React.FC = () => {
 
   const groupDataByCarbonFootprint = (data: CustomerData[]) => {
     const groupedData: { [range: string]: number } = {
-      "0-1000": 0,
-      "1000-2500": 0,
-      "2500-5000": 0,
-      "5000-7500": 0,
-      "7500-10000": 0,
+      // "0-1000": 0,
+      // "1000-2500": 0,
+      "100-5000": 0,
+      "5000-10000": 0,
       "10000-15000": 0,
-      "15000+": 0,
+      "15000-20000": 0,
+      "20000-25000": 0,
+      "25000+": 0,
     };
 
     data.forEach((item) => {
       const { total_carbon_footprint } = item;
-      if (total_carbon_footprint >= 0 && total_carbon_footprint < 1000) {
-        groupedData["0-1000"] += 1;
-      } else if (
-        total_carbon_footprint >= 1000 &&
-        total_carbon_footprint < 2500
-      ) {
-        groupedData["1000-2500"] += 1;
-      } else if (
-        total_carbon_footprint >= 2500 &&
-        total_carbon_footprint < 5000
-      ) {
-        groupedData["2500-5000"] += 1;
+      if (total_carbon_footprint >= 100 && total_carbon_footprint < 5000) {
+        groupedData["100-5000"] += 1;
       } else if (
         total_carbon_footprint >= 5000 &&
-        total_carbon_footprint < 7500
-      ) {
-        groupedData["5000-7500"] += 1;
-      } else if (
-        total_carbon_footprint >= 7500 &&
         total_carbon_footprint < 10000
       ) {
-        groupedData["7500-10000"] += 1;
+        groupedData["5000-10000"] += 1;
       } else if (
         total_carbon_footprint >= 10000 &&
         total_carbon_footprint < 15000
       ) {
         groupedData["10000-15000"] += 1;
+      } else if (
+        total_carbon_footprint >= 15000 &&
+        total_carbon_footprint < 20000
+      ) {
+        groupedData["15000-20000"] += 1;
+      } else if (
+        total_carbon_footprint >= 20000 &&
+        total_carbon_footprint < 25000
+      ) {
+        groupedData["20000-25000"] += 1;
+      // } else if (
+      //   total_carbon_footprint >= 10000 &&
+      //   total_carbon_footprint < 15000
+      // ) {
+      //   groupedData["10000-15000"] += 1;
       } else {
-        groupedData["15000+"] += 1;
+        groupedData["25000+"] += 1;
       }
     });
 
@@ -326,7 +327,7 @@ const Dashboard: React.FC = () => {
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    date.setDate(date.getDate() - 1); // Subtract one day from the date
+    date.setDate(date.getDate()); // Subtract one day from the date
     const formattedDate = date.toISOString().split("T")[0]; // Extracting the date part
     return formattedDate;
   };
