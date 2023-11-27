@@ -13,7 +13,7 @@ app.use(bodyParser.json());
 const port = 3000;
 const codeport = 5173;
 
-const hostmain = "3.15.156.179";
+const hostmain = "18.117.147.82";
 
 const dbConfig = {
   host: hostmain,
@@ -1380,26 +1380,29 @@ app.post("/api/ContactUs", cors(), (req, res) => {
       console.error("Error inserting into Enquiry table:", err);
       return res.status(500).json({ error: "Internal Server Error" });
     }
-
-    const enquiryId = result.insertId;
-
-    // 2) Inserting a new entry into the Customer table
-    const insertCustomerSql = `INSERT INTO CRBN.Customer (date_answered, session_id, first_name, last_name,age, email, total_carbon_footprint, answers, number_of_trees, enquiry_id) 
-      VALUES (CURDATE(), "N/A", ?, ?, ?, ?, 0, "N/A", 0, ?)`;
-    mysqlConnection.query(
-      insertCustomerSql,
-      [firstName, lastName, email, enquiryId],
-      (err, insertResult) => {
-        if (err) {
-          console.error("Error inserting into Customer table:", err);
-          return res.status(500).json({ error: "Internal Server Error" });
-        }
-
-        return res
+    return res
           .status(200)
-          .json({ message: "Enquiry and Customer added successfully" });
-      }
-    );
+          .json({ message: "Enquiry added successfully" });
+
+    // const enquiryId = result.insertId;
+
+    // // 2) Inserting a new entry into the Customer table
+    // const insertCustomerSql = `INSERT INTO CRBN.Customer (date_answered, session_id, first_name, last_name,age, email, total_carbon_footprint, answers, number_of_trees, enquiry_id) 
+    //   VALUES (CURDATE(), "N/A", ?, ?, ?, ?, 0, "N/A", 0, ?)`;
+    // mysqlConnection.query(
+    //   insertCustomerSql,
+    //   [firstName, lastName, email, enquiryId],
+    //   (err, insertResult) => {
+    //     if (err) {
+    //       console.error("Error inserting into Customer table:", err);
+    //       return res.status(500).json({ error: "Internal Server Error" });
+    //     }
+
+    //     return res
+    //       .status(200)
+    //       .json({ message: "Enquiry and Customer added successfully" });
+    //   }
+    // );
   });
 });
 
