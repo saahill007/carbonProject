@@ -132,3 +132,22 @@
     height: 30px;
     width: 100%;
   }
+
+  .dropzone {
+    border: 2px dashed #cccccc;
+    border-radius: 4px;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    margin-top: 10vh;
+  }
+  
+  .dropzone p {
+    margin: 0;
+    font-size: 16px;
+  }
+  
+  .dropzone.active {
+    border-color: #2196F3;
+  }
+  

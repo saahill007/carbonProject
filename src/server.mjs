@@ -5,6 +5,8 @@ import mysql1 from "mysql2/promise";
 import bodyParser from "body-parser";
 import nodemailer from "nodemailer";
 import { randomBytes } from "crypto";
+import multer from "multer";
+import csvParser from "csv-parser";
 
 const app = express();
 app.use(cors());
@@ -13,21 +15,28 @@ app.use(bodyParser.json());
 const port = 3000;
 const codeport = 5173;
 
-const hostmain = "18.117.147.82";
+const storage = multer.memoryStorage();
+const upload = multer();
+
+const csvParserOptions = {
+  mapHeaders: ({ header, index }) => header.trim(),
+};
+
+// const hostmain = "18.117.147.82";
+
+// const dbConfig = {
+//   host: hostmain,
+//   user: "carbonuser",
+//   password: "Carbon@123", // Fix the case of 'PASSWORD' to 'password'
+//   database: "CRBN", // Fix the case of 'DB' to 'database'
+// };
 
 const dbConfig = {
-  host: hostmain,
-  user: "carbonuser",
+  host: "127.0.0.1",
+  user: "root",
   password: "Carbon@123", // Fix the case of 'PASSWORD' to 'password'
   database: "CRBN", // Fix the case of 'DB' to 'database'
 };
-
-// const dbConfig = {
-//   host: "127.0.0.1",
-//   user: "root",
-//   password: "", // Fix the case of 'PASSWORD' to 'password'
-//   database: "", // Fix the case of 'DB' to 'database'
-// };
 
 // const port = 3001;
 
@@ -67,7 +76,7 @@ app.post("/api/insertCustomerData", cors(), (req, res) => {
 
 app.get("/api/Customer", cors(), (req, res) => {
   const query =
-    "SELECT cust_id, first_name,last_name, age, email, total_carbon_footprint, number_of_trees, date_answered, zipcode FROM CRBN.Customer";
+  "SELECT cust_id, age, total_carbon_footprint, number_of_trees, date_answered, zipcode FROM CRBN.Customer";
   mysqlConnection.query(query, (error, results) => {
     if (error) throw error;
     res.send(results);
@@ -86,7 +95,7 @@ app.get("/api/filterCustomer", cors(), (req, res) => {
     treesFilter,
   } = req.query;
   let query =
-    "SELECT cust_id, first_name, last_name, age, email, total_carbon_footprint, number_of_trees, date_answered, zipcode FROM CRBN.Customer";
+  "SELECT cust_id, age, total_carbon_footprint, number_of_trees, date_answered, zipcode FROM CRBN.Customer";
 
   if (
     fromDate &&
@@ -255,6 +264,63 @@ app.post("/api/new_utility_add", cors(), (req, res) => {
       res.status(200).json(newUtility);
     }
   );
+});
+
+app.post("/api/new_utilities_add_bulk", upload.single("file"), async (req, res) => {
+  try {
+    console.log("Route reached");
+    
+    // Check if the request body has data property
+    if (!req.body.data) {
+      console.error("No data found in the request body.");
+      return res.status(400).json({ error: "Bad Request" });
+    }
+
+    const newData = JSON.parse(req.body.data);
+
+    // Using a transaction for atomicity (all or nothing)
+    const connection = await pool.getConnection();
+    console.log("Received data:", newData);
+
+    try {
+      await connection.beginTransaction();
+
+      // Assuming 'utilities' is your table name
+      const insertQuery =
+        'INSERT INTO CRBN.utilities (Zipcode, Country, City, Utility, Utility_Value, Utility_Units, Sources, Date_of_Source) VALUES ?';
+
+      // Mapping data to an array of values
+      const values = newData.map((item) => [
+        item.Zipcode,
+        item.Country,
+        item.City,
+        item.Utility,
+        item.Utility_Value,
+        item.Utility_Units,
+        item.Sources,
+        item.Date_of_Source,
+      ]);
+
+      // Performing the bulk insert
+      await connection.query(insertQuery, [values]);
+
+      // Committing the transaction
+      await connection.commit();
+
+      res.status(200).json({ message: "Data saved successfully" });
+    } catch (error) {
+      // Rolling back the transaction in case of an error
+      await connection.rollback();
+      console.error("Error saving data:", error);
+      res.status(500).json({ error: "Internal server error" });
+    } finally {
+      // Releasing the connection back to the pool
+      connection.release();
+    }
+  } catch (error) {
+    console.error("Error processing file:", error);
+    res.status(400).json({ error: "Error processing file" });
+  }
 });
 
 app.post("/api/update_utility_name/:utilityId", cors(), (req, res) => {
@@ -712,13 +778,34 @@ app.get("/api/Category", cors(), (req, res) => {
 app.delete("/api/Category/delete", (req, res) => {
   const { categoryIds } = req.body;
 
-  const query = "DELETE FROM  CRBN.Category WHERE category_id IN (?)";
-  mysqlConnection.query(query, [categoryIds], (error, results) => {
-    if (error) {
-      console.error("Error deleting utilities:", error);
+  // Retrieve category names before deletion
+  const getCategoryNamesQuery = "SELECT category_name FROM CRBN.Category WHERE category_id IN (?)";
+  mysqlConnection.query(getCategoryNamesQuery, [categoryIds], (selectError, selectResults) => {
+    if (selectError) {
+      console.error("Error retrieving category names:", selectError);
       res.status(500).json({ message: "Internal Server Error" });
     } else {
-      res.status(200).json({ message: "Utilities deleted successfully" });
+      const categoryNames = selectResults.map(result => result.category_name);
+
+      // Perform deletion
+      const deleteCategoryQuery = "DELETE FROM CRBN.Category WHERE category_id IN (?)";
+      mysqlConnection.query(deleteCategoryQuery, [categoryIds], (deleteError, deleteResults) => {
+        if (deleteError) {
+          console.error("Error deleting categories:", deleteError);
+          res.status(500).json({ message: "Internal Server Error" });
+        } else {
+          // Update CRBN.questionsTable to set enabled = 0 where label = category_name
+          const updateQuestionsQuery = "UPDATE CRBN.questionsTable SET enabled = 0 WHERE label IN (?)";
+          mysqlConnection.query(updateQuestionsQuery, [categoryNames], (updateError, updateResults) => {
+            if (updateError) {
+              console.error("Error updating questionsTable:", updateError);
+              res.status(500).json({ message: "Internal Server Error" });
+            } else {
+              res.status(200).json({ message: "Categories deleted and questions updated successfully" });
+            }
+          });
+        }
+      });
     }
   });
 });

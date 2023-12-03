@@ -125,3 +125,47 @@
     margin: auto;
 }
 
+.chart-description {
+    margin-top: 1vh;
+    margin-left: 3.2vw;
+    text-align: center;
+    /* margin-bottom: 10px; */
+}
+  
+.chart-description h2 {
+    text-align: left;
+    color: #333 !important; 
+    margin-bottom: 0;
+}
+  
+.chart-description p {
+    text-align: left;
+    color: #555; 
+}
+
+.average-data-graph{
+    margin-top: 2.5vh;
+}
+
+.chart-description2 h2 {
+    margin-left: 4.5vw;
+    text-align: left !important;
+    color: #333 !important; 
+    margin-bottom: 2vh;
+    font-size: 1.8rem;
+}
+
+.graph2 {
+    display: flex;
+    justify-content: center;
+    align-items: center; 
+  }
+  
+.chart-container2 {
+    width: 50%;
+    /* margin: auto; */
+    text-align: center; 
+    margin-top: 5vh;
+    margin-left: 17.5vw;
+    margin-bottom: 5vh;
+}

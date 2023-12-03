@@ -66,7 +66,7 @@ const Category_main: React.FC = () => {
         await axiosInstance.delete('/api/Category/delete', {
           data: { categoryIds: selectedCategory },
         });
-        setSuccessMessage("Select utilities deleted successfully");
+        setSuccessMessage("Categories deleted successfully");
         setTimeout(() => {
           setSuccessMessage("");
         }, 1000);
@@ -76,7 +76,7 @@ const Category_main: React.FC = () => {
         console.error("Error deleting data:", error);
       }
     } else {
-      setErrorMessage("Select one or more utilities to delete.");
+      setErrorMessage("Select one or more categories to delete.");
       setTimeout(() => {
         setErrorMessage("");
       }, 1000);
