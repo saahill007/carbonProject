@@ -5,9 +5,14 @@ import "./Utilities_add.css";
 // import addImg from "../assets/add.png";
 // import delImg from "../assets/delete.png";
 // import editImg from "../assets/edit.png";
+import Papa from 'papaparse';
 import axiosInstance from '../axiosconfig';
 import axios from "axios";
 import { apiUrlBase } from "../config";
+import { useDropzone, DropzoneOptions } from 'react-dropzone';
+
+type Accept = string | string[];
+
 
 interface Utility {
   Zipcode: string;
@@ -56,6 +61,7 @@ const Utilities_add: React.FC = () => {
   });
   const [error, setError] = useState<string>(""); // To track and display error message
   const [SuccessMessage, setSuccessMessage] = useState<string>("");
+  const [FileSuccessMessage, setFileSuccessMessage] = useState<string>("");
   const navigate = useNavigate();
 
   const handleUtility = () => {
@@ -72,8 +78,95 @@ const Utilities_add: React.FC = () => {
       console.error("Error fetching countries:", error);
     }
   };
-  
 
+  const handleFileUpload = async (files: File[]) => {
+    const file = files[0];
+  
+    // Check if the file exists
+    if (!file) {
+      console.error("No file found.");
+      return;
+    }
+  
+    console.log("Request Headers:", {
+      "Content-Type": "multipart/form-data",
+    });
+  
+    try {
+      const result = await new Promise<any>((resolve) => {
+        Papa.parse(file, {
+          complete: (parsedData) => {
+            resolve(parsedData);
+          },
+        });
+      });
+  
+      console.log("Parsed Data:", result.data);
+  
+      const header = result.data[0]; // Assuming the first row contains column headers
+  
+      const newData = result.data
+      .filter((item: any, index: number) =>
+        index > 0 && item.length === header.length && item.every((value: any) => value.trim() !== '')
+      )
+      .map((item: any) => {
+        console.log('Item:', item);
+        return {
+          Zipcode: item[header.indexOf("Zipcode")],
+          Country: item[header.indexOf("Country")],
+          City: item[header.indexOf("City")],
+          Utility: item[header.indexOf("Utility")],
+          Utility_Value: item[header.indexOf("Utility_Value")],
+          Utility_Units: item[header.indexOf("Utility_Units")],
+          Sources: item[header.indexOf("Sources")],
+          Date_of_Source: item[header.indexOf("Date_of_Source")],
+        };
+      });
+  
+      console.log("New Data:", newData);
+  
+      const formData = new FormData();
+        formData.append("file", file);
+
+        // Append the parsed data as a JSON string
+        formData.append("data", JSON.stringify(newData));
+
+        const response = await axiosInstance.post(
+          `${apiUrlBase}/api/new_utilities_add_bulk`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+
+      setFileSuccessMessage('File saved successfully');
+      setTimeout(() => {
+        setFileSuccessMessage("");
+      }, 1000);
+  
+      console.log("Data saved:", response.data);
+  
+      // Fetch the updated data
+      fetchData();
+    } catch (error) {
+      console.error("Error uploading file:", error);
+    }
+  };
+  
+  
+  
+  const { getRootProps, getInputProps } = useDropzone({
+    onDrop: handleFileUpload,
+    accept: {
+      files: ['.csv', 'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'],
+    },
+    maxFiles: 1,
+  });
+  
+  // const { getRootProps, getInputProps } = useDropzone(dropzoneOptions);
+  
   const fetchData = async () => {
     try {
       const response = await axios.get<Utility[]>(
@@ -86,8 +179,6 @@ const Utilities_add: React.FC = () => {
     }
   };
 
- 
-
   const fetchUtilities = async () => {
     try {
       const response = await axios.get<Utility[]>(`${apiUrlBase}/api/utility_list`);
@@ -96,9 +187,6 @@ const Utilities_add: React.FC = () => {
       console.error("Error fetching utilities:", error);
     }
   };
-
-  
-
 
   const handleSave = async () => {
     // if any of the feild is empty
@@ -126,7 +214,7 @@ const Utilities_add: React.FC = () => {
         utility.Utility_Units === newUtility.Utility_Units
     );
 
-    if (!existingUtility) {
+    if (!existingUtility || existingUtility) {
       try {
         // Send the newUtility data to your server for saving
         const response = await axios.post(
@@ -305,30 +393,6 @@ const Utilities_add: React.FC = () => {
                     ))}
                 </select>
               </td>
-              {/* <td>
-                            <input
-                                type="text"
-                                placeholder="Carbon Intensity"
-                                value={newUtility.Carbon_Intensity}
-                                onChange={(e) => setNewUtility({ ...newUtility, Carbon_Intensity: e.target.value })}
-                            />
-                        </td>
-                        <td>
-                            <input
-                                type="text"
-                                placeholder="Carbon Intensity Unit"
-                                value={newUtility.Carbon_Intensity_Unit}
-                                onChange={(e) => setNewUtility({ ...newUtility, Carbon_Intensity_Unit: e.target.value })}
-                            />
-                        </td>
-                        <td>
-                            <input
-                                type="text"
-                                placeholder="Reference Value"
-                                value={newUtility.Ref_Value}
-                                onChange={(e) => setNewUtility({ ...newUtility, Ref_Value: e.target.value })}
-                            />
-                        </td> */}
               <td>
                 <input
                   type="text"
@@ -368,6 +432,15 @@ const Utilities_add: React.FC = () => {
       <button className="save" onClick={handleSave}>
         Save
       </button>
+
+      <div {...getRootProps()} className="dropzone">
+        <input {...getInputProps()} />
+        <p>Drag & drop a CSV file here, or click to select one</p>
+      </div>
+
+      {FileSuccessMessage && (
+        <div className="success-message">{FileSuccessMessage}</div>
+      )}
 
       {/* <div className="bottom-border"></div> */}
     </div>

@@ -181,10 +181,10 @@ const Dashboard: React.FC = () => {
         count: number;
       };
     } = {
-      "Teenager": { carbonFootprints: [], treeCounts: [], count: 0 },
-      "Young Adult": { carbonFootprints: [], treeCounts: [], count: 0 },
-      "Middle-Aged Adult": { carbonFootprints: [], treeCounts: [], count: 0 },
-      "Senior Citizen": { carbonFootprints: [], treeCounts: [], count: 0 },
+      "0-18": { carbonFootprints: [], treeCounts: [], count: 0 },
+      "19-39": { carbonFootprints: [], treeCounts: [], count: 0 },
+      "40-65": { carbonFootprints: [], treeCounts: [], count: 0 },
+      "65+": { carbonFootprints: [], treeCounts: [], count: 0 },
       // "50-60": { carbonFootprints: [], treeCounts: [], count: 0 },
       // "60+": { carbonFootprints: [], treeCounts: [], count: 0 },
       // add more age groups as needed
@@ -260,45 +260,53 @@ const Dashboard: React.FC = () => {
     const groupedData: { [range: string]: number } = {
       // "0-1000": 0,
       // "1000-2500": 0,
-      "100-5000": 0,
-      "5000-10000": 0,
-      "10000-15000": 0,
-      "15000-20000": 0,
-      "20000-25000": 0,
-      "25000+": 0,
+      "100-5000 lbs": 0,
+      "5000-10000 lbs": 0,
+      "10000-15000 lbs": 0,
+      "15000-20000 lbs": 0,
+      "20000-25000 lbs": 0,
+      "25000-30000 lbs": 0,
+      "30000-40000 lbs":0,
+      "40000+ lbs":0,
     };
 
     data.forEach((item) => {
       const { total_carbon_footprint } = item;
       if (total_carbon_footprint >= 100 && total_carbon_footprint < 5000) {
-        groupedData["100-5000"] += 1;
+        groupedData["100-5000 lbs"] += 1;
       } else if (
         total_carbon_footprint >= 5000 &&
         total_carbon_footprint < 10000
       ) {
-        groupedData["5000-10000"] += 1;
+        groupedData["5000-10000 lbs"] += 1;
       } else if (
         total_carbon_footprint >= 10000 &&
         total_carbon_footprint < 15000
       ) {
-        groupedData["10000-15000"] += 1;
+        groupedData["10000-15000 lbs"] += 1;
       } else if (
         total_carbon_footprint >= 15000 &&
         total_carbon_footprint < 20000
       ) {
-        groupedData["15000-20000"] += 1;
+        groupedData["15000-20000 lbs"] += 1;
       } else if (
         total_carbon_footprint >= 20000 &&
         total_carbon_footprint < 25000
       ) {
-        groupedData["20000-25000"] += 1;
-      // } else if (
-      //   total_carbon_footprint >= 10000 &&
-      //   total_carbon_footprint < 15000
-      // ) {
-      //   groupedData["10000-15000"] += 1;
-      } else {
-        groupedData["25000+"] += 1;
+        groupedData["20000-25000 lbs"] += 1;
+      } else if (
+        total_carbon_footprint >= 25000 &&
+        total_carbon_footprint < 30000
+      ) {
+        groupedData["25000-30000 lbs"] += 1;
+      } else if (
+        total_carbon_footprint >= 30000 &&
+        total_carbon_footprint < 40000
+      ) {
+        groupedData["30000-40000 lbs"] += 1;
+      } 
+      else {
+        groupedData["40000+ lbs"] += 1;
       }
     });
 
@@ -463,6 +471,10 @@ const Dashboard: React.FC = () => {
       </div>
       <div className="graphs">
         <div className="chart-container">
+          <div className="chart-description">
+            <h2>Customer Count Over Time</h2>
+            <p>This line chart shows the count of customers on each date.</p>
+          </div>
           <LineChart
             width={600}
             height={300}
@@ -471,13 +483,17 @@ const Dashboard: React.FC = () => {
           >
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="date" />
-            <YAxis />
+            {/* <YAxis /> */}
+            <YAxis dataKey="count" label={{ value: 'Count', angle: -90, position: 'insideLeft' }} />
             <Tooltip />
             <Legend />
             <Line type="monotone" dataKey="count" stroke="#8884d8" />
           </LineChart>
         </div>
         <div className="average-data-graph">
+          <div className="chart-description2">
+            <h2>Average Data by Age Group</h2>
+          </div>
           <BarChart
             width={600}
             height={300}
@@ -502,7 +518,11 @@ const Dashboard: React.FC = () => {
   
       </div>
       <div className="graph2">
-        <div className="chart-container">
+        <div className="chart-container2">
+        <div className="chart-description">
+          <h2>Carbon Footprint Distribution</h2>
+          <p>This pie chart illustrates the distribution of customers based on their total carbon footprint ranges in pounds (lbs).</p>
+        </div>
           <PieChart width={400} height={400}>
             <Pie
               data={formattedCarbonFootprintData}
@@ -510,7 +530,7 @@ const Dashboard: React.FC = () => {
               nameKey="name"
               cx="50%"
               cy="50%"
-              outerRadius={110}
+              outerRadius={125}
               fill="#8884d8"
               label
             >
