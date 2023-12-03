@@ -34,7 +34,7 @@ const csvParserOptions = {
 const dbConfig = {
   host: "127.0.0.1",
   user: "root",
-  password: "Carbon@123", // Fix the case of 'PASSWORD' to 'password'
+  password: "Sahil@123456", // Fix the case of 'PASSWORD' to 'password'
   database: "CRBN", // Fix the case of 'DB' to 'database'
 };
 
@@ -76,7 +76,7 @@ app.post("/api/insertCustomerData", cors(), (req, res) => {
 
 app.get("/api/Customer", cors(), (req, res) => {
   const query =
-  "SELECT cust_id, age, total_carbon_footprint, number_of_trees, date_answered, zipcode FROM CRBN.Customer";
+    "SELECT cust_id, age, total_carbon_footprint, number_of_trees, date_answered, zipcode FROM CRBN.Customer";
   mysqlConnection.query(query, (error, results) => {
     if (error) throw error;
     res.send(results);
@@ -95,7 +95,7 @@ app.get("/api/filterCustomer", cors(), (req, res) => {
     treesFilter,
   } = req.query;
   let query =
-  "SELECT cust_id, age, total_carbon_footprint, number_of_trees, date_answered, zipcode FROM CRBN.Customer";
+    "SELECT cust_id, age, total_carbon_footprint, number_of_trees, date_answered, zipcode FROM CRBN.Customer";
 
   if (
     fromDate &&
@@ -266,62 +266,66 @@ app.post("/api/new_utility_add", cors(), (req, res) => {
   );
 });
 
-app.post("/api/new_utilities_add_bulk", upload.single("file"), async (req, res) => {
-  try {
-    console.log("Route reached");
-    
-    // Check if the request body has data property
-    if (!req.body.data) {
-      console.error("No data found in the request body.");
-      return res.status(400).json({ error: "Bad Request" });
-    }
-
-    const newData = JSON.parse(req.body.data);
-
-    // Using a transaction for atomicity (all or nothing)
-    const connection = await pool.getConnection();
-    console.log("Received data:", newData);
-
+app.post(
+  "/api/new_utilities_add_bulk",
+  upload.single("file"),
+  async (req, res) => {
     try {
-      await connection.beginTransaction();
+      console.log("Route reached");
 
-      // Assuming 'utilities' is your table name
-      const insertQuery =
-        'INSERT INTO CRBN.utilities (Zipcode, Country, City, Utility, Utility_Value, Utility_Units, Sources, Date_of_Source) VALUES ?';
+      // Check if the request body has data property
+      if (!req.body.data) {
+        console.error("No data found in the request body.");
+        return res.status(400).json({ error: "Bad Request" });
+      }
 
-      // Mapping data to an array of values
-      const values = newData.map((item) => [
-        item.Zipcode,
-        item.Country,
-        item.City,
-        item.Utility,
-        item.Utility_Value,
-        item.Utility_Units,
-        item.Sources,
-        item.Date_of_Source,
-      ]);
+      const newData = JSON.parse(req.body.data);
 
-      // Performing the bulk insert
-      await connection.query(insertQuery, [values]);
+      // Using a transaction for atomicity (all or nothing)
+      const connection = await pool.getConnection();
+      console.log("Received data:", newData);
 
-      // Committing the transaction
-      await connection.commit();
+      try {
+        await connection.beginTransaction();
 
-      res.status(200).json({ message: "Data saved successfully" });
+        // Assuming 'utilities' is your table name
+        const insertQuery =
+          "INSERT INTO CRBN.utilities (Zipcode, Country, City, Utility, Utility_Value, Utility_Units, Sources, Date_of_Source) VALUES ?";
+
+        // Mapping data to an array of values
+        const values = newData.map((item) => [
+          item.Zipcode,
+          item.Country,
+          item.City,
+          item.Utility,
+          item.Utility_Value,
+          item.Utility_Units,
+          item.Sources,
+          item.Date_of_Source,
+        ]);
+
+        // Performing the bulk insert
+        await connection.query(insertQuery, [values]);
+
+        // Committing the transaction
+        await connection.commit();
+
+        res.status(200).json({ message: "Data saved successfully" });
+      } catch (error) {
+        // Rolling back the transaction in case of an error
+        await connection.rollback();
+        console.error("Error saving data:", error);
+        res.status(500).json({ error: "Internal server error" });
+      } finally {
+        // Releasing the connection back to the pool
+        connection.release();
+      }
     } catch (error) {
-      // Rolling back the transaction in case of an error
-      await connection.rollback();
-      console.error("Error saving data:", error);
-      res.status(500).json({ error: "Internal server error" });
-    } finally {
-      // Releasing the connection back to the pool
-      connection.release();
+      console.error("Error processing file:", error);
+      res.status(400).json({ error: "Error processing file" });
     }
-  } catch (error) {
-    console.error("Error processing file:", error);
-    res.status(400).json({ error: "Error processing file" });
   }
-});
+);
 
 app.post("/api/update_utility_name/:utilityId", cors(), (req, res) => {
   const utilityId = req.params.utilityId;
@@ -516,13 +520,13 @@ app.post("/api/ContactUs", cors(), (req, res) => {
       }
 
       return res
-            .status(200)
-            .json({ message: "Enquiry and Customer added successfully" });
+        .status(200)
+        .json({ message: "Enquiry and Customer added successfully" });
 
       // const enquiryId = result.insertId;
 
       // // 2) Inserting a new entry into the Customer table
-      // const insertCustomerSql = `INSERT INTO Customer (date_answered, session_id, first_name, last_name, email, total_carbon_footprint, answers, number_of_trees, zipcode) 
+      // const insertCustomerSql = `INSERT INTO Customer (date_answered, session_id, first_name, last_name, email, total_carbon_footprint, answers, number_of_trees, zipcode)
       // VALUES (CURDATE(), "N/A", ?, ?, ?, 0, "N/A", 0, "N/A")`;
       // mysqlConnection.query(
       //   insertCustomerSql,
@@ -779,35 +783,58 @@ app.delete("/api/Category/delete", (req, res) => {
   const { categoryIds } = req.body;
 
   // Retrieve category names before deletion
-  const getCategoryNamesQuery = "SELECT category_name FROM CRBN.Category WHERE category_id IN (?)";
-  mysqlConnection.query(getCategoryNamesQuery, [categoryIds], (selectError, selectResults) => {
-    if (selectError) {
-      console.error("Error retrieving category names:", selectError);
-      res.status(500).json({ message: "Internal Server Error" });
-    } else {
-      const categoryNames = selectResults.map(result => result.category_name);
+  const getCategoryNamesQuery =
+    "SELECT category_name FROM CRBN.Category WHERE category_id IN (?)";
+  mysqlConnection.query(
+    getCategoryNamesQuery,
+    [categoryIds],
+    (selectError, selectResults) => {
+      if (selectError) {
+        console.error("Error retrieving category names:", selectError);
+        res.status(500).json({ message: "Internal Server Error" });
+      } else {
+        const categoryNames = selectResults.map(
+          (result) => result.category_name
+        );
 
-      // Perform deletion
-      const deleteCategoryQuery = "DELETE FROM CRBN.Category WHERE category_id IN (?)";
-      mysqlConnection.query(deleteCategoryQuery, [categoryIds], (deleteError, deleteResults) => {
-        if (deleteError) {
-          console.error("Error deleting categories:", deleteError);
-          res.status(500).json({ message: "Internal Server Error" });
-        } else {
-          // Update CRBN.questionsTable to set enabled = 0 where label = category_name
-          const updateQuestionsQuery = "UPDATE CRBN.questionsTable SET enabled = 0 WHERE label IN (?)";
-          mysqlConnection.query(updateQuestionsQuery, [categoryNames], (updateError, updateResults) => {
-            if (updateError) {
-              console.error("Error updating questionsTable:", updateError);
+        // Perform deletion
+        const deleteCategoryQuery =
+          "DELETE FROM CRBN.Category WHERE category_id IN (?)";
+        mysqlConnection.query(
+          deleteCategoryQuery,
+          [categoryIds],
+          (deleteError, deleteResults) => {
+            if (deleteError) {
+              console.error("Error deleting categories:", deleteError);
               res.status(500).json({ message: "Internal Server Error" });
             } else {
-              res.status(200).json({ message: "Categories deleted and questions updated successfully" });
+              // Update CRBN.questionsTable to set enabled = 0 where label = category_name
+              const updateQuestionsQuery =
+                "UPDATE CRBN.questionsTable SET enabled = 0 WHERE label IN (?)";
+              mysqlConnection.query(
+                updateQuestionsQuery,
+                [categoryNames],
+                (updateError, updateResults) => {
+                  if (updateError) {
+                    console.error(
+                      "Error updating questionsTable:",
+                      updateError
+                    );
+                    res.status(500).json({ message: "Internal Server Error" });
+                  } else {
+                    res.status(200).json({
+                      message:
+                        "Categories deleted and questions updated successfully",
+                    });
+                  }
+                }
+              );
             }
-          });
-        }
-      });
+          }
+        );
+      }
     }
-  });
+  );
 });
 
 app.post("/api/toggleQuestion", async (req, res) => {
@@ -1459,7 +1486,6 @@ app.get("/api/questions/:id", cors(), async (req, res) => {
     res.status(500).send("Server error");
   }
 });
-
 
 // API for random fact fetching
 app.get("/api/randomfact/:index", async (req, res) => {

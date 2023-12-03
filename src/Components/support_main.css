@@ -30,7 +30,7 @@ a:link {
     /* Adjust the width as needed */
     height: 90%;
     /* Adjust the height as needed */
-    background: rgba(217, 217, 217, 0.18);
+    background: lightgray;
     margin: 20px;
     padding: 10px;
 }
