@@ -5,6 +5,7 @@ import {
   Routes,
   Route,
   NavLink,
+  Link,
 } from "react-router-dom";
 import "./App.css";
 import { ValuesPage, Values } from "./Components/Values";
@@ -64,12 +65,14 @@ const App: React.FC = () => {
           }}
         >
           <div className="navbar-left">
-            <span>
-              <img
-                src={logoImg}
-                style={{ width: "140px", height: "50px", marginLeft: "60px" }}
-              ></img>
-            </span>
+            <Link to="/values">
+              <span>
+                <img
+                  src={logoImg}
+                  style={{ width: "140px", height: "50px", marginLeft: "60px" }}
+                ></img>
+              </span>
+            </Link>
           </div>
           {!isAdmin && (
             <div className="navbar-right">
