@@ -22,7 +22,7 @@ const csvParserOptions = {
   mapHeaders: ({ header, index }) => header.trim(),
 };
 
-const hostmain = "18.224.17.131";
+const hostmain = "18.222.248.198";
 
 const dbConfig = {
   host: hostmain,
