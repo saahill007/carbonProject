@@ -482,7 +482,7 @@ const Dashboard: React.FC = () => {
         <table className="tableclass">
           <thead>
             <tr>
-              <th>Customer ID</th>
+              {/* <th>Customer ID</th> */}
               {/* <th>Name</th>
               <th>Email</th> */}
               <th>Age</th>
@@ -496,7 +496,7 @@ const Dashboard: React.FC = () => {
             {filteredData &&
               filteredData.map((item) => (
                 <tr key={item.cust_id}>
-                  <td>{item.cust_id}</td>
+                  {/* <td>{item.cust_id}</td> */}
                   {/* <td>{item.first_name + " " + item.last_name}</td>
                   <td>{item.email}</td> */}
                   <td>{item.age}</td>
