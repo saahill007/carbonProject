@@ -378,7 +378,7 @@ const Dashboard: React.FC = () => {
   return (
     <div
       className="cont"
-      style={{ paddingLeft: "10vw", paddingRight: "10vw", marginTop: "100px" }}
+      style={{ paddingLeft: "13vw", paddingRight: "13vw", marginTop: "100px" }}
     >
       <AdminDashboard></AdminDashboard>
 
