@@ -210,3 +210,13 @@ body {
 .values-page.panel-expanded .content-beside-navbar {
   margin-left: 150px; /* Adjust the value to match your expanded panel width */
 }
+
+.content-beside-navbar-values {
+  transition: margin-left 0.1s ease;
+  margin-left: 0; /* Initial position, no offset */
+}
+
+.values-page.panel-expanded .content-beside-navbar-values {
+  margin-left: 70px; /* Adjust the value to match your expanded panel width */
+}
+
