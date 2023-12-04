@@ -62,6 +62,7 @@ const Utilities_add: React.FC = () => {
   const [error, setError] = useState<string>(""); // To track and display error message
   const [SuccessMessage, setSuccessMessage] = useState<string>("");
   const [FileSuccessMessage, setFileSuccessMessage] = useState<string>("");
+  const [FileErrorMessage, setFileErrorMessage] = useState<string>("");
   const navigate = useNavigate();
 
   const handleUtility = () => {
@@ -78,7 +79,7 @@ const Utilities_add: React.FC = () => {
       console.error("Error fetching countries:", error);
     }
   };
-
+  
   const handleFileUpload = async (files: File[]) => {
     const file = files[0];
   
@@ -87,10 +88,6 @@ const Utilities_add: React.FC = () => {
       console.error("No file found.");
       return;
     }
-  
-    console.log("Request Headers:", {
-      "Content-Type": "multipart/form-data",
-    });
   
     try {
       const result = await new Promise<any>((resolve) => {
@@ -101,47 +98,66 @@ const Utilities_add: React.FC = () => {
         });
       });
   
-      console.log("Parsed Data:", result.data);
+      const header = result.data[0];
   
-      const header = result.data[0]; // Assuming the first row contains column headers
+      // Check if all required headings are present
+      const requiredHeadings = [
+        "Zipcode",
+        "Country",
+        "City",
+        "Utility",
+        "Utility_Value",
+        "Utility_Units",
+        "Sources",
+        "Date_of_Source",
+      ];
+  
+      const missingHeadings = requiredHeadings.filter(
+        (requiredHeading) => !header.includes(requiredHeading)
+      );
+  
+      if (missingHeadings.length > 0) {
+        setFileErrorMessage(`Required heading(s) "${missingHeadings.join(", ")}" is/are missing. So unable to upload the file. Please include the missing heading and try again `);
+        setTimeout(() => {
+          setFileErrorMessage("");
+        }, 6500);
+        return;
+      }
   
       const newData = result.data
-      .filter((item: any, index: number) =>
-        index > 0 && item.length === header.length && item.every((value: any) => value.trim() !== '')
-      )
-      .map((item: any) => {
-        console.log('Item:', item);
-        return {
-          Zipcode: item[header.indexOf("Zipcode")],
-          Country: item[header.indexOf("Country")],
-          City: item[header.indexOf("City")],
-          Utility: item[header.indexOf("Utility")],
-          Utility_Value: item[header.indexOf("Utility_Value")],
-          Utility_Units: item[header.indexOf("Utility_Units")],
-          Sources: item[header.indexOf("Sources")],
-          Date_of_Source: item[header.indexOf("Date_of_Source")],
-        };
-      });
-  
-      console.log("New Data:", newData);
+        .filter((item: any, index: number) =>
+          index > 0 &&
+          item.length === header.length &&
+          item.every((value: any) => value.trim() !== "")
+        )
+        .map((item: any) => {
+          return {
+            Zipcode: item[header.indexOf("Zipcode")],
+            Country: item[header.indexOf("Country")],
+            City: item[header.indexOf("City")],
+            Utility: item[header.indexOf("Utility")],
+            Utility_Value: item[header.indexOf("Utility_Value")],
+            Utility_Units: item[header.indexOf("Utility_Units")],
+            Sources: item[header.indexOf("Sources")],
+            Date_of_Source: item[header.indexOf("Date_of_Source")],
+          };
+        });
   
       const formData = new FormData();
-        formData.append("file", file);
-
-        // Append the parsed data as a JSON string
-        formData.append("data", JSON.stringify(newData));
-
-        const response = await axiosInstance.post(
-          `${apiUrlBase}/api/new_utilities_add_bulk`,
-          formData,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          }
-        );
-
-      setFileSuccessMessage('File saved successfully');
+      formData.append("file", file);
+      formData.append("data", JSON.stringify(newData));
+  
+      const response = await axiosInstance.post(
+        `${apiUrlBase}/api/new_utilities_add_bulk`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+  
+      setFileSuccessMessage("File saved successfully");
       setTimeout(() => {
         setFileSuccessMessage("");
       }, 1000);
@@ -154,7 +170,7 @@ const Utilities_add: React.FC = () => {
       console.error("Error uploading file:", error);
     }
   };
-  
+
   
   
   const { getRootProps, getInputProps } = useDropzone({
@@ -433,13 +449,21 @@ const Utilities_add: React.FC = () => {
         Save
       </button>
 
+
       <div {...getRootProps()} className="dropzone">
         <input {...getInputProps()} />
         <p>Drag & drop a CSV file here, or click to select one</p>
       </div>
+    
+      <p>Note: Please make sure your CSV file only contains the following headings: Zipcode, Country, City, Utility, Utility_Value, Utility_Units, Sources, Date_of_Source.</p>
+
 
       {FileSuccessMessage && (
         <div className="success-message">{FileSuccessMessage}</div>
+      )}
+
+      {FileErrorMessage && (
+        <div className="error-message">{FileErrorMessage}</div>
       )}
 
       {/* <div className="bottom-border"></div> */}

@@ -150,4 +150,14 @@
   .dropzone.active {
     border-color: #2196F3;
   }
+
+  .note {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  
+  .note.visible {
+    opacity: 1;
+  }
+  
   
