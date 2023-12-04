@@ -76,7 +76,7 @@ app.post("/api/insertCustomerData", cors(), (req, res) => {
 
 app.get("/api/Customer", cors(), (req, res) => {
   const query =
-    "SELECT cust_id, age, total_carbon_footprint, number_of_trees, date_answered, zipcode FROM CRBN.Customer";
+    "SELECT cust_id, age, total_carbon_footprint, number_of_trees, date_answered, zipcode FROM CRBN.Customer LIMIT 500;";
   mysqlConnection.query(query, (error, results) => {
     if (error) throw error;
     res.send(results);
@@ -178,6 +178,7 @@ app.get("/api/filterCustomer", cors(), (req, res) => {
       treesComparison === "=" ? "=" : treesComparison === ">" ? ">" : "<"
     } ${treesFilter}`;
   }
+  query += " LIMIT 500";
 
   mysqlConnection.query(query, (error, results) => {
     if (error) throw error;
