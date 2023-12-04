@@ -376,6 +376,7 @@ const Dashboard: React.FC = () => {
   };
 
   return (
+    <div className="content-beside-navbar-values"> 
     <div
       className="cont"
       style={{ paddingLeft: "10vw", paddingRight: "10vw", marginTop: "100px" }}
@@ -384,6 +385,7 @@ const Dashboard: React.FC = () => {
 
       {/* <h2>Admin Dashboard</h2> */}
       <div className="TopFilter">
+        
         {/* <div className="datefilter"> */}
         <div className="date-input">
           <span className="placeholder-text">From Date</span>
@@ -597,6 +599,7 @@ const Dashboard: React.FC = () => {
           </PieChart>
         </div>
       </div>
+    </div>
     </div>
   );
 };
