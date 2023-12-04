@@ -22,21 +22,21 @@ const csvParserOptions = {
   mapHeaders: ({ header, index }) => header.trim(),
 };
 
-// const hostmain = "18.117.147.82";
-
-// const dbConfig = {
-//   host: hostmain,
-//   user: "carbonuser",
-//   password: "Carbon@123", // Fix the case of 'PASSWORD' to 'password'
-//   database: "CRBN", // Fix the case of 'DB' to 'database'
-// };
+const hostmain = "18.222.248.198";
 
 const dbConfig = {
-  host: "127.0.0.1",
-  user: "root",
-  password: "Sahil@123456", // Fix the case of 'PASSWORD' to 'password'
+  host: hostmain,
+  user: "carbonuser",
+  password: "Carbon@123", // Fix the case of 'PASSWORD' to 'password'
   database: "CRBN", // Fix the case of 'DB' to 'database'
 };
+
+// const dbConfig = {
+//   host: "127.0.0.1",
+//   user: "root",
+//   password: "Sahil@123456", // Fix the case of 'PASSWORD' to 'password'
+//   database: "CRBN", // Fix the case of 'DB' to 'database'
+// };
 
 // const port = 3001;
 
