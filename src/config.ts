@@ -1,2 +1,2 @@
-const apiUrlBase = "http://18.222.248.198:3000";
+const apiUrlBase = "http://127.0.0.1:3000";
 export { apiUrlBase };

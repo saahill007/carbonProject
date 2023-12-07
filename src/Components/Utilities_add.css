@@ -139,7 +139,7 @@
     padding: 20px;
     text-align: center;
     cursor: pointer;
-    margin-top: 10vh;
+    margin-top: 15vh;
   }
   
   .dropzone p {
@@ -160,4 +160,30 @@
     opacity: 1;
   }
   
+  /* Add these styles to your existing CSS file or style section */
+.download-template {
+  /* background-color: #007bff; 
+  color: #fff;  */
+  border: none;
+  padding: 10px 15px;
+  margin-top: 25px;
+  cursor: pointer;
+  font-size: 16px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s ease;
+  margin-left: 40vw;
+}
+
+.download-template:hover {
+  background-color: #6b86a2; 
+}
+
+.download-template span {
+  margin-right: 8px;
+  font-size: 20px; 
+}
+
   
