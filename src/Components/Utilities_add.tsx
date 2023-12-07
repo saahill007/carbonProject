@@ -10,6 +10,8 @@ import axiosInstance from '../axiosconfig';
 import axios from "axios";
 import { apiUrlBase } from "../config";
 import { useDropzone, DropzoneOptions } from 'react-dropzone';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faFileExcel } from '@fortawesome/free-regular-svg-icons';
 
 type Accept = string | string[];
 
@@ -171,8 +173,6 @@ const Utilities_add: React.FC = () => {
     }
   };
 
-  
-  
   const { getRootProps, getInputProps } = useDropzone({
     onDrop: handleFileUpload,
     accept: {
@@ -282,6 +282,17 @@ const Utilities_add: React.FC = () => {
     fetchUtilities();
     fetchCountries(); // Add this line
   }, []);
+
+  const handleDownloadTemplate = () => {
+    const templateUrl = "/public/template.csv";
+    console.log("Template URL:", templateUrl);
+    const link = document.createElement("a");
+    link.href = templateUrl;
+    link.download = "template.csv";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
   
 
   return (
@@ -458,6 +469,26 @@ const Utilities_add: React.FC = () => {
       <p>Note: Please make sure your CSV file only contains the following headings: Zipcode, Country, City, Utility, Utility_Value, Utility_Units, Sources, Date_of_Source.</p>
 
 
+      {/* <button className="download-template" onClick={handleDownloadTemplate}>
+      <span role="img" aria-label="Download Template">
+        🔗
+      </span>
+      Download Template
+      <span role="img" aria-label="Download Template">
+        📄 
+      </span>
+      </button> */}
+
+      <button className="download-template" onClick={handleDownloadTemplate}>
+        <span className="icon">
+          <FontAwesomeIcon icon={faFileExcel} style={{ color: 'green' }} />
+        </span>
+        Download Template
+        <span role="img" aria-label="Download Template">
+          🔗
+        </span>
+      </button>
+      
       {FileSuccessMessage && (
         <div className="success-message">{FileSuccessMessage}</div>
       )}

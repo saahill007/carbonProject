@@ -519,7 +519,7 @@ const Dashboard: React.FC = () => {
       </div>
       <div className="graph2">
         <div className="chart-container2">
-        <div className="chart-description">
+        <div className="chart-description2">
           <h2>Carbon Footprint Distribution</h2>
           <p>This pie chart illustrates the distribution of customers based on their total carbon footprint ranges in pounds (lbs).</p>
         </div>
