@@ -296,6 +296,7 @@ const Utilities_add: React.FC = () => {
   
 
   return (
+    <div className="content-beside-navbar">
     <div
       className="Utilities"
       style={{ paddingLeft: "100px", paddingTop: "70px" }}
@@ -498,6 +499,7 @@ const Utilities_add: React.FC = () => {
       )}
 
       {/* <div className="bottom-border"></div> */}
+    </div>
     </div>
   );
 };
