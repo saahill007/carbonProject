@@ -1295,7 +1295,7 @@ app.post("/api/send-email", async (req, res) => {
 
   try {
     mysqlConnection.query(
-      "SELECT Email FROM CRBN.Customer",
+      "SELECT distinct Email FROM CRBN.enquiry",
       (error, results, fields) => {
         if (error) {
           console.error("Error querying the database:", error);
